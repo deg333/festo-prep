@@ -31,6 +31,11 @@
       <button data-view="cip">CIP valve</button><button data-view="safety">Safety dump</button>
       <button id="bXray">X-ray</button>
     </div>
+    <div class="hud xr" id="xrayPanel" hidden>
+      <video id="xrVid" muted playsinline preload="auto" src="/*XRAYVIDEO*/"></video>
+      <div class="xrcap"><b>MS6-SV-D cutaway</b> (Festo animation) &mdash; <label><input type="radio" name="xrmode" value="sync" checked> synced to sim</label>
+        <label><input type="radio" name="xrmode" value="play"> play loop</label> <span id="xrState"></span></div>
+    </div>
     <div class="hud bl">
       <span><i class="dot" style="background:#22ff77"></i>green = 24 VDC good</span>
       <span><i class="dot" style="background:#ffc400"></i>yellow = coil energised</span>

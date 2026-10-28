@@ -52,7 +52,30 @@
   document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => {
     View3D.view(b.dataset.view); document.querySelectorAll('[data-view]').forEach(x => x.classList.toggle('on', x === b));
   }));
-  $('bXray').addEventListener('click', e => { e.target.classList.toggle('on'); View3D.setXray(e.target.classList.contains('on')); });
+  /* X-ray: translucent 3D bodies + Festo MS6-SV-D cutaway video. Video time is scrubbed from the simulated state
+   (clip seconds: 1 normal, 3.2 pilots on, 4-9 soft-start, 9-12.5 full flow). */
+  const xv = $('xrVid'), xp = $('xrayPanel'); let xOn = false, xCur = 2, xPlay = false;
+  xv.addEventListener('error', () => { xp.hidden = true; });
+  document.querySelectorAll('[name=xrmode]').forEach(r => r.addEventListener('change', () => {
+    xPlay = r.value === 'play' && r.checked; if (xPlay) { xv.loop = true; xv.play(); } else { xv.pause(); xv.loop = false; }
+  }));
+  $('bXray').addEventListener('click', e => {
+    xOn = !xOn; e.target.classList.toggle('on', xOn); View3D.setXray(xOn); xp.hidden = !xOn;
+    if (xOn && xPlay) xv.play(); else xv.pause();
+  });
+  function xrayTarget() {
+    const s = P.s, c = P.cfg, r = s.p2 / Math.max(s.pa, s.p2, 0.1);
+    if (s.pa < 0.3 && s.p2 < 0.1) return [1.0, 'no supply pressure'];
+    if (r < 0.02) return [s.stage ? 3.2 : 2.0, s.stage ? 'pilots energised' : 'closed, outlet exhausted'];
+    if (r < c.ratio) return [4 + 5 * r / c.ratio, s.stage === 0 ? 'exhausting' : 'soft-start (throttled)'];
+    return [9 + 3.5 * Math.min(1, (r - c.ratio) / (1 - c.ratio)), s.stage === 0 ? 'exhausting' : 'full flow'];
+  }
+  function updateXray(dt) {
+    if (!xOn || xPlay || xv.readyState < 2) return;
+    const [t, txt] = xrayTarget(); $('xrState').textContent = txt;
+    xCur += (t - xCur) * Math.min(1, dt * 8);
+    if (!xv.seeking && Math.abs(xv.currentTime - xCur) > 0.02) xv.currentTime = xCur;
+  }
 
   /* ---------------- PLC I/O + ladder ---------------- */
   const io = [
@@ -224,6 +247,7 @@
     while (rem > 1e-9) { const d = Math.min(h, rem); P.step(d); rem -= d; acc += d; if (acc >= DT_S) { acc -= DT_S; sample(); } }
     View3D.update(P, dtR * speed, now / 1000);
     updatePneu(dtR * speed);
+    updateXray(dtR);
     uiAcc += dtR; chartAcc += dtR;
     if (uiAcc > 0.1) {
       uiAcc = 0; updatePLC();

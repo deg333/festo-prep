@@ -13,6 +13,7 @@ MS6-SV-D safety dump (**V1S1 / V1S2**, dual coil, **FS1 / FS2** proximity switch
 - **Simulated PLC** (20 ms scan): ladder-style rungs, I/O table, RUN latch, FS1/FS2 plausibility
   (discrepancy, no-switch, no-return), fault latch, diagnostic test (Tab. 6), blue-lamp blink logic.
 - Timing chart in the style of Fig. 4 (V1S1, V1S2, FS1, FS2, p1, p2) and live operating point on the flow curves.
+- **X-ray** button: translucent 3D bodies plus the Festo MS6-SV-D cutaway animation, scrubbed in sync with the simulated pressures (closed, soft-start, full flow), or play it as a loop. Clip source: `assets/safety-dump-xray.mp4` (embedded into the HTML by `build.py`).
 - Fault injection: stuck FS1/FS2, broken coil wire, supply off, CIP not fitted, E-stop.
 
 Build: `python3 build.py` inlines `src/*` and `vendor/three.min.js` (three.js r160, MIT).
