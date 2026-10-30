@@ -90,6 +90,7 @@ table.io th { color: var(--mut); font-weight: 600; }
         <span class="chip">p1 valve in <b id="rPa">0.0</b> bar</span>
         <span class="chip">p2 out <b id="rP2">0.0</b> bar <small id="rP2psi">(0 psi)</small></span>
         <span class="chip">flow <b id="rQ">0</b> l/min</span>
+        <span class="chip">leak <b id="rLeak">0.0</b> SCFM</span>
         <span class="chip">stage <b id="rStage">EXHAUST</b></span>
       </div>
     </div>
@@ -129,6 +130,8 @@ table.io th { color: var(--mut); font-weight: 600; }
       <div class="row"><label>Soft-start screw n</label><input type="range" id="sN" min="0" max="10" step="0.1" value="5"><output id="oN"></output></div>
       <p class="note" id="nNote"></p>
       <div class="row"><label>Switch-through</label><input type="range" id="sRatio" min="30" max="70" step="1" value="50"><output id="oRatio"></output></div>
+      <div class="row"><label>Leak valve (manual)</label><input type="range" id="sLeak" min="0" max="100" step="1" value="0"><output id="oLeak"></output></div>
+      <p class="note" id="leakNote"></p>
       <div class="row"><label>Machine volume</label><input type="range" id="sV" min="1" max="30" step="0.5" value="5"><output id="oV"></output></div>
       <label class="chk"><input type="checkbox" id="cCip" checked> CIP valve V2S1 fitted (optional)</label>
       <div class="row"><label>Sim speed</label><select id="sSpeed"><option value="0.5">0.5&times;</option><option value="1" selected>1&times;</option><option value="2">2&times;</option><option value="4">4&times;</option></select></div>
@@ -235,8 +238,12 @@ table.io th { color: var(--mut); font-weight: 600; }
       <text x="740" y="46" fill="#9fb0c0">dist. block</text>
       <g><rect x="860" y="20" width="110" height="84" rx="12" fill="#0d1319" stroke="#cfd8e0" stroke-width="2"/><rect id="tankFill" x="863" y="101" width="104" height="0" rx="9"/>
         <text x="915" y="14" text-anchor="middle" fill="#9fb0c0">machine volume</text><text id="tV" x="915" y="68" text-anchor="middle" fill="#e6edf3" font-weight="700" font-size="14"></text></g>
-      <text x="880" y="122" fill="#e6edf3" font-weight="700">&rarr; MACHINE</text>
-      <text id="tFlow" x="860" y="140" fill="#9fb0c0"></text>
+      <path id="pLeak" d="M915 104V150" fill="none" stroke-width="3.5" stroke-linecap="round"/>
+      <g stroke="#cfd8e0" stroke-width="2" fill="#0d1319"><path d="M903 150L927 168V150L903 168Z"/><path d="M915 159V148"/><path d="M909 148H927" stroke-width="3"/></g>
+      <path id="pLeak2" d="M915 168V196" fill="none" stroke-width="3.5" stroke-linecap="round"/><path d="M908 196h14l-7 9z" fill="#cfd8e0"/>
+      <g text-anchor="end"><text x="897" y="150" fill="#e6edf3" font-weight="700">LEAK</text><text x="897" y="163" fill="#9fb0c0">manual valve</text><text id="tLeakPct" x="897" y="176" fill="#9fb0c0"></text></g>
+      <text id="tLeak" x="915" y="224" fill="#e6edf3" font-weight="700" font-size="13" text-anchor="middle"></text>
+      <text id="tFlow" x="745" y="170" fill="#9fb0c0"></text>
       <text x="20" y="462" fill="#7d8b99">Festo circuit symbol of the MS6-SV-D; V1S1 + V1S2 pilots both required; FS1/FS2 monitor them; active position is highlighted.</text>
     </svg>
   </section>
@@ -296,6 +303,19 @@ const SIM = (() => {
       q = a + (b - a) * (p1 - FLOW_P[i]) / (FLOW_P[i + 1] - FLOW_P[i]);
     }
     return Math.max(q, 5 * p1 / 6); // small leakage floor so n = 0 still creeps up
+  }
+
+  /* Manual leak valve at the end of the tank: 0-100 % open, 100 % = 1/4" line. Orifice flow of air:
+     choked above ~0.9 bar(g), subsonic below. Cd 0.7, flow in SCFM (14.7 psia / 68 F). */
+  const GAMMA = 1.4, LEAK_D_IN = 0.25, LEAK_CD = 0.7, SCFM_K = 11.5, PATM = 1.01325, L_PER_SCFM = 28.3168;
+  const LEAK_AREA = Math.PI / 4 * LEAK_D_IN * LEAK_D_IN;
+  const psiFn = r => Math.sqrt(Math.pow(r, 2 / GAMMA) - Math.pow(r, (GAMMA + 1) / GAMMA));
+  const R_CRIT = Math.pow(2 / (GAMMA + 1), GAMMA / (GAMMA - 1));
+  function leakScfm(pBarG, pct) {
+    if (pct <= 0 || pBarG <= 0.005) return 0;
+    const pAbsPsi = (pBarG + PATM) * 14.5038, r = PATM / (pBarG + PATM);
+    const f = r <= R_CRIT ? 1 : psiFn(r) / psiFn(R_CRIT);
+    return SCFM_K * LEAK_CD * LEAK_AREA * (pct / 100) * pAbsPsi * f;
   }
 
   const P_PILOT_ON = 3.5, P_PILOT_OFF = 2.0; // bar, MS6-SV-D operating range starts at 3.5 bar
@@ -395,12 +415,12 @@ const SIM = (() => {
   function makePlant() {
     const plc = makePLC();
     const P = {
-      cfg: { supplyOn: true, P0: 6, n: 5, ratio: 0.5, V: 5, cipFitted: true },
+      cfg: { supplyOn: true, P0: 6, n: 5, ratio: 0.5, V: 5, cipFitted: true, leakPct: 0 },
       faults: { fs1Stuck: false, fs2Stuck: false, v1s1Open: false, v1s2Open: false },
       ctl: { estop: false, reset: false, diag: false },
       s: {
         t: 0, pF: 0, pa: 0, p2: 0, kSafe: false, stage: 0, pilotOk: false,
-        pos1: 0, pos2: 0, cipPos: 0, q: 0, qEx: 0, qExCip: 0,
+        pos1: 0, pos2: 0, cipPos: 0, q: 0, qEx: 0, qExCip: 0, qLeak: 0,
       },
       plc,
       scanAcc: 0, resetPrev: false,
@@ -481,7 +501,10 @@ const SIM = (() => {
         dp = s.q / 60 / c.V * h;
       }
       if (dp > 0) dp = Math.min(dp, Math.max(0, s.pa - s.p2));
-      s.p2 = Math.max(0, s.p2 + dp);
+      // manual leak valve at the end of the tank (flow in SCFM, converted to free-air l/min for the volume balance)
+      s.qLeak = leakScfm(s.p2, c.leakPct);
+      const dpLeak = Math.min(s.p2 + dp, s.qLeak * L_PER_SCFM / 60 / c.V * h);
+      s.p2 = Math.max(0, s.p2 + dp - dpLeak);
       s.q = Math.max(s.q, 0);
     };
 
@@ -489,12 +512,14 @@ const SIM = (() => {
     P.fillTimeEstimate = () => {
       const c = P.cfg, p1 = c.supplyOn ? c.P0 : 0;
       if (p1 < 3.5) return Infinity;
-      return c.ratio * p1 / (qn(c.n, p1) / 60 / c.V);
+      const qt = qn(c.n, p1) - leakScfm(c.ratio * p1, c.leakPct) * L_PER_SCFM;
+      if (qt <= 1) return Infinity;
+      return c.ratio * p1 / (qt / 60 / c.V);
     };
     return P;
   }
 
-  return { makePlant, qn, FLOW_Q, FLOW_P, clamp, P_PILOT_ON };
+  return { makePlant, qn, leakScfm, L_PER_SCFM, FLOW_Q, FLOW_P, clamp, P_PILOT_ON };
 })();
 if (typeof module !== 'undefined') module.exports = SIM;
 
@@ -733,6 +758,7 @@ const View3D = (() => {
   const svName = label('MS6-SV-D  SAFETY DUMP (PLd)', { bg: '#394b5c', w: 430, h: 52, fs: 24, scale: 0.045 }); svName.position.set(sx + SW / 2, 28.5, 0); root.add(svName);
   V.exhaustSV = new THREE.Vector3(sx + SW / 2, -17.7, 0);
   V.exhaustCIP = new THREE.Vector3(cx + 3.5, -14.6, 0);
+  V.exhaustSVe = { origin: V.exhaustSV }; V.exhaustCIPe = { origin: V.exhaustCIP };
 
   // distribution block 2 with push-in fittings
   x = clamp(x);
@@ -755,6 +781,25 @@ const View3D = (() => {
   const tankLbl = label('TO MACHINE (volume)', { bg: '#394b5c', w: 380, h: 52, fs: 24, scale: 0.045 }); tankLbl.position.set(tx + 7, 11, 0); root.add(tankLbl);
   const X_END = tx + 13;
   bore(tx, tx + 14, 'P2');
+
+  // manual leak valve at the end of the tank: brass ball valve with lever + 1/4" tube to atmosphere
+  const brass = bodyMat(0xc79a3b, { metalness: 0.7, roughness: 0.35 });
+  cyl(0.7, 2.4, M.silver, tx + 15.0, 0, 0, 'x', root, 16);
+  cyl(1.6, 3.0, brass, tx + 17.2, 0, 0, 'x', root, 24);
+  cyl(0.55, 1.6, M.silver, tx + 17.2, 1.9, 0, 'y', root, 12);
+  const leverPivot = new THREE.Group(); leverPivot.position.set(tx + 17.2, 2.7, 0); root.add(leverPivot);
+  box(5.4, 0.45, 0.9, new THREE.MeshStandardMaterial({ color: 0xd83a2e, roughness: 0.5 }), 2.7, 0, 0, leverPivot);
+  cyl(0.4, 0.9, new THREE.MeshStandardMaterial({ color: 0xd83a2e }), 5.2, 0, 0, 'y', leverPivot, 12);
+  cyl(0.32, 5.2, M.silver, tx + 21.4, 0, 0, 'x', root, 12);          // 1/4" line
+  V.leakOrigin = { origin: new THREE.Vector3(tx + 24.1, 0, 0) };
+  const leakLbl = label('LEAK VALVE  0%', { bg: '#8a3b12', w: 330, h: 52, fs: 24, scale: 0.045 }); leakLbl.position.set(tx + 19, 8.5, 0); root.add(leakLbl);
+  const leakTxt = (() => {
+    const c = document.createElement('canvas'); c.width = 330; c.height = 52; const tex = new THREE.CanvasTexture(c);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false })); sp.scale.set(330 * 0.045, 52 * 0.045, 1); sp.renderOrder = 10; sp.position.set(tx + 21, -8.5, 0); root.add(sp);
+    let last = '';
+    return { set(t) { if (t === last) return; last = t; const g = c.getContext('2d'); g.clearRect(0, 0, 330, 52); g.fillStyle = '#0b1016e6'; g.fillRect(0, 0, 330, 52);
+      g.strokeStyle = '#ff9a3c'; g.lineWidth = 2; g.strokeRect(1, 1, 328, 50); g.fillStyle = '#ffb36b'; g.font = '700 26px system-ui,Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, 165, 28); tex.needsUpdate = true; } };
+  })();
 
   // pendant: E-STOP + CONTROL RESET (blue lamp)
   const px = -30, pz = 4;
@@ -801,14 +846,15 @@ const View3D = (() => {
   const epoints = new THREE.Points(eg, new THREE.PointsMaterial({ size: 1.6, map: dotTex, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
   epoints.frustumCulled = false; epoints.renderOrder = 5; root.add(epoints);
   for (let i = 0; i < NE; i++) { epos[i * 3 + 1] = -999; elife[i] = 0; }
-  let eCursor = 0, spawnAcc = 0;
-  function spawn(origin, qEx, dt) {
-    spawnAcc += Math.min(qEx, 3000) / 12 * dt;   // particles per second ~ flow
-    while (spawnAcc >= 1) {
-      spawnAcc -= 1; const i = eCursor++ % NE;
-      epos[i * 3] = origin.x + (Math.random() - 0.5) * 2; epos[i * 3 + 1] = origin.y; epos[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 2;
-      const sp = 6 + Math.min(qEx, 3000) / 3000 * 28;
-      evel[i * 3] = (Math.random() - 0.5) * sp; evel[i * 3 + 1] = -sp * (0.4 + Math.random() * 0.6); evel[i * 3 + 2] = (Math.random() - 0.5) * sp;
+  let eCursor = 0;
+  const DOWN = new THREE.Vector3(0, -1, 0), JET = new THREE.Vector3(1, 0, 0);
+  function spawn(em, q, dt, dir, spread) {
+    em.acc = (em.acc || 0) + Math.min(q, 3000) / 12 * dt;   // particles per second ~ flow (l/min)
+    while (em.acc >= 1) {
+      em.acc -= 1; const i = eCursor++ % NE, o = em.origin, j = i * 3;
+      epos[j] = o.x + (Math.random() - 0.5) * 0.6; epos[j + 1] = o.y + (Math.random() - 0.5) * 0.6; epos[j + 2] = o.z + (Math.random() - 0.5) * 0.6;
+      const sp = 6 + Math.min(q, 3000) / 3000 * 28, k = sp * (0.4 + Math.random() * 0.6);
+      evel[j] = dir.x * k + (Math.random() - 0.5) * sp * spread; evel[j + 1] = dir.y * k + (Math.random() - 0.5) * sp * spread; evel[j + 2] = dir.z * k + (Math.random() - 0.5) * sp * spread;
       elife[i] = 0.5 + Math.random() * 0.5;
     }
   }
@@ -911,7 +957,11 @@ const View3D = (() => {
     }
     pg.attributes.position.needsUpdate = true; pg.attributes.color.needsUpdate = true;
 
-    spawn(V.exhaustSV, s.qEx, dt); spawn(V.exhaustCIP, s.qExCip, dt);
+    spawn(V.exhaustSVe, s.qEx, dt, DOWN, 1); spawn(V.exhaustCIPe, s.qExCip, dt, DOWN, 1);
+    spawn(V.leakOrigin, s.qLeak * SIM.L_PER_SCFM, dt, JET, 0.25);
+    leverPivot.rotation.y = (1 - P.cfg.leakPct / 100) * Math.PI / 2;
+    leakLbl.visible = false;
+    leakTxt.set(P.cfg.leakPct > 0 ? 'LEAK ' + P.cfg.leakPct.toFixed(0) + '% : ' + s.qLeak.toFixed(1) + ' SCFM' : 'LEAK VALVE CLOSED');
     for (let i = 0; i < NE; i++) {
       if (elife[i] <= 0) { epos[i * 3 + 1] = -999; continue; }
       elife[i] -= dt; const j = i * 3;
@@ -950,15 +1000,18 @@ const View3D = (() => {
     $('oN').textContent = fmt(c.n) + ' turns';
     $('oRatio').textContent = fmt(c.ratio * 100, 0) + ' % p1';
     $('oV').textContent = fmt(c.V) + ' L';
+    $('oLeak').textContent = fmt(c.leakPct, 0) + ' %';
+    $('leakNote').textContent = '100 % = 1/4" line open to atmosphere (Cd 0.7). At ' + fmt(c.P0) + ' bar the full 1/4" leak is ~' + fmt(SIM.leakScfm(c.P0, 100), 0) + ' SCFM.';
     const t = P.fillTimeEstimate();
     $('nNote').textContent = 'Counter-clockwise (+) = more flow = faster pressure build-up. Fill to switch-through: ' +
-      (isFinite(t) ? '~' + fmt(t, t < 10 ? 1 : 0) + ' s' : 'no supply') + (c.n < 0.5 ? ' (screw nearly closed: creeping)' : c.n > 9 ? ' (nearly instantaneous)' : '') + '.';
+      (isFinite(t) ? '~' + fmt(t, t < 10 ? 1 : 0) + ' s' : c.leakPct > 0 && c.supplyOn && c.P0 >= 3.5 ? 'never - leak exceeds the soft-start flow' : 'no supply') + (c.n < 0.5 ? ' (screw nearly closed: creeping)' : c.n > 9 ? ' (nearly instantaneous)' : '') + '.';
   }
   bind('cSupply', e => P.cfg.supplyOn = e.checked);
   bind('sP0', e => P.cfg.P0 = +e.value);
   bind('sN', e => P.cfg.n = +e.value);
   bind('sRatio', e => P.cfg.ratio = +e.value / 100);
   bind('sV', e => P.cfg.V = +e.value);
+  bind('sLeak', e => P.cfg.leakPct = +e.value);
   bind('cCip', e => P.cfg.cipFitted = e.checked);
   bind('fFs1', e => P.faults.fs1Stuck = e.checked);
   bind('fFs2', e => P.faults.fs2Stuck = e.checked);
@@ -1107,6 +1160,9 @@ const View3D = (() => {
     S('tN').textContent = 'n = ' + fmt(c.n) + ' turns  (' + fmt(SIM.qn(c.n, Math.max(s.pa, c.supplyOn ? c.P0 : 0)), 0) + ' l/min)';
     S('tFlow').textContent = s.q > 1 ? 'flow ' + fmt(s.q, 0) + ' l/min' : s.qEx > 1 ? 'exhausting ' + fmt(s.qEx, 0) + ' l/min' : '';
     S('tV').textContent = c.V + ' L';
+    stroke('pLeak', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01); stroke('pLeak2', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01);
+    S('tLeakPct').textContent = fmt(c.leakPct, 0) + ' % open';
+    S('tLeak').textContent = s.qLeak > 0.005 ? 'leak ' + fmt(s.qLeak, 1) + ' SCFM (' + fmt(s.qLeak * SIM.L_PER_SCFM, 0) + ' l/min)' : '';
     const h = 84 * Math.min(1, s.p2 / 10), tf = S('tankFill');
     tf.setAttribute('y', 102 - h); tf.setAttribute('height', Math.max(0, h - 3)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.5);
   }
@@ -1192,7 +1248,7 @@ const View3D = (() => {
       uiAcc = 0; updatePLC();
       const s = P.s;
       $('rP0').textContent = fmt(s.pF); $('rPa').textContent = fmt(s.pa); $('rP2').textContent = fmt(s.p2);
-      $('rP2psi').textContent = '(' + fmt(s.p2 * 14.504, 0) + ' psi)'; $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rStage').textContent = stageNames[s.stage];
+      $('rP2psi').textContent = '(' + fmt(s.p2 * 14.504, 0) + ' psi)'; $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rLeak').textContent = fmt(s.qLeak, 1); $('rStage').textContent = stageNames[s.stage];
       const el = $('plcState'); el.textContent = plc.msg;
       el.className = 'chip ' + (plc.FAULT || P.ctl.estop ? 'bad' : plc.RUN ? 'ok' : 'warn');
     }

@@ -19,15 +19,18 @@
     $('oN').textContent = fmt(c.n) + ' turns';
     $('oRatio').textContent = fmt(c.ratio * 100, 0) + ' % p1';
     $('oV').textContent = fmt(c.V) + ' L';
+    $('oLeak').textContent = fmt(c.leakPct, 0) + ' %';
+    $('leakNote').textContent = '100 % = 1/4" line open to atmosphere (Cd 0.7). At ' + fmt(c.P0) + ' bar the full 1/4" leak is ~' + fmt(SIM.leakScfm(c.P0, 100), 0) + ' SCFM.';
     const t = P.fillTimeEstimate();
     $('nNote').textContent = 'Counter-clockwise (+) = more flow = faster pressure build-up. Fill to switch-through: ' +
-      (isFinite(t) ? '~' + fmt(t, t < 10 ? 1 : 0) + ' s' : 'no supply') + (c.n < 0.5 ? ' (screw nearly closed: creeping)' : c.n > 9 ? ' (nearly instantaneous)' : '') + '.';
+      (isFinite(t) ? '~' + fmt(t, t < 10 ? 1 : 0) + ' s' : c.leakPct > 0 && c.supplyOn && c.P0 >= 3.5 ? 'never - leak exceeds the soft-start flow' : 'no supply') + (c.n < 0.5 ? ' (screw nearly closed: creeping)' : c.n > 9 ? ' (nearly instantaneous)' : '') + '.';
   }
   bind('cSupply', e => P.cfg.supplyOn = e.checked);
   bind('sP0', e => P.cfg.P0 = +e.value);
   bind('sN', e => P.cfg.n = +e.value);
   bind('sRatio', e => P.cfg.ratio = +e.value / 100);
   bind('sV', e => P.cfg.V = +e.value);
+  bind('sLeak', e => P.cfg.leakPct = +e.value);
   bind('cCip', e => P.cfg.cipFitted = e.checked);
   bind('fFs1', e => P.faults.fs1Stuck = e.checked);
   bind('fFs2', e => P.faults.fs2Stuck = e.checked);
@@ -176,6 +179,9 @@
     S('tN').textContent = 'n = ' + fmt(c.n) + ' turns  (' + fmt(SIM.qn(c.n, Math.max(s.pa, c.supplyOn ? c.P0 : 0)), 0) + ' l/min)';
     S('tFlow').textContent = s.q > 1 ? 'flow ' + fmt(s.q, 0) + ' l/min' : s.qEx > 1 ? 'exhausting ' + fmt(s.qEx, 0) + ' l/min' : '';
     S('tV').textContent = c.V + ' L';
+    stroke('pLeak', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01); stroke('pLeak2', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01);
+    S('tLeakPct').textContent = fmt(c.leakPct, 0) + ' % open';
+    S('tLeak').textContent = s.qLeak > 0.005 ? 'leak ' + fmt(s.qLeak, 1) + ' SCFM (' + fmt(s.qLeak * SIM.L_PER_SCFM, 0) + ' l/min)' : '';
     const h = 84 * Math.min(1, s.p2 / 10), tf = S('tankFill');
     tf.setAttribute('y', 102 - h); tf.setAttribute('height', Math.max(0, h - 3)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.5);
   }
@@ -261,7 +267,7 @@
       uiAcc = 0; updatePLC();
       const s = P.s;
       $('rP0').textContent = fmt(s.pF); $('rPa').textContent = fmt(s.pa); $('rP2').textContent = fmt(s.p2);
-      $('rP2psi').textContent = '(' + fmt(s.p2 * 14.504, 0) + ' psi)'; $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rStage').textContent = stageNames[s.stage];
+      $('rP2psi').textContent = '(' + fmt(s.p2 * 14.504, 0) + ' psi)'; $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rLeak').textContent = fmt(s.qLeak, 1); $('rStage').textContent = stageNames[s.stage];
       const el = $('plcState'); el.textContent = plc.msg;
       el.className = 'chip ' + (plc.FAULT || P.ctl.estop ? 'bad' : plc.RUN ? 'ok' : 'warn');
     }

@@ -30,6 +30,19 @@ const SIM = (() => {
     return Math.max(q, 5 * p1 / 6); // small leakage floor so n = 0 still creeps up
   }
 
+  /* Manual leak valve at the end of the tank: 0-100 % open, 100 % = 1/4" line. Orifice flow of air:
+     choked above ~0.9 bar(g), subsonic below. Cd 0.7, flow in SCFM (14.7 psia / 68 F). */
+  const GAMMA = 1.4, LEAK_D_IN = 0.25, LEAK_CD = 0.7, SCFM_K = 11.5, PATM = 1.01325, L_PER_SCFM = 28.3168;
+  const LEAK_AREA = Math.PI / 4 * LEAK_D_IN * LEAK_D_IN;
+  const psiFn = r => Math.sqrt(Math.pow(r, 2 / GAMMA) - Math.pow(r, (GAMMA + 1) / GAMMA));
+  const R_CRIT = Math.pow(2 / (GAMMA + 1), GAMMA / (GAMMA - 1));
+  function leakScfm(pBarG, pct) {
+    if (pct <= 0 || pBarG <= 0.005) return 0;
+    const pAbsPsi = (pBarG + PATM) * 14.5038, r = PATM / (pBarG + PATM);
+    const f = r <= R_CRIT ? 1 : psiFn(r) / psiFn(R_CRIT);
+    return SCFM_K * LEAK_CD * LEAK_AREA * (pct / 100) * pAbsPsi * f;
+  }
+
   const P_PILOT_ON = 3.5, P_PILOT_OFF = 2.0; // bar, MS6-SV-D operating range starts at 3.5 bar
   const T_SHIFT_UP = 0.12, T_SHIFT_DN = 0.08; // pilot piston / proximity switch travel times [s]
   const V_CIP_LINE = 0.5;                     // L between CIP valve and soft-start valve
@@ -127,12 +140,12 @@ const SIM = (() => {
   function makePlant() {
     const plc = makePLC();
     const P = {
-      cfg: { supplyOn: true, P0: 6, n: 5, ratio: 0.5, V: 5, cipFitted: true },
+      cfg: { supplyOn: true, P0: 6, n: 5, ratio: 0.5, V: 5, cipFitted: true, leakPct: 0 },
       faults: { fs1Stuck: false, fs2Stuck: false, v1s1Open: false, v1s2Open: false },
       ctl: { estop: false, reset: false, diag: false },
       s: {
         t: 0, pF: 0, pa: 0, p2: 0, kSafe: false, stage: 0, pilotOk: false,
-        pos1: 0, pos2: 0, cipPos: 0, q: 0, qEx: 0, qExCip: 0,
+        pos1: 0, pos2: 0, cipPos: 0, q: 0, qEx: 0, qExCip: 0, qLeak: 0,
       },
       plc,
       scanAcc: 0, resetPrev: false,
@@ -213,7 +226,10 @@ const SIM = (() => {
         dp = s.q / 60 / c.V * h;
       }
       if (dp > 0) dp = Math.min(dp, Math.max(0, s.pa - s.p2));
-      s.p2 = Math.max(0, s.p2 + dp);
+      // manual leak valve at the end of the tank (flow in SCFM, converted to free-air l/min for the volume balance)
+      s.qLeak = leakScfm(s.p2, c.leakPct);
+      const dpLeak = Math.min(s.p2 + dp, s.qLeak * L_PER_SCFM / 60 / c.V * h);
+      s.p2 = Math.max(0, s.p2 + dp - dpLeak);
       s.q = Math.max(s.q, 0);
     };
 
@@ -221,11 +237,13 @@ const SIM = (() => {
     P.fillTimeEstimate = () => {
       const c = P.cfg, p1 = c.supplyOn ? c.P0 : 0;
       if (p1 < 3.5) return Infinity;
-      return c.ratio * p1 / (qn(c.n, p1) / 60 / c.V);
+      const qt = qn(c.n, p1) - leakScfm(c.ratio * p1, c.leakPct) * L_PER_SCFM;
+      if (qt <= 1) return Infinity;
+      return c.ratio * p1 / (qt / 60 / c.V);
     };
     return P;
   }
 
-  return { makePlant, qn, FLOW_Q, FLOW_P, clamp, P_PILOT_ON };
+  return { makePlant, qn, leakScfm, L_PER_SCFM, FLOW_Q, FLOW_P, clamp, P_PILOT_ON };
 })();
 if (typeof module !== 'undefined') module.exports = SIM;

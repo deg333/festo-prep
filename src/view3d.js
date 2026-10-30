@@ -231,6 +231,7 @@ const View3D = (() => {
   const svName = label('MS6-SV-D  SAFETY DUMP (PLd)', { bg: '#394b5c', w: 430, h: 52, fs: 24, scale: 0.045 }); svName.position.set(sx + SW / 2, 28.5, 0); root.add(svName);
   V.exhaustSV = new THREE.Vector3(sx + SW / 2, -17.7, 0);
   V.exhaustCIP = new THREE.Vector3(cx + 3.5, -14.6, 0);
+  V.exhaustSVe = { origin: V.exhaustSV }; V.exhaustCIPe = { origin: V.exhaustCIP };
 
   // distribution block 2 with push-in fittings
   x = clamp(x);
@@ -253,6 +254,25 @@ const View3D = (() => {
   const tankLbl = label('TO MACHINE (volume)', { bg: '#394b5c', w: 380, h: 52, fs: 24, scale: 0.045 }); tankLbl.position.set(tx + 7, 11, 0); root.add(tankLbl);
   const X_END = tx + 13;
   bore(tx, tx + 14, 'P2');
+
+  // manual leak valve at the end of the tank: brass ball valve with lever + 1/4" tube to atmosphere
+  const brass = bodyMat(0xc79a3b, { metalness: 0.7, roughness: 0.35 });
+  cyl(0.7, 2.4, M.silver, tx + 15.0, 0, 0, 'x', root, 16);
+  cyl(1.6, 3.0, brass, tx + 17.2, 0, 0, 'x', root, 24);
+  cyl(0.55, 1.6, M.silver, tx + 17.2, 1.9, 0, 'y', root, 12);
+  const leverPivot = new THREE.Group(); leverPivot.position.set(tx + 17.2, 2.7, 0); root.add(leverPivot);
+  box(5.4, 0.45, 0.9, new THREE.MeshStandardMaterial({ color: 0xd83a2e, roughness: 0.5 }), 2.7, 0, 0, leverPivot);
+  cyl(0.4, 0.9, new THREE.MeshStandardMaterial({ color: 0xd83a2e }), 5.2, 0, 0, 'y', leverPivot, 12);
+  cyl(0.32, 5.2, M.silver, tx + 21.4, 0, 0, 'x', root, 12);          // 1/4" line
+  V.leakOrigin = { origin: new THREE.Vector3(tx + 24.1, 0, 0) };
+  const leakLbl = label('LEAK VALVE  0%', { bg: '#8a3b12', w: 330, h: 52, fs: 24, scale: 0.045 }); leakLbl.position.set(tx + 19, 8.5, 0); root.add(leakLbl);
+  const leakTxt = (() => {
+    const c = document.createElement('canvas'); c.width = 330; c.height = 52; const tex = new THREE.CanvasTexture(c);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false })); sp.scale.set(330 * 0.045, 52 * 0.045, 1); sp.renderOrder = 10; sp.position.set(tx + 21, -8.5, 0); root.add(sp);
+    let last = '';
+    return { set(t) { if (t === last) return; last = t; const g = c.getContext('2d'); g.clearRect(0, 0, 330, 52); g.fillStyle = '#0b1016e6'; g.fillRect(0, 0, 330, 52);
+      g.strokeStyle = '#ff9a3c'; g.lineWidth = 2; g.strokeRect(1, 1, 328, 50); g.fillStyle = '#ffb36b'; g.font = '700 26px system-ui,Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, 165, 28); tex.needsUpdate = true; } };
+  })();
 
   // pendant: E-STOP + CONTROL RESET (blue lamp)
   const px = -30, pz = 4;
@@ -299,14 +319,15 @@ const View3D = (() => {
   const epoints = new THREE.Points(eg, new THREE.PointsMaterial({ size: 1.6, map: dotTex, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
   epoints.frustumCulled = false; epoints.renderOrder = 5; root.add(epoints);
   for (let i = 0; i < NE; i++) { epos[i * 3 + 1] = -999; elife[i] = 0; }
-  let eCursor = 0, spawnAcc = 0;
-  function spawn(origin, qEx, dt) {
-    spawnAcc += Math.min(qEx, 3000) / 12 * dt;   // particles per second ~ flow
-    while (spawnAcc >= 1) {
-      spawnAcc -= 1; const i = eCursor++ % NE;
-      epos[i * 3] = origin.x + (Math.random() - 0.5) * 2; epos[i * 3 + 1] = origin.y; epos[i * 3 + 2] = origin.z + (Math.random() - 0.5) * 2;
-      const sp = 6 + Math.min(qEx, 3000) / 3000 * 28;
-      evel[i * 3] = (Math.random() - 0.5) * sp; evel[i * 3 + 1] = -sp * (0.4 + Math.random() * 0.6); evel[i * 3 + 2] = (Math.random() - 0.5) * sp;
+  let eCursor = 0;
+  const DOWN = new THREE.Vector3(0, -1, 0), JET = new THREE.Vector3(1, 0, 0);
+  function spawn(em, q, dt, dir, spread) {
+    em.acc = (em.acc || 0) + Math.min(q, 3000) / 12 * dt;   // particles per second ~ flow (l/min)
+    while (em.acc >= 1) {
+      em.acc -= 1; const i = eCursor++ % NE, o = em.origin, j = i * 3;
+      epos[j] = o.x + (Math.random() - 0.5) * 0.6; epos[j + 1] = o.y + (Math.random() - 0.5) * 0.6; epos[j + 2] = o.z + (Math.random() - 0.5) * 0.6;
+      const sp = 6 + Math.min(q, 3000) / 3000 * 28, k = sp * (0.4 + Math.random() * 0.6);
+      evel[j] = dir.x * k + (Math.random() - 0.5) * sp * spread; evel[j + 1] = dir.y * k + (Math.random() - 0.5) * sp * spread; evel[j + 2] = dir.z * k + (Math.random() - 0.5) * sp * spread;
       elife[i] = 0.5 + Math.random() * 0.5;
     }
   }
@@ -409,7 +430,11 @@ const View3D = (() => {
     }
     pg.attributes.position.needsUpdate = true; pg.attributes.color.needsUpdate = true;
 
-    spawn(V.exhaustSV, s.qEx, dt); spawn(V.exhaustCIP, s.qExCip, dt);
+    spawn(V.exhaustSVe, s.qEx, dt, DOWN, 1); spawn(V.exhaustCIPe, s.qExCip, dt, DOWN, 1);
+    spawn(V.leakOrigin, s.qLeak * SIM.L_PER_SCFM, dt, JET, 0.25);
+    leverPivot.rotation.y = (1 - P.cfg.leakPct / 100) * Math.PI / 2;
+    leakLbl.visible = false;
+    leakTxt.set(P.cfg.leakPct > 0 ? 'LEAK ' + P.cfg.leakPct.toFixed(0) + '% : ' + s.qLeak.toFixed(1) + ' SCFM' : 'LEAK VALVE CLOSED');
     for (let i = 0; i < NE; i++) {
       if (elife[i] <= 0) { epos[i * 3 + 1] = -999; continue; }
       elife[i] -= dt; const j = i * 3;

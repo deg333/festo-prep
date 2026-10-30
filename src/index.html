@@ -23,6 +23,7 @@
         <span class="chip">p1 valve in <b id="rPa">0.0</b> bar</span>
         <span class="chip">p2 out <b id="rP2">0.0</b> bar <small id="rP2psi">(0 psi)</small></span>
         <span class="chip">flow <b id="rQ">0</b> l/min</span>
+        <span class="chip">leak <b id="rLeak">0.0</b> SCFM</span>
         <span class="chip">stage <b id="rStage">EXHAUST</b></span>
       </div>
     </div>
@@ -62,6 +63,8 @@
       <div class="row"><label>Soft-start screw n</label><input type="range" id="sN" min="0" max="10" step="0.1" value="5"><output id="oN"></output></div>
       <p class="note" id="nNote"></p>
       <div class="row"><label>Switch-through</label><input type="range" id="sRatio" min="30" max="70" step="1" value="50"><output id="oRatio"></output></div>
+      <div class="row"><label>Leak valve (manual)</label><input type="range" id="sLeak" min="0" max="100" step="1" value="0"><output id="oLeak"></output></div>
+      <p class="note" id="leakNote"></p>
       <div class="row"><label>Machine volume</label><input type="range" id="sV" min="1" max="30" step="0.5" value="5"><output id="oV"></output></div>
       <label class="chk"><input type="checkbox" id="cCip" checked> CIP valve V2S1 fitted (optional)</label>
       <div class="row"><label>Sim speed</label><select id="sSpeed"><option value="0.5">0.5&times;</option><option value="1" selected>1&times;</option><option value="2">2&times;</option><option value="4">4&times;</option></select></div>
@@ -168,8 +171,12 @@
       <text x="740" y="46" fill="#9fb0c0">dist. block</text>
       <g><rect x="860" y="20" width="110" height="84" rx="12" fill="#0d1319" stroke="#cfd8e0" stroke-width="2"/><rect id="tankFill" x="863" y="101" width="104" height="0" rx="9"/>
         <text x="915" y="14" text-anchor="middle" fill="#9fb0c0">machine volume</text><text id="tV" x="915" y="68" text-anchor="middle" fill="#e6edf3" font-weight="700" font-size="14"></text></g>
-      <text x="880" y="122" fill="#e6edf3" font-weight="700">&rarr; MACHINE</text>
-      <text id="tFlow" x="860" y="140" fill="#9fb0c0"></text>
+      <path id="pLeak" d="M915 104V150" fill="none" stroke-width="3.5" stroke-linecap="round"/>
+      <g stroke="#cfd8e0" stroke-width="2" fill="#0d1319"><path d="M903 150L927 168V150L903 168Z"/><path d="M915 159V148"/><path d="M909 148H927" stroke-width="3"/></g>
+      <path id="pLeak2" d="M915 168V196" fill="none" stroke-width="3.5" stroke-linecap="round"/><path d="M908 196h14l-7 9z" fill="#cfd8e0"/>
+      <g text-anchor="end"><text x="897" y="150" fill="#e6edf3" font-weight="700">LEAK</text><text x="897" y="163" fill="#9fb0c0">manual valve</text><text id="tLeakPct" x="897" y="176" fill="#9fb0c0"></text></g>
+      <text id="tLeak" x="915" y="224" fill="#e6edf3" font-weight="700" font-size="13" text-anchor="middle"></text>
+      <text id="tFlow" x="745" y="170" fill="#9fb0c0"></text>
       <text x="20" y="462" fill="#7d8b99">Festo circuit symbol of the MS6-SV-D; V1S1 + V1S2 pilots both required; FS1/FS2 monitor them; active position is highlighted.</text>
     </svg>
   </section>
