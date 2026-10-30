@@ -7,7 +7,12 @@ html, body { margin: 0; background: var(--bg); color: var(--fg); font: 14px/1.4 
 header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
 header h1 { font-size: 17px; margin: 0; letter-spacing: .2px; }
 header .sub { color: var(--mut); font-size: 12.5px; }
-main { display: grid; gap: 12px; padding: 12px 16px 24px; grid-template-columns: 270px minmax(0, 1.1fr) minmax(0, 1.2fr) 290px; grid-template-rows: minmax(700px, 88vh) auto; grid-template-areas: "side stage pneu plc" "charts charts charts charts"; }
+main { display: grid; gap: 12px 0; padding: 12px 16px 24px; grid-template-columns: var(--w1, 270px) 12px minmax(0, var(--w2, 1.1fr)) 12px minmax(0, var(--w3, 1.2fr)) 12px var(--w4, 290px); grid-template-rows: minmax(700px, 88vh) auto; grid-template-areas: "side g1 stage g2 pneu g3 plc" "charts charts charts charts charts charts charts"; }
+.gutter { cursor: col-resize; position: relative; touch-action: none; user-select: none; }
+.gutter::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; border-radius: 2px; background: transparent; transition: background .15s; }
+.gutter:hover::after, .gutter.drag::after { background: #2a8cff88; }
+.gutter::before { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 34px; margin: -17px 0 0 -2px; border-radius: 2px; background: #3a4756; z-index: 1; }
+body.resizing { cursor: col-resize; user-select: none; } body.resizing canvas, body.resizing iframe { pointer-events: none; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
 .card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--mut); margin: 0 0 8px; font-weight: 700; }
 #stage { grid-area: stage; position: relative; padding: 0; overflow: hidden; min-height: 440px; }
@@ -56,7 +61,8 @@ table.io th { color: var(--mut); font-weight: 600; }
 .rung .w { flex: 0 0 12px; height: 2px; background: #3a4756; } .rung .w.on { background: var(--green); }
 .rung .or { color: var(--mut); padding: 0 4px; }
 @media (max-width: 1550px) {
-  main { grid-template-columns: 280px minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(560px, 78vh) minmax(420px, 60vh) auto; grid-template-areas: "side stage stage" "side pneu plc" "charts charts charts"; }
+  .gutter { display: none; }
+  main { gap: 12px; grid-template-columns: 280px minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(560px, 78vh) minmax(420px, 60vh) auto; grid-template-areas: "side stage stage" "side pneu plc" "charts charts charts"; }
 }
 @media (max-width: 1100px) {
   main { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "stage" "side" "pneu" "charts" "plc"; padding: 10px 12px 20px; }

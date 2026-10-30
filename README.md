@@ -15,6 +15,7 @@ MS6-SV-D safety dump (**V1S1 / V1S2**, dual coil, **FS1 / FS2** proximity switch
 - Timing chart in the style of Fig. 4 (V1S1, V1S2, FS1, FS2, p1, p2) and live operating point on the flow curves.
 - **X-ray** button: translucent 3D bodies plus the Festo MS6-SV-D cutaway animation, scrubbed in sync with the simulated pressures (closed, soft-start, full flow), or play it as a loop. Clip source: `assets/safety-dump-xray.mp4` (embedded into the HTML by `build.py`).
 - **Leak valve** (manual, 0–100 %, 100 % = 1/4" line, Cd 0.7) at the end of the tank: orifice flow shown in SCFM (and l/min) in the HUD, the 3D scene and the pneumatic diagram. A big leak can stop the soft-start from reaching the ~50 % switch-through point.
+- **Resizable columns**: drag the grips between Controls | 3D | Pneumatic circuit | PLC (double-click a grip to reset; widths are remembered in the browser).
 - Fault injection: stuck FS1/FS2, broken coil wire, supply off, CIP not fitted, E-stop.
 
 Build: `python3 build.py` inlines `src/*` and `vendor/three.min.js` (three.js r160, MIT).

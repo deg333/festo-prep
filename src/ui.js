@@ -256,6 +256,36 @@
     g.fillStyle = '#fff'; g.textAlign = 'left'; g.fillText(fmt(q, 0) + ' l/min @ ' + fmt(p1) + ' bar', Math.min(X(P.cfg.n) + 8, w - 120), Math.max(Y(q) - 8, 12));
   }
 
+  /* ---------------- resizable columns ---------------- */
+  const main = $('layout'), KEY = 'festoSimLayout';
+  const DEF = { w1: 270, w4: 290, r: 1.1 / 2.3 };
+  let lay = Object.assign({}, DEF);
+  try { Object.assign(lay, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* storage unavailable */ }
+  const applyLayout = () => {
+    main.style.setProperty('--w1', lay.w1 + 'px'); main.style.setProperty('--w4', lay.w4 + 'px');
+    main.style.setProperty('--w2', lay.r + 'fr'); main.style.setProperty('--w3', (1 - lay.r) + 'fr');
+  };
+  const saveLayout = () => { try { localStorage.setItem(KEY, JSON.stringify(lay)); } catch (e) { /* ignore */ } };
+  applyLayout();
+  const widthOf = id => $(id).getBoundingClientRect().width;
+  function dragger(id, onStart) {
+    const g = $(id);
+    g.addEventListener('dblclick', () => { Object.assign(lay, DEF); applyLayout(); saveLayout(); });
+    g.addEventListener('pointerdown', e => {
+      g.setPointerCapture(e.pointerId); g.classList.add('drag'); document.body.classList.add('resizing');
+      const x0 = e.clientX, move = onStart();
+      const mv = ev => { move(ev.clientX - x0); applyLayout(); };
+      const up = () => { g.classList.remove('drag'); document.body.classList.remove('resizing'); g.removeEventListener('pointermove', mv); g.removeEventListener('pointerup', up); g.removeEventListener('pointercancel', up); saveLayout(); };
+      g.addEventListener('pointermove', mv); g.addEventListener('pointerup', up); g.addEventListener('pointercancel', up);
+    });
+  }
+  dragger('gut1', () => { const a = lay.w1; return d => lay.w1 = SIM.clamp(a + d, 200, 560); });
+  dragger('gut3', () => { const a = lay.w4; return d => lay.w4 = SIM.clamp(a - d, 220, 640); });
+  dragger('gut2', () => {
+    const a = widthOf('stage'), b = widthOf('pneu-card'), tot = a + b;
+    return d => lay.r = SIM.clamp((a + d) / tot, 260 / tot, 1 - 260 / tot);
+  });
+
   /* ---------------- main loop ---------------- */
   const stageNames = ['EXHAUST', 'SOFT-START', 'FULL FLOW'];
   let last = performance.now(), uiAcc = 0, chartAcc = 0;
