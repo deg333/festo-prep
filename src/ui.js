@@ -143,10 +143,14 @@
     stroke('pPil', s.pos1 > 0.9 && s.pos2 > 0.9 ? s.pa : 0, false);
     // CIP valve
     const open = !c.cipFitted || co.cip.yellow;
-    show('cipOpen', open); show('cipClosed', !open);
-    S('cc1').setAttribute('stroke', pcol(s.pF)); S('cc2').setAttribute('stroke', pcol(s.pa));
-    S('cc3').setAttribute('fill', pcol(s.pa)); stroke('cipEx', open ? 0 : s.pa, !open && s.qExCip > 1);
-    S('cipOpen').setAttribute('stroke', pcol(s.pF));
+    for (const [id, on] of [['cipL', open], ['cipR', !open]]) {
+      const g = S(id), r = g.querySelector('.bx');
+      r.setAttribute('stroke', on ? '#7cf2a3' : '#6c7a89'); r.setAttribute('stroke-width', on ? 3.5 : 1.5); r.setAttribute('fill', on ? 'rgba(60,200,130,.16)' : 'none'); g.setAttribute('opacity', on ? 1 : 0.55);
+    }
+    stroke('cP1', s.pF, false); stroke('cP2', s.pa, s.q > 1); stroke('pCipOut', s.pa, s.q > 1);
+    S('cL1').setAttribute('stroke', pcol(s.pF)); S('cL1h').setAttribute('fill', pcol(s.pF));
+    S('cR2').setAttribute('stroke', pcol(s.pa)); S('cR2h').setAttribute('fill', pcol(s.pa));
+    stroke('cipEx', open ? 0 : s.pa, !open && s.qExCip > 1);
     ledFill('svgCipG', co.cip.green, '#22ff77'); ledFill('svgCipY', co.cip.yellow, '#ffc400');
     S('gCip').setAttribute('opacity', c.cipFitted ? 1 : 0.45);
     S('cipNF').textContent = c.cipFitted ? '' : 'NOT FITTED - straight through';

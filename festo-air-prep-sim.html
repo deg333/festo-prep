@@ -151,8 +151,8 @@ table.io th { color: var(--mut); font-weight: 600; }
     <svg id="pneu" viewBox="0 0 1000 470" font-family="system-ui,Arial,sans-serif" font-size="11">
       <rect x="0" y="0" width="1000" height="470" rx="8" fill="#0d1319"/>
       <g id="pipes" fill="none" stroke-width="4" stroke-linecap="round">
-        <path id="pp0" d="M20 370H110"/><path id="pp1" d="M170 370H250"/>
-        <path id="pp2" d="M340 370H732V248"/>
+        <path id="pp0" d="M20 370H110"/><path id="pp1" d="M170 370H322V350"/><path id="pCipOut" d="M330 290V260H400V370"/>
+        <path id="pp2" d="M400 370H732V248"/>
         <path id="pp3" d="M732 178V56H860"/>
         <path id="pG" d="M732 107H774" stroke-width="2"/>
         <path id="pPil" d="M585 248V275" stroke-width="3"/>
@@ -165,22 +165,30 @@ table.io th { color: var(--mut); font-weight: 600; }
         <g stroke="#cfd8e0" stroke-width="2" fill="#0d1319"><path d="M110 150L140 120L170 150L140 180Z"/><path d="M140 125V175" stroke-dasharray="4 3" fill="none"/>
           <path d="M140 180V198" fill="none"/><path d="M132 198H148L140 208Z" fill="#1e88ff" stroke="#1e88ff"/></g>
         <text x="108" y="106" fill="#9fb0c0">MS6 filter</text><text x="148" y="206" fill="#9fb0c0">drain</text>
-        <g id="gCip">
-          <rect x="250" y="118" width="90" height="64" fill="#0d1319" stroke="#cfd8e0" stroke-width="2" rx="3"/>
-          <g id="cipOpen" stroke-width="3" fill="none"><path d="M250 150H340"/><path d="M296 150l-9 -6M296 150l-9 6" stroke-width="2.5"/></g>
-          <g id="cipClosed" stroke-width="3" fill="none"><path id="cc1" d="M250 150H275"/><path d="M275 138V162" stroke="#cfd8e0"/><path id="cc2" d="M340 150H322V182" /><path id="cc3" d="M322 176l-4 -8h8z" fill="#cfd8e0" stroke="none"/></g>
-          <path d="M322 182V208" id="cipEx" stroke-width="3"/><path d="M314 208h16l-8 9z" fill="none" stroke="#cfd8e0" stroke-width="1.5"/>
-          <path d="M295 118V98" stroke="#cfd8e0" stroke-width="2"/>
-          <rect x="270" y="62" width="50" height="36" fill="#0d1319" stroke="#cfd8e0" stroke-width="2"/><path d="M276 94L292 66" stroke="#cfd8e0" stroke-width="2"/>
-          <circle id="svgCipG" cx="303" cy="75" r="5" class="ld"/><circle id="svgCipY" cx="303" cy="89" r="5" class="ld"/>
-          <path d="M340 140l-6 4 6 4-6 4 6 4-6 4" fill="none" stroke="#cfd8e0" stroke-width="1.6"/>
-          <text x="270" y="55" fill="#e6edf3" font-weight="700">V2S1 (CIP)</text>
-          <text x="252" y="196" fill="#9fb0c0">1</text><text x="330" y="144" fill="#9fb0c0">2</text><text x="328" y="198" fill="#9fb0c0">3</text>
-          <text id="cipNF" x="255" y="236" fill="#ffc400" font-weight="700"></text>
+        <g id="gCip" stroke="#cfd8e0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <text x="196" y="40" fill="#e6edf3" font-weight="700" stroke="none">V2S1 &ndash; MS6 on/off valve (CIP)</text>
+          <!-- two position boxes: left = energised (1 to 2), right = spring return (2 to 3) -->
+          <g id="cipL"><rect class="bx" x="262" y="70" width="50" height="60"/><path id="cL1" d="M272 130V76" stroke-width="2.5"/><path id="cL1h" d="M272 72l-5 11h10z" stroke="none"/>
+            <path d="M300 130V118M292 118H308"/></g>
+          <g id="cipR"><rect class="bx" x="312" y="70" width="50" height="60"/><path d="M322 130V118M314 118H330"/>
+            <path id="cR2" d="M330 72L350 124" stroke-width="2.5"/><path id="cR2h" d="M351 128l-9 -5 10 -3z" stroke="none"/></g>
+          <!-- spring return -->
+          <path d="M362 100H368l4 -8 6 16 6 -16 6 16 6 -16 4 8H402" stroke-width="1.8"/>
+          <!-- ports -->
+          <path id="cP1" d="M322 130V150" stroke-width="3"/><path id="cP2" d="M330 70V40" stroke-width="3"/><path id="cipEx" d="M351 130V150" stroke-width="3"/>
+          <rect x="342" y="150" width="20" height="13" fill="#0d1319" stroke-width="1.5"/><path d="M347 152V161M352 152V161M357 152V161" stroke-width="1"/>
+          <!-- pilot solenoid V2S1 (coil 12) -->
+          <rect x="196" y="100" width="66" height="30"/><path d="M204 126L218 104"/><path d="M228 104L252 115 228 126"/>
+          <rect x="212" y="84" width="34" height="12"/><path d="M216 96V100M242 96V100"/>
+          <text x="196" y="80" fill="#e6edf3" font-weight="700" stroke="none">12</text>
+          <circle id="svgCipG" cx="182" cy="108" r="5" class="ld"/><circle id="svgCipY" cx="182" cy="122" r="5" class="ld"/>
+          <text x="306" y="146" fill="#9fb0c0" stroke="none" font-size="12" text-anchor="end">1</text><text x="338" y="60" fill="#9fb0c0" stroke="none" font-size="12">2</text><text x="358" y="146" fill="#9fb0c0" stroke="none" font-size="12">3</text>
+          <text id="cipNF" x="196" y="196" fill="#ffc400" font-weight="700" stroke="none"></text>
         </g>
-        <circle cx="380" cy="150" r="4.5" fill="#cfd8e0"/>
-        <text x="360" y="130" fill="#9fb0c0">dist. block</text><text id="tPa" x="362" y="172" fill="#9fb0c0"></text>
-        <g><circle cx="380" cy="104" r="15" fill="#0d1319" stroke="#cfd8e0" stroke-width="1.5"/><text id="gaTxt" x="380" y="108" text-anchor="middle" fill="#e6edf3" font-size="10.5"></text><path d="M380 119V146" stroke="#cfd8e0" stroke-width="1.5"/></g>
+        <circle cx="400" cy="150" r="4.5" fill="#cfd8e0"/>
+        <path d="M400 150H425" stroke="#cfd8e0" stroke-width="1.5"/>
+        <g><circle cx="440" cy="150" r="15" fill="#0d1319" stroke="#cfd8e0" stroke-width="1.5"/><text id="gaTxt" x="440" y="154" text-anchor="middle" fill="#e6edf3" font-size="10.5"></text></g>
+        <text x="372" y="172" fill="#9fb0c0">dist. block</text><text id="tPa" x="372" y="186" fill="#9fb0c0"></text>
       </g>
 
       <!-- MS6-SV-D soft-start / quick-exhaust valve (Festo circuit symbol), origin = (470,70) -->
@@ -1124,10 +1132,14 @@ const View3D = (() => {
     stroke('pPil', s.pos1 > 0.9 && s.pos2 > 0.9 ? s.pa : 0, false);
     // CIP valve
     const open = !c.cipFitted || co.cip.yellow;
-    show('cipOpen', open); show('cipClosed', !open);
-    S('cc1').setAttribute('stroke', pcol(s.pF)); S('cc2').setAttribute('stroke', pcol(s.pa));
-    S('cc3').setAttribute('fill', pcol(s.pa)); stroke('cipEx', open ? 0 : s.pa, !open && s.qExCip > 1);
-    S('cipOpen').setAttribute('stroke', pcol(s.pF));
+    for (const [id, on] of [['cipL', open], ['cipR', !open]]) {
+      const g = S(id), r = g.querySelector('.bx');
+      r.setAttribute('stroke', on ? '#7cf2a3' : '#6c7a89'); r.setAttribute('stroke-width', on ? 3.5 : 1.5); r.setAttribute('fill', on ? 'rgba(60,200,130,.16)' : 'none'); g.setAttribute('opacity', on ? 1 : 0.55);
+    }
+    stroke('cP1', s.pF, false); stroke('cP2', s.pa, s.q > 1); stroke('pCipOut', s.pa, s.q > 1);
+    S('cL1').setAttribute('stroke', pcol(s.pF)); S('cL1h').setAttribute('fill', pcol(s.pF));
+    S('cR2').setAttribute('stroke', pcol(s.pa)); S('cR2h').setAttribute('fill', pcol(s.pa));
+    stroke('cipEx', open ? 0 : s.pa, !open && s.qExCip > 1);
     ledFill('svgCipG', co.cip.green, '#22ff77'); ledFill('svgCipY', co.cip.yellow, '#ffc400');
     S('gCip').setAttribute('opacity', c.cipFitted ? 1 : 0.45);
     S('cipNF').textContent = c.cipFitted ? '' : 'NOT FITTED - straight through';
