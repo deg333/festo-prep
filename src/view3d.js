@@ -380,7 +380,7 @@ const View3D = (() => {
 
   function resize() {
     const r = canvas.parentElement.getBoundingClientRect();
-    renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+    renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.fov = Math.min(75, 38 * Math.max(1, 1.4 / camera.aspect)); camera.updateProjectionMatrix();
   }
   new ResizeObserver(resize).observe(canvas.parentElement); resize();
 
