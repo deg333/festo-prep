@@ -55,7 +55,10 @@ const View3D = (() => {
     const w = o.w || 360, h = o.h || 64, c = document.createElement('canvas'); c.width = w; c.height = h;
     const g = c.getContext('2d');
     g.fillStyle = o.bg || '#0a7d4f'; g.beginPath();
-    g.moveTo(14, 0); g.lineTo(w, 0); g.lineTo(w - 14, h); g.lineTo(0, h); g.closePath(); g.fill();
+    if (o.shape === 'trap') { g.moveTo(0, 0); g.lineTo(w, 0); g.lineTo(w - h * 0.4, h); g.lineTo(h * 0.4, h); }       // banner narrower at the bottom
+    else if (o.shape === 'para') { g.moveTo(h * 0.45, 0); g.lineTo(w, 0); g.lineTo(w - h * 0.45, h); g.lineTo(0, h); }  // slanted tag
+    else { g.moveTo(14, 0); g.lineTo(w, 0); g.lineTo(w - 14, h); g.lineTo(0, h); }
+    g.closePath(); g.fill();
     g.fillStyle = o.fg || '#fff'; g.font = '700 ' + (o.fs || 30) + 'px system-ui,Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText(text, w / 2, h / 2 + 2);
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false }));
@@ -207,12 +210,16 @@ const View3D = (() => {
     ln.renderOrder = 8; root.add(ln); return l;
   }
   nameTag('MS6 FILTER', X_FILTER, -37, -22.5, { w: 300, fs: 28 });
-  const cipLabel = label('CIP   V2S1', { w: 300, fs: 30 }); cipLabel.position.set(X_CIP, 26, 0); root.add(cipLabel);
-  const cipOpt = label('(optional)', { bg: '#555f6a', w: 220, h: 48, fs: 24 }); cipOpt.position.set(X_CIP, 22.2, 0); root.add(cipOpt);
+  // top tags like the Festo reference: dark-green group banner with the bright-green coil tags below it
+  const BANNER = { bg: '#00704a', shape: 'trap', w: 300, h: 64, fs: 38, scale: 0.042 }, COIL = { bg: '#12a05a', shape: 'para', w: 200, h: 60, fs: 36, scale: 0.042 };
+  const cipLabel = label('CIP', BANNER); cipLabel.position.set(X_CIP, 29.5, 0); root.add(cipLabel);
+  const cipCoil = label('V2S1', COIL); cipCoil.position.set(X_CIP + 1.4, 26.4, 0); root.add(cipCoil);
+  const cipOpt = label('(optional)', { bg: '#555f6a', w: 220, h: 48, fs: 24, scale: 0.034 }); cipOpt.position.set(X_CIP, 22.6, 0); root.add(cipOpt);
+  const mainLabel = label('MAIN', Object.assign({}, BANNER, { w: 380 })); mainLabel.position.set(X_SV + 0.7, 29.5, 0); root.add(mainLabel);
+  const svL1 = label('V1S1', COIL); svL1.position.set(X_SV - 2.9, 26.4, 0); root.add(svL1);
+  const svL2 = label('V1S2', COIL); svL2.position.set(X_SV + 4.0, 26.4, 0); root.add(svL2);
   nameTag('DIST. BLOCK', X_D1, -41, -19);
   nameTag('DIST. BLOCK', X_D2, -41, -8);
-  const svL1 = label('MAIN   V1S1', { w: 250, h: 52, fs: 26, scale: 0.045 }); svL1.position.set(X_SV - 2.2, 26, 0); root.add(svL1);
-  const svL2 = label('V1S2', { w: 130, h: 52, fs: 26, scale: 0.045 }); svL2.position.set(X_SV + 3.6, 26, 0); root.add(svL2);
   nameTag('MS6-SV-D  SAFETY DUMP (PLd)', X_SV + 1, -37, -31.5, { w: 430, h: 52, fs: 24, scale: 0.045 });
 
   // LED heads on the three M12 solenoid plugs: left half green (24 V good), right half yellow (coil energised)
@@ -352,8 +359,8 @@ const View3D = (() => {
   function pAt(px, s) { return px < xmid.cip ? s.pF : px < xmid.sv ? s.pa : s.p2; }
 
   /* ---------- camera / orbit ---------- */
-  const target = new THREE.Vector3(30, -4, 0);
-  const orbit = { az: 0.45, el: 0.3, r: 135 };
+  const target = new THREE.Vector3(30, -1, 0);
+  const orbit = { az: 0.45, el: 0.3, r: 148 };
   const goal = { az: orbit.az, el: orbit.el, r: orbit.r, tx: target.x, ty: target.y, tz: target.z };
   function applyCam() {
     orbit.az += (goal.az - orbit.az) * 0.15; orbit.el += (goal.el - orbit.el) * 0.15; orbit.r += (goal.r - orbit.r) * 0.15;
@@ -363,8 +370,8 @@ const View3D = (() => {
   }
   const presets = {
     sensors: { az: 1.25, el: 0.12, r: 30, tx: 26.9, ty: -12, tz: 0 },
-    iso:    { az: 0.45, el: 0.3, r: 135, tx: 30, ty: -4, tz: 0 },
-    front:  { az: 0,    el: 0.02, r: 135, tx: 30, ty: -4,  tz: 0 },
+    iso:    { az: 0.45, el: 0.3, r: 148, tx: 30, ty: -1, tz: 0 },
+    front:  { az: 0,    el: 0.02, r: 148, tx: 30, ty: -1,  tz: 0 },
     top:    { az: 0,    el: 1.5,  r: 125, tx: 30, ty: -6,  tz: 0 },
     safety: { az: 0.25, el: 0.2,  r: 62,  tx: X_SV, ty: -4, tz: 0 },
     cip:    { az: -0.2, el: 0.2,  r: 62,  tx: X_CIP, ty: -4, tz: 0 },
