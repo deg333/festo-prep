@@ -737,7 +737,7 @@ const View3D = (() => {
     for (let v = 0; v < nv; v++) {
       const e = bb.get(find(v)), cy = (e.y0 + e.y1) / 2, span = e.y1 - e.y0;
       let k = WHITE;
-      if (kind === 'sensor') k = cy > -6.0 || cy < -12.2 ? DARK : (cy > -8.6 && span < 1.2) ? [0.96, 0.74, 0.08] : [0.78, 0.8, 0.82];
+      if (kind === 'sensor') k = cy > -5.25 ? DARK : [0.8, 0.82, 0.84];   // black elbow, everything below it silver
       else if (kind === 'ee') { if (e.y0 > 5.5) k = DARK; }
       else if (e.y0 > 4.4) k = DARK;
       else if (e.lab > 0.8 * e.n) k = [1, 0.9, 0];   // faces that lie on the front label panel
