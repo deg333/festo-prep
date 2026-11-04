@@ -339,11 +339,11 @@
 
   /* ---------------- resizable columns ---------------- */
   const main = $('layout'), KEY = 'festoSimLayout';
-  const DEF = { w1: 270, w4: 290, r: 1.1 / 2.3 };
+  const DEF = { w1: 270, r: 1.1 / 2.7 };
   let lay = Object.assign({}, DEF);
   try { Object.assign(lay, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* storage unavailable */ }
   const applyLayout = () => {
-    main.style.setProperty('--w1', lay.w1 + 'px'); main.style.setProperty('--w4', lay.w4 + 'px');
+    main.style.setProperty('--w1', lay.w1 + 'px');
     main.style.setProperty('--w2', lay.r + 'fr'); main.style.setProperty('--w3', (1 - lay.r) + 'fr');
   };
   const saveLayout = () => { try { localStorage.setItem(KEY, JSON.stringify(lay)); } catch (e) { /* ignore */ } };
@@ -361,7 +361,6 @@
     });
   }
   dragger('gut1', () => { const a = lay.w1; return d => lay.w1 = SIM.clamp(a + d, 200, 560); });
-  dragger('gut3', () => { const a = lay.w4; return d => lay.w4 = SIM.clamp(a - d, 220, 640); });
   dragger('gut2', () => {
     const a = widthOf('stage'), b = widthOf('pneu-card'), tot = a + b;
     return d => lay.r = SIM.clamp((a + d) / tot, 260 / tot, 1 - 260 / tot);

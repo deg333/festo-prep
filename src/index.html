@@ -16,7 +16,6 @@
 <main id="layout">
   <div class="gutter" id="gut1" style="grid-area:g1" title="Drag to resize (double-click to reset)"></div>
   <div class="gutter" id="gut2" style="grid-area:g2" title="Drag to resize (double-click to reset)"></div>
-  <div class="gutter" id="gut3" style="grid-area:g3" title="Drag to resize (double-click to reset)"></div>
   <section id="stage" class="card">
     <canvas id="gl"></canvas>
     <div class="hud tl">
@@ -194,10 +193,6 @@
     </svg>
   </section>
 
-  <section id="ladder-card" class="card">
-    <h2>Electro-pneumatic wiring (24 V) &mdash; follows the PLC and safety relay</h2>
-    <svg id="elec" viewBox="0 0 1000 510" font-family="system-ui,Arial,sans-serif" font-size="11"></svg>
-  </section>
   <section id="charts" class="card">
     <h2>Switching characteristics (like Fig. 4) &amp; filling-flow curves (Fig. 10)</h2>
     <div class="twocol">
@@ -207,11 +202,17 @@
   </section>
   </div>
 
+  <div id="bottom">
+  <section id="ladder-card" class="card">
+    <h2>Electro-pneumatic wiring (24 V) &mdash; follows the PLC and safety relay</h2>
+    <svg id="elec" viewBox="0 0 1000 510" font-family="system-ui,Arial,sans-serif" font-size="11"></svg>
+  </section>
   <section id="plc" class="card">
     <h2>Simulated PLC logic (20 ms scan)</h2>
     <table class="io" id="ioTable"></table>
     <div id="ladder"></div>
   </section>
+  </div>
 </main>
 <script>
 /*THREE*/
