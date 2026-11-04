@@ -170,111 +170,112 @@ table.io th { color: var(--mut); font-weight: 600; }
   <div id="mid">
   <section id="pneu-card" class="card">
     <h2>Pneumatic circuit &mdash; follows the simulation (line colour = pressure)</h2>
-    <svg id="pneu" viewBox="0 0 1000 470" font-family="system-ui,Arial,sans-serif" font-size="11">
-      <rect x="0" y="0" width="1000" height="470" rx="4" fill="#fbfcfd" stroke="#b9c0c8" stroke-width="2"/><rect x="8" y="8" width="984" height="454" fill="none" stroke="#d3d8de" stroke-width="1"/>
-      <g id="pipes" fill="none" stroke-width="4" stroke-linecap="round">
-        <path id="pp0" d="M20 370H110"/><path id="pp1" d="M170 370H322V350"/><path id="pCipOut" d="M330 290V260H400V370"/>
-        <path id="pp2" d="M400 370H732V248"/>
-        <path id="pp3" d="M732 178V56H860"/>
-        <path id="pG" d="M732 107H774" stroke-width="2"/>
-        <path id="pPil" d="M585 248V275" stroke-width="3"/>
-      </g>
-      <path id="pFb" d="M732 107H474V213H490" fill="none" stroke="#555" stroke-width="1.6" stroke-dasharray="5 4"/>
-
-      <!-- upstream part: filter, CIP valve, distribution block 1 -->
-      <g transform="translate(0,220)">
-        <text x="20" y="132" fill="#111" font-weight="700">P1 SUPPLY</text><text id="tP0" x="20" y="172" fill="#555"></text>
-        <g stroke="#1b1f24" stroke-width="2" fill="#ffffff"><path d="M110 150L140 120L170 150L140 180Z"/><path d="M140 125V175" stroke-dasharray="4 3" fill="none"/>
-          <path d="M140 180V198" fill="none"/><path d="M132 198H148L140 208Z" fill="#1e88ff" stroke="#1e88ff"/></g>
-        <text x="108" y="106" fill="#555">MS6 filter</text><text x="148" y="206" fill="#555">drain</text>
-        <g id="gCip" stroke="#1b1f24" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <text x="196" y="40" fill="#111" font-weight="700" stroke="none">V2S1 &ndash; MS6 on/off valve (CIP)</text>
-          <!-- two position boxes: left = energised (1 to 2), right = spring return (2 to 3) -->
-          <g id="cipL"><rect class="bx" x="262" y="70" width="50" height="60"/><path id="cL1" d="M272 130V76" stroke-width="2.5"/><path id="cL1h" d="M272 72l-5 11h10z" stroke="none"/>
-            <path d="M300 130V118M292 118H308"/></g>
-          <g id="cipR"><rect class="bx" x="312" y="70" width="50" height="60"/><path d="M322 130V118M314 118H330"/>
-            <path id="cR2" d="M330 72L350 124" stroke-width="2.5"/><path id="cR2h" d="M351 128l-9 -5 10 -3z" stroke="none"/></g>
-          <!-- spring return -->
-          <path d="M362 100H368l4 -8 6 16 6 -16 6 16 6 -16 4 8H402" stroke-width="1.8"/>
-          <!-- ports -->
-          <path id="cP1" d="M322 130V150" stroke-width="3"/><path id="cP2" d="M330 70V40" stroke-width="3"/><path id="cipEx" d="M351 130V150" stroke-width="3"/>
-          <rect x="342" y="150" width="20" height="13" fill="#ffffff" stroke-width="1.5"/><path d="M347 152V161M352 152V161M357 152V161" stroke-width="1"/>
-          <!-- pilot solenoid V2S1 (coil 12) -->
-          <rect x="196" y="100" width="66" height="30"/><path d="M204 126L218 104"/><path d="M228 104L252 115 228 126"/>
-          <rect x="212" y="84" width="34" height="12"/><path d="M216 96V100M242 96V100"/>
-          <text x="196" y="80" fill="#111" font-weight="700" stroke="none">12</text>
-          <circle id="svgCipG" cx="182" cy="108" r="5" class="ld"/><circle id="svgCipY" cx="182" cy="122" r="5" class="ld"/>
-          <text x="306" y="146" fill="#555" stroke="none" font-size="12" text-anchor="end">1</text><text x="338" y="60" fill="#555" stroke="none" font-size="12">2</text><text x="358" y="146" fill="#555" stroke="none" font-size="12">3</text>
-          <text id="cipNF" x="196" y="196" fill="#b07d00" font-weight="700" stroke="none"></text>
+    <svg id="pneu" viewBox="0 0 1320 740" font-family="'Arial Narrow',Arial,Helvetica,sans-serif" font-size="25" letter-spacing="1.2" fill="#111">
+      <rect x="0" y="0" width="1320" height="740" fill="#fbfcfd" stroke="#b9c0c8" stroke-width="3"/>
+      <g id="sym" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <!-- pneumatic lines (colour = pressure) -->
+        <g id="pipes" stroke-width="3.6">
+          <path id="pS0" d="M69 350H168"/><path id="pS1" d="M212 350H304"/><path id="pS2" d="M356 350H552"/>
+          <path id="pCipOut" d="M602 350H862"/><path id="pSvOut" d="M912 350H1050"/>
+          <path id="pT1" d="M670 350V520"/><path id="pT2" d="M990 350V520"/><path id="pG" d="M925 350V392" stroke-width="2.4"/>
+          <path id="pM" d="M1050 215V468"/>
+          <path id="pB0" d="M1050 215H1215"/><path d="M1050 252H1190M1050 292H1190M1050 380H1190M1050 425H1190M1050 468H1190" stroke-width="3"/>
+          <path id="pLeak" d="M1260 255V285"/><path id="pLeak2" d="M1260 322V350"/>
         </g>
-        <circle cx="400" cy="150" r="4.5" fill="#1b1f24"/>
-        <path d="M400 150H425" stroke="#1b1f24" stroke-width="1.5"/>
-        <g><circle cx="440" cy="150" r="15" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><text id="gaTxt" x="440" y="154" text-anchor="middle" fill="#111" font-size="10.5"></text></g>
-        <text x="372" y="172" fill="#555">dist. block</text><text id="tPa" x="372" y="186" fill="#555"></text>
+        <!-- dotted exhaust lines to the silencers -->
+        <path id="pE1" d="M578 373V392H505V560" stroke-dasharray="2 6" stroke-width="3.4"/>
+        <path id="pE2" d="M878 373V392H805V560" stroke-dasharray="2 6" stroke-width="3.4"/>
+        <!-- pilot feedback (dashed) -->
+        <path id="pFb" d="M965 350V205H887" stroke-dasharray="9 6" stroke-width="2"/><path id="pFb2" d="M887 205V215" stroke-dasharray="9 6" stroke-width="2"/>
+        <!-- supply: source, lock-out valve 919127A -->
+        <circle cx="45" cy="350" r="26"/><circle cx="45" cy="350" r="13" fill="#111"/>
+        <g id="lockStack">
+          <rect id="lkB" x="168" y="284" width="44" height="44"/>
+          <path id="lkBa" d="M168 306H212" stroke-width="2.6"/><path id="lkBh" d="M212 306l-9 -4v8z" fill="#111" stroke="none"/><path d="M190 328V318M182 318H198"/>
+          <rect id="lkA" x="168" y="328" width="44" height="44"/>
+          <path d="M168 350H178M178 340V360"/><path id="lkAa" d="M212 350L192 370"/><path id="lkAh" d="M191 371l3 -10 6 7z" fill="#111" stroke="none"/>
+          <path d="M190 284V266M180 266H200V256H180Z"/>
+          <path d="M190 372V380l-8 5 16 10 -16 10 16 10 -8 5V430" stroke-width="1.8"/>
+        </g>
+        <rect id="lkHit" x="150" y="250" width="80" height="190" fill="#000" fill-opacity="0" stroke="none" style="cursor:pointer"/>
+        <!-- filter 919111C -->
+        <path d="M304 350L330 324L356 350L330 376Z"/><path d="M330 330V370" stroke-dasharray="5 4" stroke-width="1.8"/>
+        <!-- group boxes -->
+        <rect x="470" y="190" width="220" height="310" stroke-dasharray="18 5 3 5" stroke-width="1.8"/>
+        <rect x="750" y="190" width="260" height="310" stroke-dasharray="18 5 3 5" stroke-width="1.8"/>
+        <!-- CIP valve 919111B: boxes slide up/down -->
+        <g id="cipStack">
+          <rect id="cipE" x="552" y="281" width="50" height="46"/>
+          <path id="cEa" d="M552 304H602" stroke-width="2.6"/><path id="cEh" d="M602 304l-9 -4v8z" fill="#111" stroke="none"/><path d="M577 327V317M569 317H585"/>
+          <rect id="cipS" x="552" y="327" width="50" height="46"/>
+          <path d="M552 350H562M562 340V360"/><path id="cSa" d="M602 350L579 371" stroke-width="2.6"/><path id="cSh" d="M578 372l3 -10 7 6z" fill="#111" stroke="none"/>
+          <rect x="556" y="251" width="46" height="26"/><path d="M563 273L574 255"/><path d="M582 255L596 264 582 273Z"/><path d="M579 277V281"/>
+          <path d="M590 373V379l-7 5 14 10 -14 10 14 10 -7 5V428" stroke-width="1.8"/>
+          <circle id="svgCipG" cx="540" cy="259" r="4" class="ld"/><circle id="svgCipY" cx="540" cy="271" r="4" class="ld"/>
+        </g>
+        <!-- SV 919111A: three boxes (soft-start variable, full flow, spring/exhaust) slide up/down -->
+        <g id="svStack">
+          <rect id="svV" x="862" y="235" width="50" height="46"/>
+          <path d="M872 235V247M864 247H880"/><path d="M900 281V269M892 269H908"/><path id="sVa" d="M870 274L902 244" stroke-width="2.6"/><path id="sVh" d="M903 243l-10 2 6 7z" fill="#111" stroke="none"/>
+          <rect id="svF" x="862" y="281" width="50" height="46"/>
+          <path id="sFa" d="M862 304H912" stroke-width="2.6"/><path id="sFh" d="M912 304l-9 -4v8z" fill="#111" stroke="none"/><path d="M887 327V317M879 317H895"/>
+          <rect id="svR" x="862" y="327" width="50" height="46"/>
+          <path d="M862 350H872M872 340V360"/><path id="sRa" d="M912 350L889 371" stroke-width="2.6"/><path id="sRh" d="M888 372l3 -10 7 6z" fill="#111" stroke="none"/>
+          <path d="M877 215H897L887 233Z"/><path d="M887 233V235"/>
+          <rect x="812" y="235" width="50" height="23"/><path d="M837 235V258"/><path d="M820 255L832 238"/><path d="M842 238L856 246.5 842 255Z"/>
+          <rect x="812" y="258" width="50" height="23"/><path d="M837 258V281"/><path d="M820 278L832 261"/><path d="M842 261L856 269.5 842 278Z"/>
+          <circle id="svgV1G" cx="800" cy="241" r="4" class="ld"/><circle id="svgV1Y" cx="800" cy="253" r="4" class="ld"/>
+          <circle id="svgV2G" cx="800" cy="264" r="4" class="ld"/><circle id="svgV2Y" cx="800" cy="276" r="4" class="ld"/>
+          <path d="M900 373V379l-7 5 14 10 -14 10 14 10 -7 5V420" stroke-width="1.8"/>
+          <text x="760" y="248" stroke="none" font-size="15">V1S1</text><text x="760" y="274" stroke="none" font-size="15">V1S2</text>
+        </g>
+        <!-- throttle (soft-start flow control) on port 2 line -->
+        <rect x="934" y="332" width="26" height="36" fill="#fbfcfd" stroke="none"/>
+        <path id="thr" d="M940 332C946 342 946 358 940 368M954 332C948 342 948 358 954 368"/><path id="thrA" d="M934 362L960 338" stroke-width="2.2"/><path id="thrH" d="M960 338l-9 2 5 6z" fill="#111" stroke="none"/>
+        <!-- pressure switch with FS contact (G) -->
+        <rect x="905" y="392" width="40" height="38"/><path d="M905 430L945 392"/><text x="910" y="424" stroke="none" font-size="17">G</text><path d="M922 400L936 394" stroke-width="1.6"/>
+        <!-- silencers -->
+        <g><rect x="490" y="560" width="30" height="40"/><path d="M496 566V594M505 566V594M514 566V594" stroke-width="1.4"/><path d="M495 600h20l-10 12z" fill="#111" stroke="none"/></g>
+        <g><rect x="790" y="560" width="30" height="40"/><path d="M796 566V594M805 566V594M814 566V594" stroke-width="1.4"/><path d="M795 600h20l-10 12z" fill="#111" stroke="none"/></g>
+        <!-- pressure sensors 919111R -->
+        <g><rect x="648" y="520" width="44" height="44"/><path d="M648 564L692 520"/><text x="670" y="539" stroke="none" font-size="17">P</text><path d="M654 556a5 5 0 0 1 10 0V560" stroke-width="1.6"/></g>
+        <g><rect x="968" y="520" width="44" height="44"/><path d="M968 564L1012 520"/><text x="990" y="539" stroke="none" font-size="17">P</text><path d="M974 556a5 5 0 0 1 10 0V560" stroke-width="1.6"/></g>
+        <!-- manifold outlets -->
+        <g stroke="none" fill="#111"><circle cx="1190" cy="252" r="5"/><circle cx="1190" cy="292" r="5"/><circle cx="1190" cy="380" r="5"/><circle cx="1190" cy="425" r="5"/><circle cx="1190" cy="468" r="5"/>
+          <circle cx="400" cy="350" r="5"/><circle cx="670" cy="350" r="5"/><circle cx="925" cy="350" r="5"/><circle cx="965" cy="350" r="5"/><circle cx="990" cy="350" r="5"/><circle cx="1050" cy="350" r="5"/><circle cx="1050" cy="215" r="0"/></g>
+        <!-- machine volume + manual leak valve -->
+        <rect x="1215" y="175" width="95" height="80" rx="12"/><rect id="tankFill" x="1218" y="252" width="89" height="0" rx="9" stroke="none"/>
+        <path d="M1248 285L1272 303V285L1248 303Z" fill="#fbfcfd"/><path d="M1260 294V283M1254 283H1268" stroke-width="3"/>
+        <path d="M1253 350h14l-7 10z" fill="#111" stroke="none"/>
       </g>
-
-      <!-- MS6-SV-D soft-start / quick-exhaust valve (Festo circuit symbol), origin = (470,70) -->
-      <g transform="translate(470,70)" stroke="#1b1f24" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <text x="0" y="-12" fill="#111" font-weight="700" stroke="none">MS6-SV-D soft-start / quick exhaust (PLd)</text>
-        <!-- position boxes -->
-        <g id="svB1"><rect class="bx" x="88" y="108" width="54" height="70"/>
-          <path d="M100 108V122M92 122H108" /><path d="M130 178V164M122 164H138"/><path id="sB1a" d="M98 172L132 114" stroke-width="2.5"/><path id="sB1h" d="M132 114l-1 10 7 -4z" stroke="none"/></g>
-        <g id="svB2"><rect class="bx" x="142" y="108" width="54" height="70"/>
-          <path id="sB2a" d="M154 172V114" stroke-width="2.5"/><path id="sB2h" d="M154 112l-5 11h10z" stroke="none"/><path d="M184 178V164M176 164H192"/></g>
-        <g id="svB3"><rect class="bx" x="196" y="108" width="54" height="70"/>
-          <path d="M208 108V122M200 122H216"/><path d="M208 178V164M200 164H216"/><path d="M238 178V164M230 164H246"/></g>
-        <g id="svB4"><rect class="bx" x="250" y="108" width="54" height="70"/>
-          <path id="sB4e" d="M262 108V135H292V176" stroke-width="2.5"/><path id="sB4h" d="M292 178l-5 -11h10z" stroke="none"/><path d="M262 178V164M254 164H270"/></g>
-        <!-- ports -->
-        <path id="pt2" d="M262 108V0" stroke-width="3"/><path id="pt1" d="M262 178V215" stroke-width="3"/><path id="pt3" d="M292 178V215" stroke-width="3"/>
-        <path d="M284 215h16l-8 10z" fill="#ffffff"/>
-        <!-- spring return -->
-        <path d="M304 143H312l5 -9 8 18 8 -18 8 18 8 -18 5 9H346" stroke-width="1.8"/>
-        <!-- soft-start flow control (variable throttle) in the pilot-fed line from port 2 -->
-        <circle cx="262" cy="37" r="4" fill="#1b1f24" stroke="none"/>
-        <rect x="248" y="58" width="28" height="42" fill="#ffffff" stroke="none"/>
-        <path d="M262 37V108"/><path d="M255 56C261 68 261 90 255 102M269 56C263 68 263 90 269 102" stroke-width="1.8"/>
-        <path id="sThr" d="M246 98L278 60" stroke-width="2.2"/><path id="sThrH" d="M278 60l-9 3 5 6z" stroke="none" fill="#1b1f24"/>
-        <!-- pressure switch with FS contact -->
-        <path d="M262 37H304"/><rect x="304" y="20" width="50" height="50" /><path d="M304 70L354 20"/><text x="316" y="62" font-size="16" fill="#1b1f24" stroke="none">G</text>
-        <path d="M322 30L340 22" stroke-width="1.8"/><path d="M352 26l-6 0M344 26l-4 0" stroke-width="1.5"/>
-        <!-- pilot operator -->
-        <path d="M20 128V158L48 143Z"/><path d="M48 143H88"/>
-        <path id="sPil" d="M115 178V205" stroke-width="2.5"/>
-        <!-- solenoid pair V1S1 / V1S2 -->
-        <g><rect x="50" y="205" width="82" height="32"/><path d="M92 205V237"/><path d="M60 233L76 209"/><path d="M92 209L124 221 92 233"/></g>
-        <g><rect x="50" y="237" width="82" height="32"/><path d="M92 237V269"/><path d="M60 265L76 241"/><path d="M92 241L124 253 92 265"/></g>
-        <text x="258" y="-6" fill="#555" stroke="none" font-size="12">2</text>
-        <text x="270" y="226" fill="#555" stroke="none" font-size="12" transform="translate(-14,0)">1</text><text x="298" y="232" fill="#555" stroke="none" font-size="12" transform="translate(-4,-6)">3</text>
+      <!-- texts -->
+      <g stroke="none" font-weight="300">
+        <text x="580" y="68" text-anchor="middle" font-size="30">MAIN</text><text x="580" y="106" text-anchor="middle" font-size="30">PNEUMATIC</text><text x="580" y="144" text-anchor="middle" font-size="30">SOLENOID</text><text x="580" y="182" text-anchor="middle" font-size="30">V2S1</text>
+        <text x="880" y="30" text-anchor="middle" font-size="30">MAIN</text><text x="880" y="68" text-anchor="middle" font-size="30">PNEUMATIC</text><text x="880" y="106" text-anchor="middle" font-size="30">SAFETY</text><text x="880" y="144" text-anchor="middle" font-size="30">SOLENOID (PLd)</text><text x="880" y="182" text-anchor="middle" font-size="30">V1S1 &amp; V1S2</text>
+        <text x="580" y="488" text-anchor="middle" font-size="22">919111B</text><text x="880" y="488" text-anchor="middle" font-size="22">919111A</text>
+        <text x="190" y="236" text-anchor="middle" font-size="24">919127A</text><text x="190" y="256" text-anchor="middle" font-size="15" fill="#555">SUPPLY LOCK-OUT (click)</text>
+        <text x="115" y="338" text-anchor="middle" font-size="22">3/4"</text>
+        <text x="330" y="420" text-anchor="middle" font-size="24">919111C</text><text x="330" y="448" text-anchor="middle" font-size="24">REPLACEMENT</text><text x="330" y="476" text-anchor="middle" font-size="24">FILTER:</text><text x="330" y="504" text-anchor="middle" font-size="24">919111P</text>
+        <text x="670" y="606" text-anchor="middle" font-size="22">919111R</text><text x="670" y="632" text-anchor="middle" font-size="22">MAIN PNEUMATIC</text><text x="670" y="658" text-anchor="middle" font-size="22">PRESSURE</text><text x="670" y="684" text-anchor="middle" font-size="22">V2A1</text>
+        <text x="990" y="606" text-anchor="middle" font-size="22">919111R</text><text x="990" y="632" text-anchor="middle" font-size="22">MAIN PNEUMATIC</text><text x="990" y="658" text-anchor="middle" font-size="22">PRESSURE</text><text x="990" y="684" text-anchor="middle" font-size="22">V1A1</text>
+        <text x="1075" y="209" font-size="22">1/2"</text><text x="1075" y="246" font-size="22">1/2"</text><text x="1075" y="286" font-size="22">1/2"</text><text x="1075" y="374" font-size="22">1/2"</text><text x="1075" y="419" font-size="22">1/2"</text><text x="1075" y="462" font-size="22">1/2"</text>
+        <text x="1262" y="165" text-anchor="middle" font-size="20">MACHINE</text><text id="tV" x="1262" y="222" text-anchor="middle" font-size="22" font-weight="700"></text>
+        <text x="1250" y="320" text-anchor="end" font-size="20">LEAK</text><text id="tLeakPct" x="1250" y="341" text-anchor="end" font-size="16" fill="#555"></text>
+        <text id="tLeak" x="1262" y="385" text-anchor="middle" font-size="19" font-weight="700" fill="#111"></text>
+        <text id="tFlow" x="1262" y="408" text-anchor="middle" font-size="16" fill="#555"></text>
       </g>
-      <text id="svPos" x="474" y="262" fill="#111" font-weight="700" font-size="11">&nbsp;</text>
-      <text x="474" y="84" fill="#7a3aa8" font-weight="700">flow control screw for soft-start</text><text id="tN" x="474" y="98" fill="#7a3aa8"></text>
-      <text x="486" y="204" fill="#555" font-size="10">pilot (air-actuated)</text>
-      <text x="745" y="86" fill="#555" font-size="10">FS1/FS2</text>
-      <text x="480" y="162" fill="#555" font-size="10" transform="translate(-6,2)">feedback @ ~50 % p1</text>
-      <!-- LEDs, labels and FS contacts for the solenoids -->
-      <text x="458" y="295" fill="#111" font-weight="700">V1S1</text>
-      <text x="458" y="327" fill="#111" font-weight="700">V1S2</text>
-      <text x="446" y="315" fill="#555" font-size="10" text-anchor="end"></text>
-      <circle id="svgV1G" cx="500" cy="285" r="4.5" class="ld"/><circle id="svgV1Y" cx="500" cy="299" r="4.5" class="ld"/>
-      <circle id="svgV2G" cx="500" cy="317" r="4.5" class="ld"/><circle id="svgV2Y" cx="500" cy="331" r="4.5" class="ld"/>
-      <path d="M602 291H620M602 323H620" stroke="#999" stroke-dasharray="2 3"/>
-      <rect x="620" y="277" width="44" height="28" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><path id="fs1sw" d="M628 291H640" stroke="#111" stroke-width="2"/><circle id="svgFS1" cx="654" cy="284" r="4.5" class="ld"/>
-      <rect x="620" y="309" width="44" height="28" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><path id="fs2sw" d="M628 323H640" stroke="#111" stroke-width="2"/><circle id="svgFS2" cx="654" cy="316" r="4.5" class="ld"/>
-      <text x="670" y="295" fill="#111" font-weight="700">FS1 <tspan id="tFS1" fill="#555"></tspan></text><text x="670" y="327" fill="#111" font-weight="700">FS2 <tspan id="tFS2" fill="#555"></tspan></text>
-      <text id="tP2" x="740" y="150" fill="#555"></text>
-      <circle cx="800" cy="56" r="4.5" fill="#1b1f24"/>
-      <g><circle cx="800" cy="26" r="15" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><text id="gbTxt" x="800" y="30" text-anchor="middle" fill="#111" font-size="10.5"></text><path d="M800 41V52" stroke="#1b1f24" stroke-width="1.5"/></g>
-      <text x="740" y="46" fill="#555">dist. block</text>
-      <g><rect x="860" y="20" width="110" height="84" rx="12" fill="#ffffff" stroke="#1b1f24" stroke-width="2"/><rect id="tankFill" x="863" y="101" width="104" height="0" rx="9"/>
-        <text x="915" y="14" text-anchor="middle" fill="#555">machine volume</text><text id="tV" x="915" y="68" text-anchor="middle" fill="#111" font-weight="700" font-size="14"></text></g>
-      <path id="pLeak" d="M915 104V150" fill="none" stroke-width="3.5" stroke-linecap="round"/>
-      <g stroke="#1b1f24" stroke-width="2" fill="#ffffff"><path d="M903 150L927 168V150L903 168Z"/><path d="M915 159V148"/><path d="M909 148H927" stroke-width="3"/></g>
-      <path id="pLeak2" d="M915 168V196" fill="none" stroke-width="3.5" stroke-linecap="round"/><path d="M908 196h14l-7 9z" fill="#1b1f24"/>
-      <g text-anchor="end"><text x="897" y="150" fill="#111" font-weight="700">LEAK</text><text x="897" y="163" fill="#555">manual valve</text><text id="tLeakPct" x="897" y="176" fill="#555"></text></g>
-      <text id="tLeak" x="915" y="224" fill="#111" font-weight="700" font-size="13" text-anchor="middle"></text>
-      <text id="tFlow" x="745" y="170" fill="#555"></text>
-      <text x="20" y="462" fill="#666">Festo circuit symbol of the MS6-SV-D; V1S1 + V1S2 pilots both required; FS1/FS2 monitor them; active position is highlighted.</text>
+      <!-- live values -->
+      <g stroke="none" font-weight="700" fill="#1a5fb4">
+        <text id="tP0" x="45" y="402" text-anchor="middle" font-size="21"></text>
+        <text id="tPa" x="705" y="548" font-size="21"></text><text id="tP2" x="1025" y="548" font-size="21"></text>
+        <text id="svPos" x="758" y="526" font-size="17" fill="#111" font-weight="400"></text>
+        <text id="tN" x="758" y="546" font-size="17" fill="#7a3aa8"></text>
+        <text id="cipNF" x="470" y="520" font-size="19" fill="#b07d00"></text>
+      </g>
+      <!-- FS1 / FS2 chips -->
+      <g stroke="#111" stroke-width="1.6" fill="none"><rect x="1070" y="510" width="170" height="26"/><rect x="1070" y="540" width="170" height="26"/></g>
+      <circle id="svgFS1" cx="1085" cy="523" r="6" class="ld"/><circle id="svgFS2" cx="1085" cy="553" r="6" class="ld"/>
+      <g stroke="none" font-size="18"><text x="1100" y="529">FS1 (I301)</text><text id="tFS1" x="1190" y="529" font-weight="700"></text><text x="1100" y="559">FS2 (I302)</text><text id="tFS2" x="1190" y="559" font-weight="700"></text></g>
     </svg>
   </section>
 
@@ -1186,66 +1187,58 @@ const View3D = (() => {
       (plc.diag ? ' | diag step ' + plc.diag + '/4' : plc.diagResult ? ' | last diagnostic: ' + plc.diagResult : '');
   }
 
-  /* ---------------- pneumatic diagram ---------------- */
+  /* ---------------- pneumatic diagram (CAD style, valve boxes slide up/down) ---------------- */
   const S = id => $(id);
   const ledFill = (id, on, col) => { const e = S(id); e.setAttribute('fill', on ? col : '#e1e5ea'); e.setAttribute('stroke', on ? '#333' : '#8a929b'); e.setAttribute('stroke-width', on ? 1.5 : 1); };
-  const show = (id, on) => S(id).setAttribute('display', on ? 'inline' : 'none');
   let dash = 0;
+  const slide = { lock: 0, cip: 0, sv: 0 };
+  const SC = { lock: 'lockStack', cip: 'cipStack', sv: 'svStack' };
+  function setBoxes(ids, active) {
+    ids.forEach((id, i) => { const r = S(id), on = i === active; r.setAttribute('stroke', on ? '#0a9d5a' : '#111'); r.setAttribute('stroke-width', on ? 3.6 : 2.2); r.setAttribute('fill', on ? 'rgba(10,157,90,.10)' : 'none'); });
+  }
+  S('lkHit').addEventListener('click', () => { const c = $('cSupply'); c.checked = !c.checked; c.dispatchEvent(new Event('input')); c.dispatchEvent(new Event('change')); });
   function updatePneu(dt) {
     const s = P.s, c = P.cfg, co = P.coils();
     dash = (dash - dt * (20 + s.q / 8)) % 1000;
-    const stroke = (id, p, flowing) => { const e = S(id); e.setAttribute('stroke', pcol(p)); e.setAttribute('stroke-dasharray', flowing && p > 0.1 ? '10 8' : ''); e.setAttribute('stroke-dashoffset', dash); };
+    const stroke = (id, p, flowing) => { const e = S(id); e.setAttribute('stroke', pcol(p)); e.setAttribute('stroke-dasharray', flowing && p > 0.1 ? '12 9' : ''); e.setAttribute('stroke-dashoffset', dash); };
+    const col = (ids, p) => ids.forEach(id => { const e = S(id); if (e.tagName === 'path' && /h$/.test(id)) e.setAttribute('fill', pcol(p)); else e.setAttribute('stroke', pcol(p)); });
     const fl = s.q > 1 || (s.pa > 0.1 && s.pa < s.pF - 0.05);
-    stroke('pp0', s.pF, fl); stroke('pp1', s.pF, fl);
-    stroke('pp2', s.pa, s.q > 1); stroke('pp3', s.p2, s.q > 1); stroke('pG', s.p2, false);
-    stroke('pPil', s.pos1 > 0.9 && s.pos2 > 0.9 ? s.pa : 0, false);
-    // CIP valve
-    const open = !c.cipFitted || co.cip.yellow;
-    for (const [id, on] of [['cipL', open], ['cipR', !open]]) {
-      const g = S(id), r = g.querySelector('.bx');
-      r.setAttribute('stroke', on ? '#0a9d5a' : '#8a929b'); r.setAttribute('stroke-width', on ? 3.5 : 1.5); r.setAttribute('fill', on ? 'rgba(10,157,90,.14)' : 'none'); g.setAttribute('opacity', on ? 1 : 0.55);
-    }
-    stroke('cP1', s.pF, false); stroke('cP2', s.pa, s.q > 1); stroke('pCipOut', s.pa, s.q > 1);
-    S('cL1').setAttribute('stroke', pcol(s.pF)); S('cL1h').setAttribute('fill', pcol(s.pF));
-    S('cR2').setAttribute('stroke', pcol(s.pa)); S('cR2h').setAttribute('fill', pcol(s.pa));
-    stroke('cipEx', open ? 0 : s.pa, !open && s.qExCip > 1);
-    ledFill('svgCipG', co.cip.green, '#22ff77'); ledFill('svgCipY', co.cip.yellow, '#ffc400');
-    S('gCip').setAttribute('opacity', c.cipFitted ? 1 : 0.45);
-    S('cipNF').textContent = c.cipFitted ? '' : 'NOT FITTED - straight through';
-    // soft-start valve: highlight the active position box
-    const energised = co.v1s1.yellow && co.v1s2.yellow;
-    const active = s.stage === 1 ? 1 : s.stage === 2 ? 2 : energised ? 3 : 4;
-    for (let i = 1; i <= 4; i++) {
-      const r = S('svB' + i).querySelector('.bx'), on = i === active;
-      r.setAttribute('stroke', on ? '#0a9d5a' : '#8a929b'); r.setAttribute('stroke-width', on ? 3.5 : 1.5);
-      r.setAttribute('fill', on ? 'rgba(10,157,90,.14)' : 'none');
-      S('svB' + i).setAttribute('opacity', on ? 1 : 0.55);
-    }
-    S('sB1a').setAttribute('stroke', pcol(s.pa)); S('sB1h').setAttribute('fill', pcol(s.pa));
-    S('sB2a').setAttribute('stroke', pcol(s.pa)); S('sB2h').setAttribute('fill', pcol(s.pa));
-    S('sB4e').setAttribute('stroke', pcol(s.p2)); S('sB4h').setAttribute('fill', pcol(s.p2));
-    stroke('pt1', s.pa, s.q > 1); stroke('pt2', s.p2, s.q > 1);
-    stroke('pt3', s.stage === 0 ? s.p2 : 0, s.qEx > 1);
-    S('sThr').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#1b1f24'); S('sThrH').setAttribute('fill', s.stage === 1 ? '#7a3aa8' : '#1b1f24');
-    S('svPos').textContent = ['EXHAUST (spring return)', 'SOFT-START (throttled)', 'FULL FLOW'][s.stage] + (s.stage === 0 && energised ? ' - pilots shifting' : '');
+    // pipes
+    stroke('pS0', s.pF, fl); stroke('pS1', s.pF, fl); stroke('pS2', s.pF, fl);
+    stroke('pCipOut', s.pa, s.q > 1); stroke('pSvOut', s.p2, s.q > 1); stroke('pM', s.p2, false); stroke('pB0', s.p2, s.q > 1);
+    stroke('pT1', s.pa, false); stroke('pT2', s.p2, false); stroke('pG', s.p2, false);
+    stroke('pLeak', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01); stroke('pLeak2', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01);
+    // lock-out valve 919127A: open when supply is on
+    const open = !c.cipFitted || co.cip.yellow, sOn = c.supplyOn;
+    // slide the position boxes so the active one sits on the port line
+    const targets = { lock: sOn ? 44 : 0, cip: open ? 46 : 0, sv: s.stage === 2 ? 46 : s.stage === 1 ? 92 : 0 };
+    for (const k in slide) { slide[k] += (targets[k] - slide[k]) * Math.min(1, dt * 9); S(SC[k]).setAttribute('transform', 'translate(0,' + slide[k].toFixed(1) + ')'); }
+    setBoxes(['lkB', 'lkA'], sOn ? 0 : 1); setBoxes(['cipE', 'cipS'], open ? 0 : 1); setBoxes(['svV', 'svF', 'svR'], s.stage === 1 ? 0 : s.stage === 2 ? 1 : 2);
+    col(['lkBa', 'lkBh'], s.pF); col(['lkAa', 'lkAh'], 0);
+    col(['cEa', 'cEh'], s.pF); col(['cSa', 'cSh'], s.pa); stroke('pE1', open ? 0 : s.pa, !open && s.qExCip > 1);
+    col(['sVa', 'sVh'], s.pa); col(['sFa', 'sFh'], s.pa); col(['sRa', 'sRh'], s.p2); stroke('pE2', s.stage === 0 ? s.p2 : 0, s.qEx > 1);
+    S('pE1').setAttribute('stroke-dasharray', '2 6'); S('pE2').setAttribute('stroke-dasharray', '2 6');
+    S('thr').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#111'); S('thrA').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#111'); S('thrH').setAttribute('fill', s.stage === 1 ? '#7a3aa8' : '#111');
+    // dashed pilot feedback follows the pilot triangle on the sliding stack
+    S('pFb2').setAttribute('d', 'M887 205V' + (215 + slide.sv).toFixed(1));
+    S('svPos').textContent = ['EXHAUST (spring return)', 'SOFT-START (throttled)', 'FULL FLOW'][s.stage] + (s.stage === 0 && co.v1s1.yellow && co.v1s2.yellow ? ' - pilots shifting' : '');
     S('svPos').setAttribute('fill', ['#c0392b', '#7a3aa8', '#0a8a4f'][s.stage]);
-    ledFill('svgV1G', co.v1s1.green, '#22ff77'); ledFill('svgV1Y', co.v1s1.yellow, '#ffc400');
-    ledFill('svgV2G', co.v1s2.green, '#22ff77'); ledFill('svgV2Y', co.v1s2.yellow, '#ffc400');
+    ledFill('svgCipG', co.cip.green, '#22cc66'); ledFill('svgCipY', co.cip.yellow, '#f2b705');
+    ledFill('svgV1G', co.v1s1.green, '#22cc66'); ledFill('svgV1Y', co.v1s1.yellow, '#f2b705');
+    ledFill('svgV2G', co.v2s2 ? co.v2s2.green : co.v1s2.green, '#22cc66'); ledFill('svgV2Y', co.v1s2.yellow, '#f2b705');
     const f1 = P.fs1(), f2 = P.fs2();
-    ledFill('svgFS1', f1, '#ffb300'); ledFill('svgFS2', f2, '#ffb300');
-    S('fs1sw').setAttribute('d', f1 ? 'M628 291H640M640 291H658' : 'M628 291H640L652 281'); S('fs2sw').setAttribute('d', f2 ? 'M628 323H640M640 323H658' : 'M628 323H640L652 313');
+    ledFill('svgFS1', f1, '#f2b705'); ledFill('svgFS2', f2, '#f2b705');
     S('tFS1').textContent = '= ' + (f1 ? '1' : '0'); S('tFS2').textContent = '= ' + (f2 ? '1' : '0');
-    // gauges / texts
-    S('gaTxt').textContent = fmt(s.pa); S('gbTxt').textContent = fmt(s.p2);
-    S('tP0').textContent = fmt(s.pF) + ' bar'; S('tPa').textContent = fmt(s.pa) + ' bar'; S('tP2').textContent = 'p2 ' + fmt(s.p2) + ' bar';
-    S('tN').textContent = 'n = ' + fmt(c.n) + ' turns  (' + fmt(SIM.qn(c.n, Math.max(s.pa, c.supplyOn ? c.P0 : 0)), 0) + ' l/min)';
+    S('lockStack').setAttribute('opacity', 1); S('cipStack').parentNode.setAttribute('opacity', c.cipFitted ? 1 : 0.9);
+    S('cipNF').textContent = c.cipFitted ? '' : 'CIP NOT FITTED - bypassed';
+    S('tP0').textContent = fmt(s.pF) + ' bar'; S('tPa').textContent = fmt(s.pa) + ' bar'; S('tP2').textContent = fmt(s.p2) + ' bar';
+    S('tN').textContent = 'screw n = ' + fmt(c.n) + ' (' + fmt(SIM.qn(c.n, Math.max(s.pa, c.supplyOn ? c.P0 : 0)), 0) + ' l/min)';
     S('tFlow').textContent = s.q > 1 ? 'flow ' + fmt(s.q, 0) + ' l/min' : s.qEx > 1 ? 'exhausting ' + fmt(s.qEx, 0) + ' l/min' : '';
     S('tV').textContent = c.V + ' L';
-    stroke('pLeak', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01); stroke('pLeak2', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01);
     S('tLeakPct').textContent = fmt(c.leakPct, 0) + ' % open';
-    S('tLeak').textContent = s.qLeak > 0.005 ? 'leak ' + fmt(s.qLeak, 1) + ' SCFM (' + fmt(s.qLeak * SIM.L_PER_SCFM, 0) + ' l/min)' : '';
-    const h = 84 * Math.min(1, s.p2 / 10), tf = S('tankFill');
-    tf.setAttribute('y', 102 - h); tf.setAttribute('height', Math.max(0, h - 3)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.5);
+    S('tLeak').textContent = s.qLeak > 0.005 ? 'leak ' + fmt(s.qLeak, 1) + ' SCFM' : '';
+    const h = 80 * Math.min(1, s.p2 / 10), tf = S('tankFill');
+    tf.setAttribute('y', 252 - h); tf.setAttribute('height', Math.max(0, h - 3)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.45);
   }
 
   /* ---------------- electro-pneumatic wiring ladder (IEC-style symbols, live) ---------------- */
