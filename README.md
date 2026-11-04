@@ -18,5 +18,7 @@ MS6-SV-D safety dump (**V1S1 / V1S2**, dual coil, **FS1 / FS2** proximity switch
 - **Resizable columns**: drag the grips between Controls | 3D | Pneumatic circuit | PLC (double-click a grip to reset; widths are remembered in the browser).
 - Fault injection: stuck FS1/FS2, broken coil wire, supply off, CIP not fitted, E-stop.
 
+The 3D unit is the real Festo 919111 CAD assembly (STEP) converted to a compact mesh (`assets/ms6-model.*`, made with `tools/step_to_mesh.py`); LEDs, labels, gauges, hoses, tank and leak valve are added on top.
+
 Build: `python3 build.py` inlines `src/*` and `vendor/three.min.js` (three.js r160, MIT).
 Logic only (no DOM): `src/sim.js` can be run in node.

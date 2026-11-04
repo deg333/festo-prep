@@ -15,7 +15,7 @@ const View3D = (() => {
   const rim = new THREE.DirectionalLight(0x8fb4ff, 0.8); rim.position.set(-40, 20, -50); scene.add(rim);
 
   const root = new THREE.Group(); scene.add(root);
-  const FLOOR_Y = -21;
+  const FLOOR_Y = -33;
   const grid = new THREE.GridHelper(220, 44, 0x2b3642, 0x1b232c); grid.position.set(30, FLOOR_Y, 0); scene.add(grid);
 
   /* ---------- helpers ---------- */
@@ -126,134 +126,129 @@ const View3D = (() => {
     };
   }
 
-  /* ---------- build the unit ---------- */
-  const AX = 0; // flow axis y = 0
-  const V = {};   // handles for the update loop
-  const bores = []; // internal air passages (visible in X-ray)
+  /* ---------- build the unit from the Festo CAD model (STEP 919111 -> assets/ms6-model.*) ---------- */
+  const AX = 0;           // flow axis y = 0
+  const SC = 1.45;        // CAD cm -> scene units (keeps the proportions of the earlier hand-built scene)
+  const V = {};           // handles for the update loop
+  const bores = [];       // internal air passages (visible in X-ray)
   function bore(x0, x1, key) {
     const m = new THREE.MeshBasicMaterial({ color: 0x3355ff, transparent: true, opacity: 0.0, depthWrite: false });
     const mesh = cyl(1.05, x1 - x0, m, (x0 + x1) / 2, AX, 0, 'x', root, 16);
     mesh.renderOrder = 2; bores.push({ mesh, key, x0, x1 });
   }
-  function clamp(x) {
-    const g = new THREE.Group(); root.add(g);
-    box(0.9, 11.4, 9.8, M.dark, x + 0.45, 0, 0, g);
-    for (const yy of [3.4, -3.4]) {
-      cyl(0.65, 0.5, M.silver, x + 0.45, yy, 5.1, 'z', g, 16);
-      box(0.9, 0.18, 0.12, M.black, x + 0.45, yy, 5.38, g);
+
+  // part roles, indices as in assets/ms6-model.json
+  const ROLE = {};
+  const role = (r, list) => list.forEach(i => { ROLE[i] = r; });
+  role('white', [0, 7, 8]); role('ee', [3]); role('sv', [9]);
+  role('dark', [2, 5, 10, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 17, 18, 44, 45, 11, 12, 6, 13, 15, 40, 41, 42, 43]);
+  role('black', [14, 16, 35, 36, 37, 38, 39]);
+  role('silver', [20, 21, 34, 4, 46, 47]); role('white2', [19]); role('brass', [1]);
+  const MATS = {
+    white: bodyMat(0xe6eaec, { roughness: 0.55 }), white2: bodyMat(0xdfe3e6, { roughness: 0.5 }),
+    dark: bodyMat(0x2b2e33, { roughness: 0.5 }), black: bodyMat(0x15171a, { roughness: 0.45 }),
+    silver: bodyMat(0xb3b9bf, { metalness: 0.6, roughness: 0.35 }), brass: bodyMat(0xc79a3b, { metalness: 0.7, roughness: 0.35 }),
+    vc: bodyMat(0xffffff, { roughness: 0.55, vertexColors: true }),
+  };
+  function paintFaces(geo0, kind) {     // flat colour per triangle (no gradients across the big CAD triangles)
+    const geo = geo0.toNonIndexed(), pos = geo.attributes.position, n = pos.count, col = new Float32Array(n * 3);
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), nm = new THREE.Vector3();
+    for (let i = 0; i < n; i += 3) {
+      a.fromBufferAttribute(pos, i); b.fromBufferAttribute(pos, i + 1); c.fromBufferAttribute(pos, i + 2);
+      nm.subVectors(c, b).cross(a.clone().sub(b)).normalize();
+      const y = (a.y + b.y + c.y) / 3;
+      let k = [0.9, 0.92, 0.93];
+      if (kind === 'ee') { if (y > 6.2) k = [0.08, 0.09, 0.1]; }
+      else if (y > 4.6) k = [0.08, 0.09, 0.1];
+      else if (nm.z > 0.9 && (a.z + b.z + c.z) / 3 > 6.3 && y < 3) k = [1, 0.9, 0];   // raised label panel on the front
+      for (let j = 0; j < 3; j++) { col[(i + j) * 3] = k[0]; col[(i + j) * 3 + 1] = k[1]; col[(i + j) * 3 + 2] = k[2]; }
     }
-    return x + 0.9;
+    geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); geo.computeVertexNormals();
+    return geo;
   }
-
-  let x = 0;
-  // supply hose + coupling
-  const hoseM = new THREE.MeshStandardMaterial({ color: 0x2c5fa8, transparent: true, opacity: 0.55, roughness: 0.3 });
-  cyl(1.2, 14, hoseM, -11, AX, 0, 'x', root, 20);
-  cyl(2.2, 4, M.silver, -2, AX, 0, 'x', root, 24);
-  bore(-14, 0, 'F');
-
-  // MS6 filter
-  x = clamp(x);
-  const fx = x; box(9, 10, 9, M.white, fx + 4.5, 0, 0);
-  box(7.2, 1.2, 7.4, M.light, fx + 4.5, 5.6, 0);
-  cyl(3.7, 8.2, M.glass, fx + 4.5, -9.1, 0, 'y', root, 32);
-  cyl(3.3, 1.6, new THREE.MeshStandardMaterial({ color: 0x66aaff, transparent: true, opacity: 0.55 }), fx + 4.5, -12.2, 0, 'y');
-  box(1.8, 3.2, 1.2, M.blue, fx + 0.6, -7.2, 3.4);
-  box(2.2, 6.5, 0.4, M.black, fx + 4.5, -9, 3.75);
-  bore(fx, fx + 9, 'F');
-  x = fx + 9;
-  const filterLabel = label('MS6 FILTER', { bg: '#394b5c', w: 300, fs: 28 }); filterLabel.position.set(fx + 4.5, 20, 0); root.add(filterLabel);
-
-  // MS6 on/off valve (CIP, V2S1)
-  x = clamp(x);
-  const cx = x; V.cipX = cx;
-  box(9, 10, 9, M.white, cx + 4.5, 0, 0);
-  box(8.2, 3.6, 8.2, M.black, cx + 4.5, 6.8, 0);
-  cyl(3.8, 1.2, M.black, cx + 4.5, 8.9, 0, 'y');
-  box(4, 2.6, 4, M.dark, cx + 4.5, 10.7, 0);
-  V.cipConn = connector(root, cx + 4.5, 12, 0);
-  cyl(1.85, 9.5, M.dark, cx + 3.5, -9.7, 0, 'y');            // exhaust silencer (port 3)
-  for (const yy of [-8.2, -10.6, -13]) box(1.4, 1.4, 0.3, M.black, cx + 3.5, yy, 1.85);
-  const cipPoppet = cyl(0.8, 1.6, new THREE.MeshStandardMaterial({ color: 0xff9a2a }), cx + 4.5, -0.9, 0, 'y', root, 16);
-  bore(cx, cx + 4.5, 'F'); bore(cx + 4.5, cx + 9, 'A');
-  x = cx + 9;
-  const cipLabel = label('CIP   V2S1', { w: 300, fs: 30 }); cipLabel.position.set(cx + 4.5, 25, 0); root.add(cipLabel);
-  const cipOpt = label('(optional)', { bg: '#555f6a', w: 220, h: 48, fs: 24 }); cipOpt.position.set(cx + 4.5, 21.2, 0); root.add(cipOpt);
-  V.cipOpt = cipOpt;
-
-  // distribution block 1
-  x = clamp(x);
-  const d1 = x; box(5, 10, 9, M.white, d1 + 2.5, 0, 0);
-  cyl(2.2, 5.5, M.dark, d1 + 2.5, 7.7, 0, 'y'); cyl(2.2, 5.5, M.dark, d1 + 2.5, -7.7, 0, 'y');
-  box(5.2, 0.5, 5.2, M.black, d1 + 2.5, 5.2, 0);
-  V.gauge1 = gauge(root, d1 + 2.5, 0, 4.5 + 0.6);
-  bore(d1, d1 + 5, 'A');
-  x = d1 + 5;
-  const d1Label = label('DIST. BLOCK', { bg: '#394b5c', w: 260, fs: 26 }); d1Label.position.set(d1 + 2.5, 17, 0); root.add(d1Label);
-
-  // MS6-SV-D safety dump (PLd)
-  x = clamp(x);
-  const sx = x; V.svX = sx; const SW = 11;
-  box(SW, 10, 9, M.white, sx + SW / 2, 0, 0);
-  box(SW - 1, 4.2, 8.4, M.black, sx + SW / 2, 7.1, 0);
-  box(SW - 0.4, 8, 8.6, M.yellow, sx + SW / 2, -9, 0);
-  box(SW + 0.3, 1.2, 9.2, M.white, sx + SW / 2, -4.6, 0);
-  cyl(4.3, 4.5, M.white, sx + SW / 2, -15.2, 0, 'y', root, 32);
-  for (const k of [-2.4, 0, 2.4]) box(1.3, 3.4, 0.4, M.dark, sx + SW / 2 + k, -15.4, 4.2);
-  const decal = (() => {
-    const c = document.createElement('canvas'); c.width = 256; c.height = 128; const g = c.getContext('2d');
-    g.fillStyle = '#ffe600'; g.fillRect(0, 0, 256, 128); g.fillStyle = '#111'; g.font = '700 22px Arial'; g.textAlign = 'center';
-    g.fillText('MS6-SV-..-D-10V24', 128, 34); g.fillText('SAFETY DUMP  PLd', 128, 64); g.font = '600 18px Arial'; g.fillText('SOFT-START / QUICK EXHAUST', 128, 94);
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(SW - 1.4, 5.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c) }));
-    return add(m, sx + SW / 2, -9, 4.33);
+  (() => {
+    const bin = atob(MS6_MODEL.b64), u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    const buf = u8.buffer;
+    for (const m of MS6_MODEL.meta) {
+      const q = new Uint16Array(buf.slice(m.off, m.off + m.nv * 6)), pos = new Float32Array(m.nv * 3);
+      for (let i = 0; i < m.nv; i++) for (let k = 0; k < 3; k++) pos[i * 3 + k] = (m.mn[k] + q[i * 3 + k] * m.sc[k]) * SC;
+      const io = m.off + m.nv * 6, idx = m.u32 ? new Uint32Array(buf.slice(io, io + m.nt * 12)) : new Uint16Array(buf.slice(io, io + m.nt * 6));
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setIndex(new THREE.BufferAttribute(idx, 1)); geo.computeVertexNormals();
+      const r = ROLE[m.i] || 'white';
+      const painted = r === 'ee' || r === 'sv';
+      root.add(new THREE.Mesh(painted ? paintFaces(geo, r) : geo, painted ? MATS.vc : MATS[r]));
+    }
   })();
-  box(SW - 1.6, 0.9, 0.6, M.grey, sx + SW / 2, -5.6, 4.4);
-  // two solenoids V1S1 / V1S2 on top
-  V.v1s1Conn = connector(root, sx + 3.0, 9.2, 0);
-  V.v1s2Conn = connector(root, sx + 7.9, 9.2, 0);
-  box(3.6, 1.6, 3.6, M.grey, sx + 3.0, 9.0, 0); box(3.6, 1.6, 3.6, M.grey, sx + 7.9, 9.0, 0);
-  // soft-start flow control screw (turns with n)
-  const screw = new THREE.Group(); screw.position.set(sx + SW / 2 + 0.2, 9.25, 2.6); root.add(screw);
-  cyl(1.0, 0.7, M.silver, 0, 0, 0, 'y', screw, 20); box(1.6, 0.2, 0.28, M.black, 0, 0.4, 0, screw);
+
+  // anchors measured from the CAD model (scene units)
+  const X_FILTER = 0, X_CIP = 9.0, X_D1 = 15.75, X_SV = 22.5, X_D2 = 29.25, X_PORT_IN = -8.3, X_PORT_OUT = 35.3;
+  const cx = X_CIP, sx = X_SV;
+  const hoseM = new THREE.MeshStandardMaterial({ color: 0x2c5fa8, transparent: true, opacity: 0.55, roughness: 0.3 });
+  cyl(1.2, 14, hoseM, X_PORT_IN - 7, AX, 0, 'x', root, 20);               // supply hose
+  bore(X_PORT_IN - 14, X_CIP, 'F'); bore(X_CIP, X_SV, 'A'); bore(X_SV, X_PORT_OUT, 'P2');
+  const filterLabel = label('MS6 FILTER', { bg: '#394b5c', w: 300, fs: 28 }); filterLabel.position.set(X_FILTER, 14, 0); root.add(filterLabel);
+  const cipLabel = label('CIP   V2S1', { w: 300, fs: 30 }); cipLabel.position.set(X_CIP, 26, 0); root.add(cipLabel);
+  const cipOpt = label('(optional)', { bg: '#555f6a', w: 220, h: 48, fs: 24 }); cipOpt.position.set(X_CIP, 22.2, 0); root.add(cipOpt);
+  const d1Label = label('DIST. BLOCK', { bg: '#394b5c', w: 260, fs: 26 }); d1Label.position.set(X_D1, 12, 0); root.add(d1Label);
+  const d2Label = label('DIST. BLOCK', { bg: '#394b5c', w: 260, fs: 26 }); d2Label.position.set(X_D2, 20, 0); root.add(d2Label);
+  const svL1 = label('MAIN   V1S1', { w: 250, h: 52, fs: 26, scale: 0.045 }); svL1.position.set(X_SV - 2.2, 26, 0); root.add(svL1);
+  const svL2 = label('V1S2', { w: 130, h: 52, fs: 26, scale: 0.045 }); svL2.position.set(X_SV + 3.6, 26, 0); root.add(svL2);
+  const svName = label('MS6-SV-D  SAFETY DUMP (PLd)', { bg: '#394b5c', w: 430, h: 52, fs: 24, scale: 0.045 }); svName.position.set(X_SV, 31, 0); root.add(svName);
+
+  // LED heads on the three M12 solenoid plugs: left half green (24 V good), right half yellow (coil energised)
+  function ledFace(x, y, z, r) {
+    const gm = new THREE.MeshStandardMaterial({ color: 0x0d4a22, emissive: 0x00ff66, emissiveIntensity: 0, roughness: 0.3 });
+    const ym = new THREE.MeshStandardMaterial({ color: 0x5a4400, emissive: 0xffc400, emissiveIntensity: 0, roughness: 0.3 });
+    add(new THREE.Mesh(new THREE.CircleGeometry(r, 28, Math.PI / 2, Math.PI), gm), x, y, z, root);
+    add(new THREE.Mesh(new THREE.CircleGeometry(r, 28, -Math.PI / 2, Math.PI), ym), x, y, z, root);
+    const hg = halo(0x00ff66, 4.2, root, x - r * 0.5, y, z + 0.5), hy = halo(0xffc400, 4.2, root, x + r * 0.5, y, z + 0.5);
+    return { set(g, y2) { gm.emissiveIntensity = g ? 2.4 : 0; ym.emissiveIntensity = y2 ? 2.4 : 0; hg.material.opacity = g ? 0.9 : 0; hy.material.opacity = y2 ? 0.9 : 0; } };
+  }
+  V.cipConn = ledFace(9.0, 15.55, -3.74, 0.95);
+  V.v1s1Conn = ledFace(21.2, 17.25, -3.74, 1.0);
+  V.v1s2Conn = ledFace(23.8, 17.25, -3.74, 1.0);
+
+  // FS1 / FS2 proximity-switch LEDs (lit = 24 V = normal position) on the SV front sensor
+  function sensorLed(x, y, z) {
+    const lm = new THREE.MeshStandardMaterial({ color: 0x4d3b00, emissive: 0xffb300, emissiveIntensity: 0, roughness: 0.3 });
+    add(new THREE.Mesh(new THREE.SphereGeometry(0.38, 14, 10), lm), x, y, z, root);
+    const hl = halo(0xffb300, 3.2, root, x, y, z + 0.5);
+    return { set(on) { lm.emissiveIntensity = on ? 2.6 : 0; hl.material.opacity = on ? 0.85 : 0; } };
+  }
+  V.fs1 = sensorLed(18.75, -9.6, 10.72);
+  V.fs2 = sensorLed(18.5, -11.8, 10.72);
+  const fs1L = label('FS1', { bg: '#c9322f', w: 120, h: 44, fs: 26, scale: 0.04 }); fs1L.position.set(15.6, -9.6, 11.5); root.add(fs1L);
+  const fs2L = label('FS2', { bg: '#c9322f', w: 120, h: 44, fs: 26, scale: 0.04 }); fs2L.position.set(15.6, -12.2, 11.5); root.add(fs2L);
+
+  // gauges on the distribution blocks
+  V.gauge1 = gauge(root, X_D1, -1.0, 4.5 + 0.6);
+  V.gauge2 = gauge(root, X_D2, -1.0, 4.5 + 0.6);
+
+  // soft-start flow-control screw (turns with n)
+  const screw = new THREE.Group(); screw.position.set(X_SV + 0.2, 11.8, 3.2); root.add(screw);
+  cyl(0.9, 0.5, M.silver, 0, 0.25, 0, 'y', screw, 20); box(1.5, 0.2, 0.28, M.black, 0, 0.55, 0, screw);
   V.screw = screw;
-  const screwLbl = label('SOFT-START SCREW  CCW (+) faster', { bg: '#7a3aa8', w: 420, h: 48, fs: 22, scale: 0.042 }); screwLbl.position.set(sx + SW / 2, 14.3, 3.8); root.add(screwLbl);
-  // FS1 / FS2 proximity switches
-  V.fs1 = proxSwitch(root, sx + 2.6, 0.6, 4.5);
-  V.fs2 = proxSwitch(root, sx + 8.4, 0.6, 4.5);
-  const fs1L = label('FS1', { bg: '#c9322f', w: 120, h: 44, fs: 26, scale: 0.04 }); fs1L.position.set(sx + 2.6, 4.2, 5.4); root.add(fs1L);
-  const fs2L = label('FS2', { bg: '#c9322f', w: 120, h: 44, fs: 26, scale: 0.04 }); fs2L.position.set(sx + 8.4, 4.2, 5.4); root.add(fs2L);
-  // internal spool (visible in X-ray)
-  const spool = box(2.2, 4.4, 2.2, new THREE.MeshStandardMaterial({ color: 0xff9a2a }), sx + SW / 2, 0, 0);
-  bore(sx, sx + SW / 2, 'A'); bore(sx + SW / 2, sx + SW, 'P2');
-  x = sx + SW;
-  const svL1 = label('MAIN   V1S1', { w: 250, h: 52, fs: 26, scale: 0.045 }); svL1.position.set(sx + 1.6, 23.5, 0); root.add(svL1);
-  const svL2 = label('V1S2', { w: 130, h: 52, fs: 26, scale: 0.045 }); svL2.position.set(sx + 9.6, 23.5, 0); root.add(svL2);
-  const svName = label('MS6-SV-D  SAFETY DUMP (PLd)', { bg: '#394b5c', w: 430, h: 52, fs: 24, scale: 0.045 }); svName.position.set(sx + SW / 2, 28.5, 0); root.add(svName);
-  V.exhaustSV = new THREE.Vector3(sx + SW / 2, -17.7, 0);
-  V.exhaustCIP = new THREE.Vector3(cx + 3.5, -14.6, 0);
+  const screwLbl = label('SOFT-START SCREW  CCW (+) faster', { bg: '#7a3aa8', w: 420, h: 48, fs: 22, scale: 0.042 }); screwLbl.position.set(X_SV, 15.5, 4.5); root.add(screwLbl);
+
+  // moving internals, visible in X-ray: CIP poppet and the safety-dump spool
+  const cipPoppet = cyl(0.8, 1.6, new THREE.MeshStandardMaterial({ color: 0xff9a2a }), X_CIP, -0.9, 0, 'y', root, 16);
+  const spool = box(2.2, 4.4, 2.2, new THREE.MeshStandardMaterial({ color: 0xff9a2a }), X_SV, 0, 0);
+  V.exhaustSV = new THREE.Vector3(X_SV, -30.6, 0);
+  V.exhaustCIP = new THREE.Vector3(X_CIP, -27.6, 0);
   V.exhaustSVe = { origin: V.exhaustSV }; V.exhaustCIPe = { origin: V.exhaustCIP };
 
-  // distribution block 2 with push-in fittings
-  x = clamp(x);
-  const d2 = x; box(5, 10, 9, M.white, d2 + 2.5, 0, 0);
-  cyl(2.2, 5.5, M.dark, d2 + 2.5, -7.7, 0, 'y');
-  cyl(2.2, 12, M.dark, d2 + 2.5, 11, 0, 'y');
-  for (const yy of [7, 10.6, 14.2]) { cyl(1.25, 3.2, M.dark, d2 + 5.4, yy, 0, 'x', root, 20); cyl(1.0, 1.0, M.grey, d2 + 7.2, yy, 0, 'x', root, 20); }
-  V.gauge2 = gauge(root, d2 + 2.5, 0, 4.5 + 0.6);
-  bore(d2, d2 + 5, 'P2');
-  x = d2 + 5;
-  const d2Label = label('DIST. BLOCK', { bg: '#394b5c', w: 260, fs: 26 }); d2Label.position.set(d2 + 2.5, 22, 0); root.add(d2Label);
-
   // outlet hose + machine volume
+  let x = X_PORT_OUT;
   cyl(1.2, 9, hoseM, x + 4.5, AX, 0, 'x', root, 20);
-  bore(x, x + 9, 'P2');
   const tx = x + 9; V.tankX = tx;
   const tank = cyl(5.2, 14, new THREE.MeshStandardMaterial({ color: 0xaecbe0, transparent: true, opacity: 0.22, roughness: 0.1, depthWrite: false }), tx + 7, 0, 0, 'x', root, 36);
   const tankFill = cyl(4.8, 13.2, new THREE.MeshBasicMaterial({ color: 0x3355ff, transparent: true, opacity: 0, depthWrite: false }), tx + 7, 0, 0, 'x', root, 36);
   cyl(5.3, 0.8, M.dark, tx, 0, 0, 'x'); cyl(5.3, 0.8, M.dark, tx + 14, 0, 0, 'x');
   const tankLbl = label('TO MACHINE (volume)', { bg: '#394b5c', w: 380, h: 52, fs: 24, scale: 0.045 }); tankLbl.position.set(tx + 7, 11, 0); root.add(tankLbl);
   const X_END = tx + 13;
-  bore(tx, tx + 14, 'P2');
+  bore(X_PORT_OUT, tx + 14, 'P2');
 
   // manual leak valve at the end of the tank: brass ball valve with lever + 1/4" tube to atmosphere
   const brass = bodyMat(0xc79a3b, { metalness: 0.7, roughness: 0.35 });
@@ -275,8 +270,8 @@ const View3D = (() => {
   })();
 
   // pendant: E-STOP + CONTROL RESET (blue lamp)
-  const px = -30, pz = 4;
-  box(11, 18, 8, M.dark, px, -12, pz);
+  const px = -34, pz = 4;
+  box(11, 29, 8, M.dark, px, -17.5, pz);
   box(12, 8.5, 6.4, M.dark, px, -1.5, pz);
   const pf = pz + 3.3;
   box(4.6, 4.6, 0.6, M.yellow, px - 3, -1.5, pf);
@@ -296,11 +291,11 @@ const View3D = (() => {
   const arrow = new THREE.Mesh(new THREE.ShapeGeometry((() => {
     const s = new THREE.Shape(); s.moveTo(0, -1.2); s.lineTo(8, -1.2); s.lineTo(8, -3); s.lineTo(13, 0); s.lineTo(8, 3); s.lineTo(8, 1.2); s.lineTo(0, 1.2); s.closePath(); return s;
   })()), new THREE.MeshBasicMaterial({ color: 0x2b7bd6, transparent: true, opacity: 0.55 }));
-  arrow.rotation.x = -Math.PI / 2; arrow.position.set(x - 22, FLOOR_Y + 0.05, 14); root.add(arrow);
-  const arrowL = label('AIR FLOW', { bg: '#1f4f86', w: 200, h: 44, fs: 24, scale: 0.04 }); arrowL.position.set(x - 17, FLOOR_Y + 4, 14); root.add(arrowL);
+  arrow.rotation.x = -Math.PI / 2; arrow.position.set(12, FLOOR_Y + 0.05, 16); root.add(arrow);
+  const arrowL = label('AIR FLOW', { bg: '#1f4f86', w: 200, h: 44, fs: 24, scale: 0.04 }); arrowL.position.set(17, FLOOR_Y + 4, 16); root.add(arrowL);
 
   /* ---------- particles (air flow) ---------- */
-  const X0 = -14;
+  const X0 = X_PORT_IN - 14;
   const NP = 900, ppos = new Float32Array(NP * 3), pcol = new Float32Array(NP * 3);
   const px_ = new Float32Array(NP), pr_ = new Float32Array(NP), pa_ = new Float32Array(NP);
   for (let i = 0; i < NP; i++) { px_[i] = X0 + Math.random() * (X_END - X0); pr_[i] = Math.sqrt(Math.random()) * 0.8; pa_[i] = Math.random() * 6.283; }
@@ -332,12 +327,12 @@ const View3D = (() => {
     }
   }
 
-  const xmid = { cip: cx + 4.5, sv: sx + SW / 2 };
+  const xmid = { cip: X_CIP, sv: X_SV };
   function pAt(px, s) { return px < xmid.cip ? s.pF : px < xmid.sv ? s.pa : s.p2; }
 
   /* ---------- camera / orbit ---------- */
-  const target = new THREE.Vector3(26, 4, 0);
-  const orbit = { az: 0.45, el: 0.3, r: 112 };
+  const target = new THREE.Vector3(30, 0, 0);
+  const orbit = { az: 0.45, el: 0.3, r: 125 };
   const goal = { az: orbit.az, el: orbit.el, r: orbit.r, tx: target.x, ty: target.y, tz: target.z };
   function applyCam() {
     orbit.az += (goal.az - orbit.az) * 0.15; orbit.el += (goal.el - orbit.el) * 0.15; orbit.r += (goal.r - orbit.r) * 0.15;
@@ -346,11 +341,11 @@ const View3D = (() => {
     camera.lookAt(target);
   }
   const presets = {
-    iso:    { az: 0.45, el: 0.3, r: 112, tx: 26, ty: 4, tz: 0 },
-    front:  { az: 0,    el: 0.02, r: 110, tx: 26, ty: 4,  tz: 0 },
-    top:    { az: 0,    el: 1.5,  r: 125, tx: 26, ty: 0,  tz: 0 },
-    safety: { az: 0.25, el: 0.2,  r: 60,  tx: sx + 5.5, ty: 3, tz: 0 },
-    cip:    { az: -0.2, el: 0.2,  r: 60,  tx: cx + 5, ty: 3, tz: 0 },
+    iso:    { az: 0.45, el: 0.3, r: 125, tx: 30, ty: 0, tz: 0 },
+    front:  { az: 0,    el: 0.02, r: 120, tx: 30, ty: 0,  tz: 0 },
+    top:    { az: 0,    el: 1.5,  r: 125, tx: 30, ty: 0,  tz: 0 },
+    safety: { az: 0.25, el: 0.2,  r: 62,  tx: X_SV, ty: -4, tz: 0 },
+    cip:    { az: -0.2, el: 0.2,  r: 62,  tx: X_CIP, ty: -4, tz: 0 },
   };
   function view(name) { Object.assign(goal, presets[name]); }
   let drag = null;
