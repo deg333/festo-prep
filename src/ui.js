@@ -132,7 +132,7 @@
   const S = id => $(id);
   const ledFill = (id, on, col) => { const e = S(id); e.setAttribute('fill', on ? col : '#e1e5ea'); e.setAttribute('stroke', on ? '#333' : '#8a929b'); e.setAttribute('stroke-width', on ? 1.5 : 1); };
   let dash = 0;
-  const slide = { lock: 0, cip: 0, sv: 0 };
+  const slide = { lock: 0, cip: 0, sv: 0 };   // sv in drawing units of the scaled symbol (128 per box)
   const SC = { lock: 'lockStack', cip: 'cipStack', sv: 'svStack' };
   function setBoxes(ids, active) {
     ids.forEach((id, i) => { const r = S(id), on = i === active; r.setAttribute('stroke', on ? '#0a9d5a' : '#111'); r.setAttribute('stroke-width', on ? 3.6 : 2.2); r.setAttribute('fill', on ? 'rgba(10,157,90,.10)' : 'none'); });
@@ -147,12 +147,12 @@
     // pipes
     stroke('pS0', s.pF, fl); stroke('pS1', s.pF, fl); stroke('pS2', s.pF, fl);
     stroke('pCipOut', s.pa, s.q > 1); stroke('pSvOut', s.p2, s.q > 1); stroke('pM', s.p2, false); stroke('pB0', s.p2, s.q > 1);
-    stroke('pT1', s.pa, false); stroke('pT2', s.p2, false); stroke('pG', s.p2, false);
+    stroke('pT1', s.pa, false); stroke('pT2', s.p2, false);
     stroke('pLeak', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01); stroke('pLeak2', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01);
     // lock-out valve 919127A: open when supply is on
     const open = !c.cipFitted || co.cip.yellow, sOn = c.supplyOn;
     // slide the position boxes so the active one sits on the port line
-    const targets = { lock: sOn ? 44 : 0, cip: open ? 46 : 0, sv: s.stage === 2 ? 46 : s.stage === 1 ? 92 : 0 };
+    const targets = { lock: sOn ? 44 : 0, cip: open ? 46 : 0, sv: s.stage === 2 ? 128 : s.stage === 1 ? 256 : 0 };
     for (const k in slide) { slide[k] += (targets[k] - slide[k]) * Math.min(1, dt * 9); S(SC[k]).setAttribute('transform', 'translate(0,' + slide[k].toFixed(1) + ')'); }
     setBoxes(['lkB', 'lkA'], sOn ? 0 : 1); setBoxes(['cipE', 'cipS'], open ? 0 : 1); setBoxes(['svV', 'svF', 'svR'], s.stage === 1 ? 0 : s.stage === 2 ? 1 : 2);
     col(['lkBa', 'lkBh'], s.pF); col(['lkAa', 'lkAh'], 0);
@@ -161,7 +161,7 @@
     S('pE1').setAttribute('stroke-dasharray', '2 6'); S('pE2').setAttribute('stroke-dasharray', '2 6');
     S('thr').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#111'); S('thrA').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#111'); S('thrH').setAttribute('fill', s.stage === 1 ? '#7a3aa8' : '#111');
     // dashed pilot feedback follows the pilot triangle on the sliding stack
-    S('pFb2').setAttribute('d', 'M887 205V' + (215 + slide.sv).toFixed(1));
+    S('pFb2').setAttribute('d', 'M320 96V' + (96 + slide.sv).toFixed(1));
     S('svPos').textContent = ['EXHAUST (spring return)', 'SOFT-START (throttled)', 'FULL FLOW'][s.stage] + (s.stage === 0 && co.v1s1.yellow && co.v1s2.yellow ? ' - pilots shifting' : '');
     S('svPos').setAttribute('fill', ['#c0392b', '#7a3aa8', '#0a8a4f'][s.stage]);
     ledFill('svgCipG', co.cip.green, '#22cc66'); ledFill('svgCipY', co.cip.yellow, '#f2b705');
@@ -253,7 +253,7 @@
     rungs2.push({ y, upd() { const kk = kOn(), qq = getQ(), l = ledsGet();
       kc.set(kk); kc.w1.setAttribute('stroke', LIVE); kc.w2.setAttribute('stroke', kk ? LIVE : OFF);
       q.set(qq); q.w1.setAttribute('stroke', kk ? LIVE : OFF); q.w2.setAttribute('stroke', kk && qq ? LIVE : OFF);
-      c.set(kk && qq && l.green, l.green, l.yellow);   // green LED needs only 24 V, the coil also needs K1 + PLC output c.w1.setAttribute('stroke', kk && qq ? LIVE : OFF); c.w2.setAttribute('stroke', kk && qq && l.green ? '#2a5db0' : OFF); } });
+      c.set(kk && qq && l.green, l.green, l.yellow); c.w1.setAttribute('stroke', kk && qq ? LIVE : OFF); c.w2.setAttribute('stroke', kk && qq && l.green ? '#2a5db0' : OFF); } });
   }
   outRung(184, 'V2S1 CIP', 'Q 224T2', () => plc.QC, () => co().cip, 'PL-V2S1: optional CIP on/off valve, one coil');
   outRung(250, 'V1S1', 'Q 224T', () => plc.Q1, () => co().v1s1, 'PL-V1S1: safety coil 1 of the dump valve');
