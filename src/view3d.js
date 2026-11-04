@@ -254,11 +254,20 @@ const View3D = (() => {
   V.gauge1 = gauge(root, X_D1, -1.0, 4.5 + 0.6);
   V.gauge2 = gauge(root, X_D2, -1.0, 4.5 + 0.6);
 
-  // soft-start flow-control screw (turns with n)
-  const screw = new THREE.Group(); screw.position.set(X_SV + 0.2, 11.8, 3.2); root.add(screw);
-  cyl(0.9, 0.5, M.silver, 0, 0.25, 0, 'y', screw, 20); box(1.5, 0.2, 0.28, M.black, 0, 0.55, 0, screw);
+  // soft-start flow-control screw (turns with n): brass slotted screw in the round recess on top of the MS6-SV-D (next to the V1/V2 marks)
+  const SCREW = new THREE.Vector3(19.43, 11.3, 0);
+  const screw = new THREE.Group(); screw.position.copy(SCREW); root.add(screw);
+  cyl(0.42, 0.3, bodyMat(0xc79a3b, { metalness: 0.75, roughness: 0.3 }), 0, 0.12, 0, 'y', screw, 24); box(0.78, 0.1, 0.14, M.black, 0, 0.28, 0, screw);
   V.screw = screw;
-  const screwLbl = label('SOFT-START SCREW  CCW (+) faster', { bg: '#7a3aa8', w: 420, h: 48, fs: 22, scale: 0.042 }); screwLbl.position.set(X_SV, 15.5, 4.5); root.add(screwLbl);
+  const screwLbl = label('SOFT-START SCREW  CCW (+) faster', { bg: '#7a3aa8', w: 420, h: 48, fs: 22, scale: 0.042 }); screwLbl.position.set(12.5, 20.5, 9); root.add(screwLbl);
+  { // leader line + arrow head pointing at the screw
+    const from = new THREE.Vector3(15.5, 19.5, 9), to = SCREW.clone().add(new THREE.Vector3(0, 0.4, 0.3));
+    const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints([from, to]), new THREE.LineBasicMaterial({ color: 0xd9a8ff, depthTest: false, transparent: true }));
+    ln.renderOrder = 9; root.add(ln);
+    const head = new THREE.Mesh(new THREE.ConeGeometry(0.35, 1.1, 12), new THREE.MeshBasicMaterial({ color: 0xd9a8ff, depthTest: false }));
+    head.renderOrder = 9; head.position.copy(to).addScaledVector(from.clone().sub(to).normalize(), 0.55);
+    head.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), from.clone().sub(to).normalize()); root.add(head);
+  }
 
   // moving internals, visible in X-ray: CIP poppet and the safety-dump spool
   const cipPoppet = cyl(0.8, 1.6, new THREE.MeshStandardMaterial({ color: 0xff9a2a }), X_CIP, -0.9, 0, 'y', root, 16);
@@ -369,6 +378,7 @@ const View3D = (() => {
     camera.lookAt(target);
   }
   const presets = {
+    screw:   { az: 0.6, el: 0.85, r: 40, tx: 20, ty: 10, tz: 0 },
     sensors: { az: 1.25, el: 0.12, r: 30, tx: 26.9, ty: -12, tz: 0 },
     iso:    { az: 0.45, el: 0.3, r: 148, tx: 30, ty: -1, tz: 0 },
     front:  { az: 0,    el: 0.02, r: 148, tx: 30, ty: -1,  tz: 0 },
