@@ -5,7 +5,7 @@
   window.festoSim = P; // handy for experiments from the browser console
   const plc = P.plc.m;
   const fmt = (v, d = 1) => v.toFixed(d);
-  const pcol = p => p < 0.05 ? '#59636e' : 'hsl(' + Math.max(0, 215 - 18 * p) + ',90%,55%)';
+  const pcol = p => p < 0.05 ? '#9aa3ad' : 'hsl(212,88%,' + Math.max(34, 62 - 3.2 * p) + '%)';   // blue = compressed air, darker = higher pressure
 
   /* ---------------- controls ---------------- */
   const bind = (id, fn, out) => {
@@ -130,7 +130,7 @@
 
   /* ---------------- pneumatic diagram ---------------- */
   const S = id => $(id);
-  const ledFill = (id, on, col) => { const e = S(id); e.setAttribute('fill', on ? col : '#1b242d'); e.setAttribute('stroke', on ? '#fff' : '#455465'); e.setAttribute('stroke-width', on ? 1.5 : 1); };
+  const ledFill = (id, on, col) => { const e = S(id); e.setAttribute('fill', on ? col : '#e1e5ea'); e.setAttribute('stroke', on ? '#333' : '#8a929b'); e.setAttribute('stroke-width', on ? 1.5 : 1); };
   const show = (id, on) => S(id).setAttribute('display', on ? 'inline' : 'none');
   let dash = 0;
   function updatePneu(dt) {
@@ -145,7 +145,7 @@
     const open = !c.cipFitted || co.cip.yellow;
     for (const [id, on] of [['cipL', open], ['cipR', !open]]) {
       const g = S(id), r = g.querySelector('.bx');
-      r.setAttribute('stroke', on ? '#7cf2a3' : '#6c7a89'); r.setAttribute('stroke-width', on ? 3.5 : 1.5); r.setAttribute('fill', on ? 'rgba(60,200,130,.16)' : 'none'); g.setAttribute('opacity', on ? 1 : 0.55);
+      r.setAttribute('stroke', on ? '#0a9d5a' : '#8a929b'); r.setAttribute('stroke-width', on ? 3.5 : 1.5); r.setAttribute('fill', on ? 'rgba(10,157,90,.14)' : 'none'); g.setAttribute('opacity', on ? 1 : 0.55);
     }
     stroke('cP1', s.pF, false); stroke('cP2', s.pa, s.q > 1); stroke('pCipOut', s.pa, s.q > 1);
     S('cL1').setAttribute('stroke', pcol(s.pF)); S('cL1h').setAttribute('fill', pcol(s.pF));
@@ -159,8 +159,8 @@
     const active = s.stage === 1 ? 1 : s.stage === 2 ? 2 : energised ? 3 : 4;
     for (let i = 1; i <= 4; i++) {
       const r = S('svB' + i).querySelector('.bx'), on = i === active;
-      r.setAttribute('stroke', on ? '#7cf2a3' : '#6c7a89'); r.setAttribute('stroke-width', on ? 3.5 : 1.5);
-      r.setAttribute('fill', on ? 'rgba(60,200,130,.16)' : 'none');
+      r.setAttribute('stroke', on ? '#0a9d5a' : '#8a929b'); r.setAttribute('stroke-width', on ? 3.5 : 1.5);
+      r.setAttribute('fill', on ? 'rgba(10,157,90,.14)' : 'none');
       S('svB' + i).setAttribute('opacity', on ? 1 : 0.55);
     }
     S('sB1a').setAttribute('stroke', pcol(s.pa)); S('sB1h').setAttribute('fill', pcol(s.pa));
@@ -168,9 +168,9 @@
     S('sB4e').setAttribute('stroke', pcol(s.p2)); S('sB4h').setAttribute('fill', pcol(s.p2));
     stroke('pt1', s.pa, s.q > 1); stroke('pt2', s.p2, s.q > 1);
     stroke('pt3', s.stage === 0 ? s.p2 : 0, s.qEx > 1);
-    S('sThr').setAttribute('stroke', s.stage === 1 ? '#d9a8ff' : '#cfd8e0'); S('sThrH').setAttribute('fill', s.stage === 1 ? '#d9a8ff' : '#cfd8e0');
+    S('sThr').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#1b1f24'); S('sThrH').setAttribute('fill', s.stage === 1 ? '#7a3aa8' : '#1b1f24');
     S('svPos').textContent = ['EXHAUST (spring return)', 'SOFT-START (throttled)', 'FULL FLOW'][s.stage] + (s.stage === 0 && energised ? ' - pilots shifting' : '');
-    S('svPos').setAttribute('fill', ['#ef8a8a', '#d9a8ff', '#7cf2a3'][s.stage]);
+    S('svPos').setAttribute('fill', ['#c0392b', '#7a3aa8', '#0a8a4f'][s.stage]);
     ledFill('svgV1G', co.v1s1.green, '#22ff77'); ledFill('svgV1Y', co.v1s1.yellow, '#ffc400');
     ledFill('svgV2G', co.v1s2.green, '#22ff77'); ledFill('svgV2Y', co.v1s2.yellow, '#ffc400');
     const f1 = P.fs1(), f2 = P.fs2();
@@ -189,6 +189,95 @@
     const h = 84 * Math.min(1, s.p2 / 10), tf = S('tankFill');
     tf.setAttribute('y', 102 - h); tf.setAttribute('height', Math.max(0, h - 3)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.5);
   }
+
+  /* ---------------- electro-pneumatic wiring ladder (IEC-style symbols, live) ---------------- */
+  const NS = 'http://www.w3.org/2000/svg', E = $('elec');
+  const mk = (tag, attrs, parent, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; (parent || E).appendChild(e); return e; };
+  const INK = '#1b1f24', OFF = '#8a929b', LIVE = '#d6402b';
+  const ladder = { wires: [], items: [] };
+  const LX = 40, RX = 960;
+  mk('rect', { x: 0, y: 0, width: 1000, height: 510, rx: 4, fill: '#fbfcfd', stroke: '#b9c0c8', 'stroke-width': 2 });
+  mk('path', { d: 'M' + LX + ' 40V500', stroke: INK, 'stroke-width': 3, fill: 'none' }); mk('path', { d: 'M' + RX + ' 40V500', stroke: INK, 'stroke-width': 3, fill: 'none' });
+  mk('text', { x: LX, y: 30, 'text-anchor': 'middle', 'font-weight': 700, fill: LIVE }, null, '+24 V'); mk('text', { x: RX, y: 30, 'text-anchor': 'middle', 'font-weight': 700, fill: '#2a5db0' }, null, '0 V');
+  const wire = (x1, y1, x2, y2) => { const w = mk('path', { d: 'M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2, fill: 'none', 'stroke-width': 2.2, 'stroke-linecap': 'round', stroke: OFF }); return w; };
+  // a series element between xa and xb on rung y; returns {wires:[before, after], set(state)}
+  function contact(x, y, name, nc, len = 105) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 16, y), w2 = wire(x + 16, y, x + len, y);
+    mk('circle', { cx: x - 16, cy: y, r: 2.6, fill: INK }, g); mk('circle', { cx: x + 16, cy: y, r: 2.6, fill: INK }, g);
+    const blade = mk('path', { d: '', stroke: INK, 'stroke-width': 2.2, fill: 'none' }, g), bar = mk('path', { d: nc ? 'M' + (x + 16) + ' ' + (y - 10) + 'V' + y : '', stroke: INK, 'stroke-width': 2, fill: 'none' }, g);
+    mk('text', { x, y: y - 22, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700 }, g, name);
+    const st = mk('text', { x, y: y + 24, 'text-anchor': 'middle', fill: '#666', 'font-size': 10 }, g, '');
+    return { w1, w2, set(closed, txt) {
+      blade.setAttribute('d', closed ? 'M' + (x - 16) + ' ' + y + 'H' + (x + 16) : 'M' + (x - 16) + ' ' + y + 'L' + (x + 13) + ' ' + (y - 14));
+      st.textContent = txt || (closed ? 'closed' : 'open'); } };
+  }
+  function plcBox(x, y, addr, tag, isOut, len = 145) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 38, y), w2 = wire(x + 38, y, x + len, y);
+    const r = mk('rect', { x: x - 38, y: y - 15, width: 76, height: 30, fill: '#fff', stroke: INK, 'stroke-width': 1.8 }, g);
+    mk('text', { x, y: y - 2, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700, 'font-size': 11 }, g, addr);
+    mk('text', { x, y: y + 10, 'text-anchor': 'middle', fill: '#555', 'font-size': 9.5 }, g, tag);
+    mk('text', { x, y: y - 22, 'text-anchor': 'middle', fill: '#555', 'font-size': 10 }, g, isOut ? 'PLC output' : 'PLC input');
+    return { w1, w2, set(on) { r.setAttribute('fill', on ? '#d7f5e3' : '#fff'); r.setAttribute('stroke', on ? '#0a9d5a' : INK); } };
+  }
+  function coil(x, y, name, o = {}) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 20, y), w2 = wire(x + 20, y, RX, y);
+    const r = mk('rect', { x: x - 20, y: y - 14, width: 40, height: 28, fill: '#fff', stroke: INK, 'stroke-width': 1.8 }, g);
+    mk('text', { x, y: y + 4, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700, 'font-size': 11 }, g, name);
+    let gl, yl;
+    if (o.leds) { gl = mk('circle', { cx: x + 34, cy: y - 7, r: 5, stroke: '#333', 'stroke-width': 1 }, g); yl = mk('circle', { cx: x + 34, cy: y + 8, r: 5, stroke: '#333', 'stroke-width': 1 }, g);
+      mk('text', { x: x + 44, y: y - 3, fill: '#555', 'font-size': 9 }, g, 'green 24 V'); mk('text', { x: x + 44, y: y + 12, fill: '#555', 'font-size': 9 }, g, 'yellow coil'); }
+    return { w1, w2, set(on, green, yellow) { r.setAttribute('fill', on ? '#fff3b0' : '#fff'); r.setAttribute('stroke', on ? '#b07d00' : INK);
+      if (gl) { gl.setAttribute('fill', green ? '#22cc66' : '#e1e5ea'); yl.setAttribute('fill', yellow ? '#f2b705' : '#e1e5ea'); } } };
+  }
+  function lamp(x, y, name) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 16, y), w2 = wire(x + 16, y, RX, y);
+    const c = mk('circle', { cx: x, cy: y, r: 16, fill: '#fff', stroke: INK, 'stroke-width': 1.8 }, g);
+    mk('path', { d: 'M' + (x - 11) + ' ' + (y - 11) + 'L' + (x + 11) + ' ' + (y + 11) + 'M' + (x + 11) + ' ' + (y - 11) + 'L' + (x - 11) + ' ' + (y + 11), stroke: INK, 'stroke-width': 1.5 }, g);
+    mk('text', { x, y: y - 24, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700 }, g, name);
+    return { w1, w2, set(on) { c.setAttribute('fill', on ? '#8fc4ff' : '#fff'); } };
+  }
+  const note = (y, t) => mk('text', { x: 580, y: y - 10, fill: '#555', 'font-size': 11 }, null, t);
+  const co = () => P.coils();
+  const kOn = () => P.s.kSafe, safeOn = () => !P.ctl.estop;
+  const rungs2 = [];
+  // R1: safety relay K1: E-stop (NC) in series with Control Reset (NO) parallel K1 seal-in contact
+  { const y = 70; wire(LX, y, 85, y);
+    const es = contact(140, y, 'E-STOP S0', true, 200), rs = contact(320, y, 'CONTROL RESET S1', false, 375), sl = contact(320, y + 48, 'K1 seal-in', false, 375), k = coil(500, y, 'K1');
+    wire(200, y, 200, y + 48); wire(200, y + 48, 265, y + 48); wire(375, y, 440, y); wire(375, y + 48, 440, y + 48); wire(440, y, 440, y + 48); wire(440, y, 445, y);
+    note(y, 'Safety relay K1 (PLd): E-stop drops it, Reset re-latches');
+    rungs2.push({ y, upd() {
+      const p0 = true, eC = safeOn(), rC = P.ctl.reset, sC = kOn();
+      es.set(eC, eC ? 'closed' : 'PRESSED'); rs.set(rC, rC ? 'pressed' : 'open'); sl.set(sC);
+      const live = p0 && eC; const par = live && (rC || sC);
+      es.w1.setAttribute('stroke', p0 ? LIVE : OFF); es.w2.setAttribute('stroke', live ? LIVE : OFF);
+      rs.w1.setAttribute('stroke', live ? LIVE : OFF); rs.w2.setAttribute('stroke', live && rC ? LIVE : OFF); sl.w1.setAttribute('stroke', live ? LIVE : OFF); sl.w2.setAttribute('stroke', live && sC ? LIVE : OFF);
+      k.w1.setAttribute('stroke', par ? LIVE : OFF); k.w2.setAttribute('stroke', par ? '#2a5db0' : OFF); k.set(sC);
+    } }); }
+  // generic output rung: K1 contact -> PLC output -> coil
+  function outRung(y, tag, addr, getQ, ledsGet, note_) {
+    wire(LX, y, 85, y);
+    const kc = contact(140, y, 'K1 (24 V good)', false), q = plcBox(300, y, addr, tag, true), c = coil(500, y, tag.split(' ')[0], { leds: true });
+    note(y + 0, note_);
+    rungs2.push({ y, upd() { const kk = kOn(), qq = getQ(), l = ledsGet();
+      kc.set(kk); kc.w1.setAttribute('stroke', LIVE); kc.w2.setAttribute('stroke', kk ? LIVE : OFF);
+      q.set(qq); q.w1.setAttribute('stroke', kk ? LIVE : OFF); q.w2.setAttribute('stroke', kk && qq ? LIVE : OFF);
+      c.set(kk && qq && l.green, l.green, l.yellow); c.w1.setAttribute('stroke', kk && qq ? LIVE : OFF); c.w2.setAttribute('stroke', kk && qq && l.green ? '#2a5db0' : OFF); } });
+  }
+  outRung(184, 'V2S1 CIP', 'Q 224T2', () => plc.QC, () => co().cip, 'PL-V2S1: optional CIP on/off valve, one coil');
+  outRung(250, 'V1S1', 'Q 224T', () => plc.Q1, () => co().v1s1, 'PL-V1S1: safety coil 1 of the dump valve');
+  outRung(316, 'V1S2', 'Q 224T', () => plc.Q2, () => co().v1s2, 'PL-V1S2: safety coil 2, redundant channel');
+  // feedback rungs: +24 V -> FS contact -> PLC input
+  function fsRung(y, name, addr, get, txt) {
+    wire(LX, y, 85, y); const f = contact(140, y, name, false), i = plcBox(300, y, addr, 'FS feedback', false); wire(355, y, RX, y).setAttribute('stroke-dasharray', '3 4');
+    note(y, txt);
+    rungs2.push({ y, upd() { const on = get(); f.set(on, on ? '24 V = normal' : '0 V = actuated'); f.w1.setAttribute('stroke', LIVE); f.w2.setAttribute('stroke', on ? LIVE : OFF); i.set(on); i.w1.setAttribute('stroke', on ? LIVE : OFF); } });
+  }
+  fsRung(384, 'FS1 (S1)', 'I 301', () => P.fs1(), 'PL-FS1 prox. switch on the V1 pilot (1 = normal)');
+  fsRung(440, 'FS2 (S2)', 'I 302', () => P.fs2(), 'PL-FS2 prox. switch on the V2 pilot');
+  // reset lamp
+  { const y = 490; wire(LX, y, 245, y); const q = plcBox(300, y, 'Q 307', 'reset lamp', true), l = lamp(500, y, 'BLUE LAMP'); note(y, 'Reset lamp: blink = ready, solid = run, fast = fault');
+    rungs2.push({ y, upd() { const on = plc.LAMP; q.set(on); q.w1.setAttribute('stroke', LIVE); q.w2.setAttribute('stroke', on ? LIVE : OFF); l.set(on); l.w1.setAttribute('stroke', on ? LIVE : OFF); l.w2.setAttribute('stroke', on ? '#2a5db0' : OFF); } }); }
+  const updateLadder = () => rungs2.forEach(r => r.upd());
 
   /* ---------------- charts ---------------- */
   const cvT = $('cvTime'), cvF = $('cvFlow');
@@ -298,7 +387,7 @@
     updateXray(dtR);
     uiAcc += dtR; chartAcc += dtR;
     if (uiAcc > 0.1) {
-      uiAcc = 0; updatePLC();
+      uiAcc = 0; updatePLC(); updateLadder();
       const s = P.s;
       $('rP0').textContent = fmt(s.pF); $('rPa').textContent = fmt(s.pa); $('rP2').textContent = fmt(s.p2);
       $('rP2psi').textContent = '(' + fmt(s.p2 * 14.504, 0) + ' psi)'; $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rLeak').textContent = fmt(s.qLeak, 1); $('rStage').textContent = stageNames[s.stage];

@@ -52,7 +52,7 @@ button:hover { border-color: #46586a; } button:active { transform: translateY(1p
 #bEstop { background: #5a1212; border-color: #ef4444; } #bEstop.pressed { background: #ef4444; color: #fff; }
 .note { color: var(--mut); font-size: 12px; margin: 6px 0 0; }
 #mid { grid-area: mid; display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 0; overflow-y: auto; }
-#pneu-card, #charts { flex: none; } #pneu { width: 100%; height: auto; display: block; }
+#pneu-card, #ladder-card, #charts { flex: none; } #pneu { width: 100%; height: auto; display: block; }
 #plc { grid-area: plc; }
 #mid .twocol { grid-template-columns: minmax(0, 1fr); }
 #cvTime { height: 250px; } #cvFlow { height: 210px; }
@@ -88,6 +88,8 @@ table.io th { color: var(--mut); font-weight: 600; }
 .xrcap { background: #0b1016; color: var(--fg); padding: 4px 8px; font-size: 11.5px; display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: center; }
 .xrcap label { color: var(--mut); cursor: pointer; } .xrcap #xrState { color: #9cc9ff; font-weight: 600; }
 @media (max-width: 1100px) { .hud.xr { width: 62%; } }
+
+#elec { width: 100%; height: auto; display: block; border-radius: 4px; }
 
 </style>
 </head>
@@ -169,7 +171,7 @@ table.io th { color: var(--mut); font-weight: 600; }
   <section id="pneu-card" class="card">
     <h2>Pneumatic circuit &mdash; follows the simulation (line colour = pressure)</h2>
     <svg id="pneu" viewBox="0 0 1000 470" font-family="system-ui,Arial,sans-serif" font-size="11">
-      <rect x="0" y="0" width="1000" height="470" rx="8" fill="#0d1319"/>
+      <rect x="0" y="0" width="1000" height="470" rx="4" fill="#fbfcfd" stroke="#b9c0c8" stroke-width="2"/><rect x="8" y="8" width="984" height="454" fill="none" stroke="#d3d8de" stroke-width="1"/>
       <g id="pipes" fill="none" stroke-width="4" stroke-linecap="round">
         <path id="pp0" d="M20 370H110"/><path id="pp1" d="M170 370H322V350"/><path id="pCipOut" d="M330 290V260H400V370"/>
         <path id="pp2" d="M400 370H732V248"/>
@@ -177,16 +179,16 @@ table.io th { color: var(--mut); font-weight: 600; }
         <path id="pG" d="M732 107H774" stroke-width="2"/>
         <path id="pPil" d="M585 248V275" stroke-width="3"/>
       </g>
-      <path id="pFb" d="M732 107H474V213H490" fill="none" stroke="#9fb0c0" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <path id="pFb" d="M732 107H474V213H490" fill="none" stroke="#555" stroke-width="1.6" stroke-dasharray="5 4"/>
 
       <!-- upstream part: filter, CIP valve, distribution block 1 -->
       <g transform="translate(0,220)">
-        <text x="20" y="132" fill="#e6edf3" font-weight="700">P1 SUPPLY</text><text id="tP0" x="20" y="172" fill="#9fb0c0"></text>
-        <g stroke="#cfd8e0" stroke-width="2" fill="#0d1319"><path d="M110 150L140 120L170 150L140 180Z"/><path d="M140 125V175" stroke-dasharray="4 3" fill="none"/>
+        <text x="20" y="132" fill="#111" font-weight="700">P1 SUPPLY</text><text id="tP0" x="20" y="172" fill="#555"></text>
+        <g stroke="#1b1f24" stroke-width="2" fill="#ffffff"><path d="M110 150L140 120L170 150L140 180Z"/><path d="M140 125V175" stroke-dasharray="4 3" fill="none"/>
           <path d="M140 180V198" fill="none"/><path d="M132 198H148L140 208Z" fill="#1e88ff" stroke="#1e88ff"/></g>
-        <text x="108" y="106" fill="#9fb0c0">MS6 filter</text><text x="148" y="206" fill="#9fb0c0">drain</text>
-        <g id="gCip" stroke="#cfd8e0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <text x="196" y="40" fill="#e6edf3" font-weight="700" stroke="none">V2S1 &ndash; MS6 on/off valve (CIP)</text>
+        <text x="108" y="106" fill="#555">MS6 filter</text><text x="148" y="206" fill="#555">drain</text>
+        <g id="gCip" stroke="#1b1f24" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <text x="196" y="40" fill="#111" font-weight="700" stroke="none">V2S1 &ndash; MS6 on/off valve (CIP)</text>
           <!-- two position boxes: left = energised (1 to 2), right = spring return (2 to 3) -->
           <g id="cipL"><rect class="bx" x="262" y="70" width="50" height="60"/><path id="cL1" d="M272 130V76" stroke-width="2.5"/><path id="cL1h" d="M272 72l-5 11h10z" stroke="none"/>
             <path d="M300 130V118M292 118H308"/></g>
@@ -196,24 +198,24 @@ table.io th { color: var(--mut); font-weight: 600; }
           <path d="M362 100H368l4 -8 6 16 6 -16 6 16 6 -16 4 8H402" stroke-width="1.8"/>
           <!-- ports -->
           <path id="cP1" d="M322 130V150" stroke-width="3"/><path id="cP2" d="M330 70V40" stroke-width="3"/><path id="cipEx" d="M351 130V150" stroke-width="3"/>
-          <rect x="342" y="150" width="20" height="13" fill="#0d1319" stroke-width="1.5"/><path d="M347 152V161M352 152V161M357 152V161" stroke-width="1"/>
+          <rect x="342" y="150" width="20" height="13" fill="#ffffff" stroke-width="1.5"/><path d="M347 152V161M352 152V161M357 152V161" stroke-width="1"/>
           <!-- pilot solenoid V2S1 (coil 12) -->
           <rect x="196" y="100" width="66" height="30"/><path d="M204 126L218 104"/><path d="M228 104L252 115 228 126"/>
           <rect x="212" y="84" width="34" height="12"/><path d="M216 96V100M242 96V100"/>
-          <text x="196" y="80" fill="#e6edf3" font-weight="700" stroke="none">12</text>
+          <text x="196" y="80" fill="#111" font-weight="700" stroke="none">12</text>
           <circle id="svgCipG" cx="182" cy="108" r="5" class="ld"/><circle id="svgCipY" cx="182" cy="122" r="5" class="ld"/>
-          <text x="306" y="146" fill="#9fb0c0" stroke="none" font-size="12" text-anchor="end">1</text><text x="338" y="60" fill="#9fb0c0" stroke="none" font-size="12">2</text><text x="358" y="146" fill="#9fb0c0" stroke="none" font-size="12">3</text>
-          <text id="cipNF" x="196" y="196" fill="#ffc400" font-weight="700" stroke="none"></text>
+          <text x="306" y="146" fill="#555" stroke="none" font-size="12" text-anchor="end">1</text><text x="338" y="60" fill="#555" stroke="none" font-size="12">2</text><text x="358" y="146" fill="#555" stroke="none" font-size="12">3</text>
+          <text id="cipNF" x="196" y="196" fill="#b07d00" font-weight="700" stroke="none"></text>
         </g>
-        <circle cx="400" cy="150" r="4.5" fill="#cfd8e0"/>
-        <path d="M400 150H425" stroke="#cfd8e0" stroke-width="1.5"/>
-        <g><circle cx="440" cy="150" r="15" fill="#0d1319" stroke="#cfd8e0" stroke-width="1.5"/><text id="gaTxt" x="440" y="154" text-anchor="middle" fill="#e6edf3" font-size="10.5"></text></g>
-        <text x="372" y="172" fill="#9fb0c0">dist. block</text><text id="tPa" x="372" y="186" fill="#9fb0c0"></text>
+        <circle cx="400" cy="150" r="4.5" fill="#1b1f24"/>
+        <path d="M400 150H425" stroke="#1b1f24" stroke-width="1.5"/>
+        <g><circle cx="440" cy="150" r="15" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><text id="gaTxt" x="440" y="154" text-anchor="middle" fill="#111" font-size="10.5"></text></g>
+        <text x="372" y="172" fill="#555">dist. block</text><text id="tPa" x="372" y="186" fill="#555"></text>
       </g>
 
       <!-- MS6-SV-D soft-start / quick-exhaust valve (Festo circuit symbol), origin = (470,70) -->
-      <g transform="translate(470,70)" stroke="#cfd8e0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <text x="0" y="-12" fill="#e6edf3" font-weight="700" stroke="none">MS6-SV-D soft-start / quick exhaust (PLd)</text>
+      <g transform="translate(470,70)" stroke="#1b1f24" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <text x="0" y="-12" fill="#111" font-weight="700" stroke="none">MS6-SV-D soft-start / quick exhaust (PLd)</text>
         <!-- position boxes -->
         <g id="svB1"><rect class="bx" x="88" y="108" width="54" height="70"/>
           <path d="M100 108V122M92 122H108" /><path d="M130 178V164M122 164H138"/><path id="sB1a" d="M98 172L132 114" stroke-width="2.5"/><path id="sB1h" d="M132 114l-1 10 7 -4z" stroke="none"/></g>
@@ -225,16 +227,16 @@ table.io th { color: var(--mut); font-weight: 600; }
           <path id="sB4e" d="M262 108V135H292V176" stroke-width="2.5"/><path id="sB4h" d="M292 178l-5 -11h10z" stroke="none"/><path d="M262 178V164M254 164H270"/></g>
         <!-- ports -->
         <path id="pt2" d="M262 108V0" stroke-width="3"/><path id="pt1" d="M262 178V215" stroke-width="3"/><path id="pt3" d="M292 178V215" stroke-width="3"/>
-        <path d="M284 215h16l-8 10z" fill="#0d1319"/>
+        <path d="M284 215h16l-8 10z" fill="#ffffff"/>
         <!-- spring return -->
         <path d="M304 143H312l5 -9 8 18 8 -18 8 18 8 -18 5 9H346" stroke-width="1.8"/>
         <!-- soft-start flow control (variable throttle) in the pilot-fed line from port 2 -->
-        <circle cx="262" cy="37" r="4" fill="#cfd8e0" stroke="none"/>
-        <rect x="248" y="58" width="28" height="42" fill="#0d1319" stroke="none"/>
+        <circle cx="262" cy="37" r="4" fill="#1b1f24" stroke="none"/>
+        <rect x="248" y="58" width="28" height="42" fill="#ffffff" stroke="none"/>
         <path d="M262 37V108"/><path d="M255 56C261 68 261 90 255 102M269 56C263 68 263 90 269 102" stroke-width="1.8"/>
-        <path id="sThr" d="M246 98L278 60" stroke-width="2.2"/><path id="sThrH" d="M278 60l-9 3 5 6z" stroke="none" fill="#cfd8e0"/>
+        <path id="sThr" d="M246 98L278 60" stroke-width="2.2"/><path id="sThrH" d="M278 60l-9 3 5 6z" stroke="none" fill="#1b1f24"/>
         <!-- pressure switch with FS contact -->
-        <path d="M262 37H304"/><rect x="304" y="20" width="50" height="50" /><path d="M304 70L354 20"/><text x="316" y="62" font-size="16" fill="#cfd8e0" stroke="none">G</text>
+        <path d="M262 37H304"/><rect x="304" y="20" width="50" height="50" /><path d="M304 70L354 20"/><text x="316" y="62" font-size="16" fill="#1b1f24" stroke="none">G</text>
         <path d="M322 30L340 22" stroke-width="1.8"/><path d="M352 26l-6 0M344 26l-4 0" stroke-width="1.5"/>
         <!-- pilot operator -->
         <path d="M20 128V158L48 143Z"/><path d="M48 143H88"/>
@@ -242,40 +244,44 @@ table.io th { color: var(--mut); font-weight: 600; }
         <!-- solenoid pair V1S1 / V1S2 -->
         <g><rect x="50" y="205" width="82" height="32"/><path d="M92 205V237"/><path d="M60 233L76 209"/><path d="M92 209L124 221 92 233"/></g>
         <g><rect x="50" y="237" width="82" height="32"/><path d="M92 237V269"/><path d="M60 265L76 241"/><path d="M92 241L124 253 92 265"/></g>
-        <text x="258" y="-6" fill="#9fb0c0" stroke="none" font-size="12">2</text>
-        <text x="270" y="226" fill="#9fb0c0" stroke="none" font-size="12" transform="translate(-14,0)">1</text><text x="298" y="232" fill="#9fb0c0" stroke="none" font-size="12" transform="translate(-4,-6)">3</text>
+        <text x="258" y="-6" fill="#555" stroke="none" font-size="12">2</text>
+        <text x="270" y="226" fill="#555" stroke="none" font-size="12" transform="translate(-14,0)">1</text><text x="298" y="232" fill="#555" stroke="none" font-size="12" transform="translate(-4,-6)">3</text>
       </g>
-      <text id="svPos" x="474" y="262" fill="#e6edf3" font-weight="700" font-size="11">&nbsp;</text>
-      <text x="474" y="84" fill="#d9a8ff" font-weight="700">flow control screw for soft-start</text><text id="tN" x="474" y="98" fill="#d9a8ff"></text>
-      <text x="486" y="204" fill="#9fb0c0" font-size="10">pilot (air-actuated)</text>
-      <text x="745" y="86" fill="#9fb0c0" font-size="10">FS1/FS2</text>
-      <text x="480" y="162" fill="#9fb0c0" font-size="10" transform="translate(-6,2)">feedback @ ~50 % p1</text>
+      <text id="svPos" x="474" y="262" fill="#111" font-weight="700" font-size="11">&nbsp;</text>
+      <text x="474" y="84" fill="#7a3aa8" font-weight="700">flow control screw for soft-start</text><text id="tN" x="474" y="98" fill="#7a3aa8"></text>
+      <text x="486" y="204" fill="#555" font-size="10">pilot (air-actuated)</text>
+      <text x="745" y="86" fill="#555" font-size="10">FS1/FS2</text>
+      <text x="480" y="162" fill="#555" font-size="10" transform="translate(-6,2)">feedback @ ~50 % p1</text>
       <!-- LEDs, labels and FS contacts for the solenoids -->
-      <text x="458" y="295" fill="#e6edf3" font-weight="700">V1S1</text>
-      <text x="458" y="327" fill="#e6edf3" font-weight="700">V1S2</text>
-      <text x="446" y="315" fill="#9fb0c0" font-size="10" text-anchor="end"></text>
+      <text x="458" y="295" fill="#111" font-weight="700">V1S1</text>
+      <text x="458" y="327" fill="#111" font-weight="700">V1S2</text>
+      <text x="446" y="315" fill="#555" font-size="10" text-anchor="end"></text>
       <circle id="svgV1G" cx="500" cy="285" r="4.5" class="ld"/><circle id="svgV1Y" cx="500" cy="299" r="4.5" class="ld"/>
       <circle id="svgV2G" cx="500" cy="317" r="4.5" class="ld"/><circle id="svgV2Y" cx="500" cy="331" r="4.5" class="ld"/>
-      <path d="M602 291H620M602 323H620" stroke="#6c7a89" stroke-dasharray="2 3"/>
-      <rect x="620" y="277" width="44" height="28" fill="#0d1319" stroke="#cfd8e0" stroke-width="1.5"/><path id="fs1sw" d="M628 291H640" stroke="#e6edf3" stroke-width="2"/><circle id="svgFS1" cx="654" cy="284" r="4.5" class="ld"/>
-      <rect x="620" y="309" width="44" height="28" fill="#0d1319" stroke="#cfd8e0" stroke-width="1.5"/><path id="fs2sw" d="M628 323H640" stroke="#e6edf3" stroke-width="2"/><circle id="svgFS2" cx="654" cy="316" r="4.5" class="ld"/>
-      <text x="670" y="295" fill="#e6edf3" font-weight="700">FS1 <tspan id="tFS1" fill="#9fb0c0"></tspan></text><text x="670" y="327" fill="#e6edf3" font-weight="700">FS2 <tspan id="tFS2" fill="#9fb0c0"></tspan></text>
-      <text id="tP2" x="740" y="150" fill="#9fb0c0"></text>
-      <circle cx="800" cy="56" r="4.5" fill="#cfd8e0"/>
-      <g><circle cx="800" cy="26" r="15" fill="#0d1319" stroke="#cfd8e0" stroke-width="1.5"/><text id="gbTxt" x="800" y="30" text-anchor="middle" fill="#e6edf3" font-size="10.5"></text><path d="M800 41V52" stroke="#cfd8e0" stroke-width="1.5"/></g>
-      <text x="740" y="46" fill="#9fb0c0">dist. block</text>
-      <g><rect x="860" y="20" width="110" height="84" rx="12" fill="#0d1319" stroke="#cfd8e0" stroke-width="2"/><rect id="tankFill" x="863" y="101" width="104" height="0" rx="9"/>
-        <text x="915" y="14" text-anchor="middle" fill="#9fb0c0">machine volume</text><text id="tV" x="915" y="68" text-anchor="middle" fill="#e6edf3" font-weight="700" font-size="14"></text></g>
+      <path d="M602 291H620M602 323H620" stroke="#999" stroke-dasharray="2 3"/>
+      <rect x="620" y="277" width="44" height="28" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><path id="fs1sw" d="M628 291H640" stroke="#111" stroke-width="2"/><circle id="svgFS1" cx="654" cy="284" r="4.5" class="ld"/>
+      <rect x="620" y="309" width="44" height="28" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><path id="fs2sw" d="M628 323H640" stroke="#111" stroke-width="2"/><circle id="svgFS2" cx="654" cy="316" r="4.5" class="ld"/>
+      <text x="670" y="295" fill="#111" font-weight="700">FS1 <tspan id="tFS1" fill="#555"></tspan></text><text x="670" y="327" fill="#111" font-weight="700">FS2 <tspan id="tFS2" fill="#555"></tspan></text>
+      <text id="tP2" x="740" y="150" fill="#555"></text>
+      <circle cx="800" cy="56" r="4.5" fill="#1b1f24"/>
+      <g><circle cx="800" cy="26" r="15" fill="#ffffff" stroke="#1b1f24" stroke-width="1.5"/><text id="gbTxt" x="800" y="30" text-anchor="middle" fill="#111" font-size="10.5"></text><path d="M800 41V52" stroke="#1b1f24" stroke-width="1.5"/></g>
+      <text x="740" y="46" fill="#555">dist. block</text>
+      <g><rect x="860" y="20" width="110" height="84" rx="12" fill="#ffffff" stroke="#1b1f24" stroke-width="2"/><rect id="tankFill" x="863" y="101" width="104" height="0" rx="9"/>
+        <text x="915" y="14" text-anchor="middle" fill="#555">machine volume</text><text id="tV" x="915" y="68" text-anchor="middle" fill="#111" font-weight="700" font-size="14"></text></g>
       <path id="pLeak" d="M915 104V150" fill="none" stroke-width="3.5" stroke-linecap="round"/>
-      <g stroke="#cfd8e0" stroke-width="2" fill="#0d1319"><path d="M903 150L927 168V150L903 168Z"/><path d="M915 159V148"/><path d="M909 148H927" stroke-width="3"/></g>
-      <path id="pLeak2" d="M915 168V196" fill="none" stroke-width="3.5" stroke-linecap="round"/><path d="M908 196h14l-7 9z" fill="#cfd8e0"/>
-      <g text-anchor="end"><text x="897" y="150" fill="#e6edf3" font-weight="700">LEAK</text><text x="897" y="163" fill="#9fb0c0">manual valve</text><text id="tLeakPct" x="897" y="176" fill="#9fb0c0"></text></g>
-      <text id="tLeak" x="915" y="224" fill="#e6edf3" font-weight="700" font-size="13" text-anchor="middle"></text>
-      <text id="tFlow" x="745" y="170" fill="#9fb0c0"></text>
-      <text x="20" y="462" fill="#7d8b99">Festo circuit symbol of the MS6-SV-D; V1S1 + V1S2 pilots both required; FS1/FS2 monitor them; active position is highlighted.</text>
+      <g stroke="#1b1f24" stroke-width="2" fill="#ffffff"><path d="M903 150L927 168V150L903 168Z"/><path d="M915 159V148"/><path d="M909 148H927" stroke-width="3"/></g>
+      <path id="pLeak2" d="M915 168V196" fill="none" stroke-width="3.5" stroke-linecap="round"/><path d="M908 196h14l-7 9z" fill="#1b1f24"/>
+      <g text-anchor="end"><text x="897" y="150" fill="#111" font-weight="700">LEAK</text><text x="897" y="163" fill="#555">manual valve</text><text id="tLeakPct" x="897" y="176" fill="#555"></text></g>
+      <text id="tLeak" x="915" y="224" fill="#111" font-weight="700" font-size="13" text-anchor="middle"></text>
+      <text id="tFlow" x="745" y="170" fill="#555"></text>
+      <text x="20" y="462" fill="#666">Festo circuit symbol of the MS6-SV-D; V1S1 + V1S2 pilots both required; FS1/FS2 monitor them; active position is highlighted.</text>
     </svg>
   </section>
 
+  <section id="ladder-card" class="card">
+    <h2>Electro-pneumatic wiring (24 V) &mdash; follows the PLC and safety relay</h2>
+    <svg id="elec" viewBox="0 0 1000 510" font-family="system-ui,Arial,sans-serif" font-size="11"></svg>
+  </section>
   <section id="charts" class="card">
     <h2>Switching characteristics (like Fig. 4) &amp; filling-flow curves (Fig. 10)</h2>
     <div class="twocol">
@@ -1057,7 +1063,7 @@ const View3D = (() => {
   window.festoSim = P; // handy for experiments from the browser console
   const plc = P.plc.m;
   const fmt = (v, d = 1) => v.toFixed(d);
-  const pcol = p => p < 0.05 ? '#59636e' : 'hsl(' + Math.max(0, 215 - 18 * p) + ',90%,55%)';
+  const pcol = p => p < 0.05 ? '#9aa3ad' : 'hsl(212,88%,' + Math.max(34, 62 - 3.2 * p) + '%)';   // blue = compressed air, darker = higher pressure
 
   /* ---------------- controls ---------------- */
   const bind = (id, fn, out) => {
@@ -1182,7 +1188,7 @@ const View3D = (() => {
 
   /* ---------------- pneumatic diagram ---------------- */
   const S = id => $(id);
-  const ledFill = (id, on, col) => { const e = S(id); e.setAttribute('fill', on ? col : '#1b242d'); e.setAttribute('stroke', on ? '#fff' : '#455465'); e.setAttribute('stroke-width', on ? 1.5 : 1); };
+  const ledFill = (id, on, col) => { const e = S(id); e.setAttribute('fill', on ? col : '#e1e5ea'); e.setAttribute('stroke', on ? '#333' : '#8a929b'); e.setAttribute('stroke-width', on ? 1.5 : 1); };
   const show = (id, on) => S(id).setAttribute('display', on ? 'inline' : 'none');
   let dash = 0;
   function updatePneu(dt) {
@@ -1197,7 +1203,7 @@ const View3D = (() => {
     const open = !c.cipFitted || co.cip.yellow;
     for (const [id, on] of [['cipL', open], ['cipR', !open]]) {
       const g = S(id), r = g.querySelector('.bx');
-      r.setAttribute('stroke', on ? '#7cf2a3' : '#6c7a89'); r.setAttribute('stroke-width', on ? 3.5 : 1.5); r.setAttribute('fill', on ? 'rgba(60,200,130,.16)' : 'none'); g.setAttribute('opacity', on ? 1 : 0.55);
+      r.setAttribute('stroke', on ? '#0a9d5a' : '#8a929b'); r.setAttribute('stroke-width', on ? 3.5 : 1.5); r.setAttribute('fill', on ? 'rgba(10,157,90,.14)' : 'none'); g.setAttribute('opacity', on ? 1 : 0.55);
     }
     stroke('cP1', s.pF, false); stroke('cP2', s.pa, s.q > 1); stroke('pCipOut', s.pa, s.q > 1);
     S('cL1').setAttribute('stroke', pcol(s.pF)); S('cL1h').setAttribute('fill', pcol(s.pF));
@@ -1211,8 +1217,8 @@ const View3D = (() => {
     const active = s.stage === 1 ? 1 : s.stage === 2 ? 2 : energised ? 3 : 4;
     for (let i = 1; i <= 4; i++) {
       const r = S('svB' + i).querySelector('.bx'), on = i === active;
-      r.setAttribute('stroke', on ? '#7cf2a3' : '#6c7a89'); r.setAttribute('stroke-width', on ? 3.5 : 1.5);
-      r.setAttribute('fill', on ? 'rgba(60,200,130,.16)' : 'none');
+      r.setAttribute('stroke', on ? '#0a9d5a' : '#8a929b'); r.setAttribute('stroke-width', on ? 3.5 : 1.5);
+      r.setAttribute('fill', on ? 'rgba(10,157,90,.14)' : 'none');
       S('svB' + i).setAttribute('opacity', on ? 1 : 0.55);
     }
     S('sB1a').setAttribute('stroke', pcol(s.pa)); S('sB1h').setAttribute('fill', pcol(s.pa));
@@ -1220,9 +1226,9 @@ const View3D = (() => {
     S('sB4e').setAttribute('stroke', pcol(s.p2)); S('sB4h').setAttribute('fill', pcol(s.p2));
     stroke('pt1', s.pa, s.q > 1); stroke('pt2', s.p2, s.q > 1);
     stroke('pt3', s.stage === 0 ? s.p2 : 0, s.qEx > 1);
-    S('sThr').setAttribute('stroke', s.stage === 1 ? '#d9a8ff' : '#cfd8e0'); S('sThrH').setAttribute('fill', s.stage === 1 ? '#d9a8ff' : '#cfd8e0');
+    S('sThr').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#1b1f24'); S('sThrH').setAttribute('fill', s.stage === 1 ? '#7a3aa8' : '#1b1f24');
     S('svPos').textContent = ['EXHAUST (spring return)', 'SOFT-START (throttled)', 'FULL FLOW'][s.stage] + (s.stage === 0 && energised ? ' - pilots shifting' : '');
-    S('svPos').setAttribute('fill', ['#ef8a8a', '#d9a8ff', '#7cf2a3'][s.stage]);
+    S('svPos').setAttribute('fill', ['#c0392b', '#7a3aa8', '#0a8a4f'][s.stage]);
     ledFill('svgV1G', co.v1s1.green, '#22ff77'); ledFill('svgV1Y', co.v1s1.yellow, '#ffc400');
     ledFill('svgV2G', co.v1s2.green, '#22ff77'); ledFill('svgV2Y', co.v1s2.yellow, '#ffc400');
     const f1 = P.fs1(), f2 = P.fs2();
@@ -1241,6 +1247,95 @@ const View3D = (() => {
     const h = 84 * Math.min(1, s.p2 / 10), tf = S('tankFill');
     tf.setAttribute('y', 102 - h); tf.setAttribute('height', Math.max(0, h - 3)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.5);
   }
+
+  /* ---------------- electro-pneumatic wiring ladder (IEC-style symbols, live) ---------------- */
+  const NS = 'http://www.w3.org/2000/svg', E = $('elec');
+  const mk = (tag, attrs, parent, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; (parent || E).appendChild(e); return e; };
+  const INK = '#1b1f24', OFF = '#8a929b', LIVE = '#d6402b';
+  const ladder = { wires: [], items: [] };
+  const LX = 40, RX = 960;
+  mk('rect', { x: 0, y: 0, width: 1000, height: 510, rx: 4, fill: '#fbfcfd', stroke: '#b9c0c8', 'stroke-width': 2 });
+  mk('path', { d: 'M' + LX + ' 40V500', stroke: INK, 'stroke-width': 3, fill: 'none' }); mk('path', { d: 'M' + RX + ' 40V500', stroke: INK, 'stroke-width': 3, fill: 'none' });
+  mk('text', { x: LX, y: 30, 'text-anchor': 'middle', 'font-weight': 700, fill: LIVE }, null, '+24 V'); mk('text', { x: RX, y: 30, 'text-anchor': 'middle', 'font-weight': 700, fill: '#2a5db0' }, null, '0 V');
+  const wire = (x1, y1, x2, y2) => { const w = mk('path', { d: 'M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2, fill: 'none', 'stroke-width': 2.2, 'stroke-linecap': 'round', stroke: OFF }); return w; };
+  // a series element between xa and xb on rung y; returns {wires:[before, after], set(state)}
+  function contact(x, y, name, nc, len = 105) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 16, y), w2 = wire(x + 16, y, x + len, y);
+    mk('circle', { cx: x - 16, cy: y, r: 2.6, fill: INK }, g); mk('circle', { cx: x + 16, cy: y, r: 2.6, fill: INK }, g);
+    const blade = mk('path', { d: '', stroke: INK, 'stroke-width': 2.2, fill: 'none' }, g), bar = mk('path', { d: nc ? 'M' + (x + 16) + ' ' + (y - 10) + 'V' + y : '', stroke: INK, 'stroke-width': 2, fill: 'none' }, g);
+    mk('text', { x, y: y - 22, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700 }, g, name);
+    const st = mk('text', { x, y: y + 24, 'text-anchor': 'middle', fill: '#666', 'font-size': 10 }, g, '');
+    return { w1, w2, set(closed, txt) {
+      blade.setAttribute('d', closed ? 'M' + (x - 16) + ' ' + y + 'H' + (x + 16) : 'M' + (x - 16) + ' ' + y + 'L' + (x + 13) + ' ' + (y - 14));
+      st.textContent = txt || (closed ? 'closed' : 'open'); } };
+  }
+  function plcBox(x, y, addr, tag, isOut, len = 145) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 38, y), w2 = wire(x + 38, y, x + len, y);
+    const r = mk('rect', { x: x - 38, y: y - 15, width: 76, height: 30, fill: '#fff', stroke: INK, 'stroke-width': 1.8 }, g);
+    mk('text', { x, y: y - 2, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700, 'font-size': 11 }, g, addr);
+    mk('text', { x, y: y + 10, 'text-anchor': 'middle', fill: '#555', 'font-size': 9.5 }, g, tag);
+    mk('text', { x, y: y - 22, 'text-anchor': 'middle', fill: '#555', 'font-size': 10 }, g, isOut ? 'PLC output' : 'PLC input');
+    return { w1, w2, set(on) { r.setAttribute('fill', on ? '#d7f5e3' : '#fff'); r.setAttribute('stroke', on ? '#0a9d5a' : INK); } };
+  }
+  function coil(x, y, name, o = {}) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 20, y), w2 = wire(x + 20, y, RX, y);
+    const r = mk('rect', { x: x - 20, y: y - 14, width: 40, height: 28, fill: '#fff', stroke: INK, 'stroke-width': 1.8 }, g);
+    mk('text', { x, y: y + 4, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700, 'font-size': 11 }, g, name);
+    let gl, yl;
+    if (o.leds) { gl = mk('circle', { cx: x + 34, cy: y - 7, r: 5, stroke: '#333', 'stroke-width': 1 }, g); yl = mk('circle', { cx: x + 34, cy: y + 8, r: 5, stroke: '#333', 'stroke-width': 1 }, g);
+      mk('text', { x: x + 44, y: y - 3, fill: '#555', 'font-size': 9 }, g, 'green 24 V'); mk('text', { x: x + 44, y: y + 12, fill: '#555', 'font-size': 9 }, g, 'yellow coil'); }
+    return { w1, w2, set(on, green, yellow) { r.setAttribute('fill', on ? '#fff3b0' : '#fff'); r.setAttribute('stroke', on ? '#b07d00' : INK);
+      if (gl) { gl.setAttribute('fill', green ? '#22cc66' : '#e1e5ea'); yl.setAttribute('fill', yellow ? '#f2b705' : '#e1e5ea'); } } };
+  }
+  function lamp(x, y, name) {
+    const g = mk('g'), w1 = wire(x - 55, y, x - 16, y), w2 = wire(x + 16, y, RX, y);
+    const c = mk('circle', { cx: x, cy: y, r: 16, fill: '#fff', stroke: INK, 'stroke-width': 1.8 }, g);
+    mk('path', { d: 'M' + (x - 11) + ' ' + (y - 11) + 'L' + (x + 11) + ' ' + (y + 11) + 'M' + (x + 11) + ' ' + (y - 11) + 'L' + (x - 11) + ' ' + (y + 11), stroke: INK, 'stroke-width': 1.5 }, g);
+    mk('text', { x, y: y - 24, 'text-anchor': 'middle', fill: '#111', 'font-weight': 700 }, g, name);
+    return { w1, w2, set(on) { c.setAttribute('fill', on ? '#8fc4ff' : '#fff'); } };
+  }
+  const note = (y, t) => mk('text', { x: 580, y: y - 10, fill: '#555', 'font-size': 11 }, null, t);
+  const co = () => P.coils();
+  const kOn = () => P.s.kSafe, safeOn = () => !P.ctl.estop;
+  const rungs2 = [];
+  // R1: safety relay K1: E-stop (NC) in series with Control Reset (NO) parallel K1 seal-in contact
+  { const y = 70; wire(LX, y, 85, y);
+    const es = contact(140, y, 'E-STOP S0', true, 200), rs = contact(320, y, 'CONTROL RESET S1', false, 375), sl = contact(320, y + 48, 'K1 seal-in', false, 375), k = coil(500, y, 'K1');
+    wire(200, y, 200, y + 48); wire(200, y + 48, 265, y + 48); wire(375, y, 440, y); wire(375, y + 48, 440, y + 48); wire(440, y, 440, y + 48); wire(440, y, 445, y);
+    note(y, 'Safety relay K1 (PLd): E-stop drops it, Reset re-latches');
+    rungs2.push({ y, upd() {
+      const p0 = true, eC = safeOn(), rC = P.ctl.reset, sC = kOn();
+      es.set(eC, eC ? 'closed' : 'PRESSED'); rs.set(rC, rC ? 'pressed' : 'open'); sl.set(sC);
+      const live = p0 && eC; const par = live && (rC || sC);
+      es.w1.setAttribute('stroke', p0 ? LIVE : OFF); es.w2.setAttribute('stroke', live ? LIVE : OFF);
+      rs.w1.setAttribute('stroke', live ? LIVE : OFF); rs.w2.setAttribute('stroke', live && rC ? LIVE : OFF); sl.w1.setAttribute('stroke', live ? LIVE : OFF); sl.w2.setAttribute('stroke', live && sC ? LIVE : OFF);
+      k.w1.setAttribute('stroke', par ? LIVE : OFF); k.w2.setAttribute('stroke', par ? '#2a5db0' : OFF); k.set(sC);
+    } }); }
+  // generic output rung: K1 contact -> PLC output -> coil
+  function outRung(y, tag, addr, getQ, ledsGet, note_) {
+    wire(LX, y, 85, y);
+    const kc = contact(140, y, 'K1 (24 V good)', false), q = plcBox(300, y, addr, tag, true), c = coil(500, y, tag.split(' ')[0], { leds: true });
+    note(y + 0, note_);
+    rungs2.push({ y, upd() { const kk = kOn(), qq = getQ(), l = ledsGet();
+      kc.set(kk); kc.w1.setAttribute('stroke', LIVE); kc.w2.setAttribute('stroke', kk ? LIVE : OFF);
+      q.set(qq); q.w1.setAttribute('stroke', kk ? LIVE : OFF); q.w2.setAttribute('stroke', kk && qq ? LIVE : OFF);
+      c.set(kk && qq && l.green, l.green, l.yellow); c.w1.setAttribute('stroke', kk && qq ? LIVE : OFF); c.w2.setAttribute('stroke', kk && qq && l.green ? '#2a5db0' : OFF); } });
+  }
+  outRung(184, 'V2S1 CIP', 'Q 224T2', () => plc.QC, () => co().cip, 'PL-V2S1: optional CIP on/off valve, one coil');
+  outRung(250, 'V1S1', 'Q 224T', () => plc.Q1, () => co().v1s1, 'PL-V1S1: safety coil 1 of the dump valve');
+  outRung(316, 'V1S2', 'Q 224T', () => plc.Q2, () => co().v1s2, 'PL-V1S2: safety coil 2, redundant channel');
+  // feedback rungs: +24 V -> FS contact -> PLC input
+  function fsRung(y, name, addr, get, txt) {
+    wire(LX, y, 85, y); const f = contact(140, y, name, false), i = plcBox(300, y, addr, 'FS feedback', false); wire(355, y, RX, y).setAttribute('stroke-dasharray', '3 4');
+    note(y, txt);
+    rungs2.push({ y, upd() { const on = get(); f.set(on, on ? '24 V = normal' : '0 V = actuated'); f.w1.setAttribute('stroke', LIVE); f.w2.setAttribute('stroke', on ? LIVE : OFF); i.set(on); i.w1.setAttribute('stroke', on ? LIVE : OFF); } });
+  }
+  fsRung(384, 'FS1 (S1)', 'I 301', () => P.fs1(), 'PL-FS1 prox. switch on the V1 pilot (1 = normal)');
+  fsRung(440, 'FS2 (S2)', 'I 302', () => P.fs2(), 'PL-FS2 prox. switch on the V2 pilot');
+  // reset lamp
+  { const y = 490; wire(LX, y, 245, y); const q = plcBox(300, y, 'Q 307', 'reset lamp', true), l = lamp(500, y, 'BLUE LAMP'); note(y, 'Reset lamp: blink = ready, solid = run, fast = fault');
+    rungs2.push({ y, upd() { const on = plc.LAMP; q.set(on); q.w1.setAttribute('stroke', LIVE); q.w2.setAttribute('stroke', on ? LIVE : OFF); l.set(on); l.w1.setAttribute('stroke', on ? LIVE : OFF); l.w2.setAttribute('stroke', on ? '#2a5db0' : OFF); } }); }
+  const updateLadder = () => rungs2.forEach(r => r.upd());
 
   /* ---------------- charts ---------------- */
   const cvT = $('cvTime'), cvF = $('cvFlow');
@@ -1350,7 +1445,7 @@ const View3D = (() => {
     updateXray(dtR);
     uiAcc += dtR; chartAcc += dtR;
     if (uiAcc > 0.1) {
-      uiAcc = 0; updatePLC();
+      uiAcc = 0; updatePLC(); updateLadder();
       const s = P.s;
       $('rP0').textContent = fmt(s.pF); $('rPa').textContent = fmt(s.pa); $('rP2').textContent = fmt(s.p2);
       $('rP2psi').textContent = '(' + fmt(s.p2 * 14.504, 0) + ' psi)'; $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rLeak').textContent = fmt(s.qLeak, 1); $('rStage').textContent = stageNames[s.stage];
