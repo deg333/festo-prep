@@ -165,7 +165,7 @@ const SIM = (() => {
     // coil / connector state as seen by the LEDs
     P.coils = () => {
       const m = plc.m, s = P.s;
-      const mk = (q, open) => ({ green: s.kSafe && !open, yellow: q && s.kSafe && !open });
+      const mk = (q, open) => ({ green: !P.ctl.estop && !open, yellow: q && s.kSafe && !open });   // green = 24 V present (E-stop released), yellow = coil driven
       return {
         cip: P.cfg.cipFitted ? mk(m.QC, false) : { green: false, yellow: false },
         v1s1: mk(m.Q1, P.faults.v1s1Open),
