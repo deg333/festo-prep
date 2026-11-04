@@ -15,7 +15,7 @@ const View3D = (() => {
   const rim = new THREE.DirectionalLight(0x8fb4ff, 0.8); rim.position.set(-40, 20, -50); scene.add(rim);
 
   const root = new THREE.Group(); scene.add(root);
-  const FLOOR_Y = -33;
+  const FLOOR_Y = -45;
   const grid = new THREE.GridHelper(220, 44, 0x2b3642, 0x1b232c); grid.position.set(30, FLOOR_Y, 0); scene.add(grid);
 
   /* ---------- helpers ---------- */
@@ -145,7 +145,7 @@ const View3D = (() => {
   role('white', [0, 7, 8]); role('ee', [3]); role('sv', [9]);
   role('dark', [2, 5, 10, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 17, 18, 44, 45, 11, 12, 6, 13, 15, 40, 41, 42, 43]);
   role('black', [14, 16, 35, 36, 37, 38, 39]);
-  role('silver', [20, 21, 34, 4, 46, 47]); role('white2', [19]); role('brass', [1]);
+  role('silver', [34, 4]); role('white2', [19, 20, 21]); role('brass', [1]); role('sensor', [46, 47]);
   const MATS = {
     white: bodyMat(0xe6eaec, { roughness: 0.55 }), white2: bodyMat(0xdfe3e6, { roughness: 0.5 }),
     dark: bodyMat(0x2b2e33, { roughness: 0.5 }), black: bodyMat(0x15171a, { roughness: 0.45 }),
@@ -158,11 +158,12 @@ const View3D = (() => {
     for (let i = 0; i < n; i += 3) {
       a.fromBufferAttribute(pos, i); b.fromBufferAttribute(pos, i + 1); c.fromBufferAttribute(pos, i + 2);
       nm.subVectors(c, b).cross(a.clone().sub(b)).normalize();
-      const y = (a.y + b.y + c.y) / 3;
+      const y = (a.y + b.y + c.y) / 3, span = Math.max(a.y, b.y, c.y) - Math.min(a.y, b.y, c.y);
       let k = [0.9, 0.92, 0.93];
-      if (kind === 'ee') { if (y > 6.2) k = [0.08, 0.09, 0.1]; }
+      if (kind === 'sensor') k = y > -6.0 ? [0.1, 0.11, 0.12] : y < -12.2 ? [0.1, 0.11, 0.12] : (y > -8.6 && span < 0.8) ? [0.96, 0.74, 0.08] : [0.78, 0.8, 0.82];
+      else if (kind === 'ee') { if (y > 6.2) k = [0.08, 0.09, 0.1]; }
       else if (y > 4.6) k = [0.08, 0.09, 0.1];
-      else if (nm.z > 0.9 && (a.z + b.z + c.z) / 3 > 6.3 && y < 3) k = [1, 0.9, 0];   // raised label panel on the front
+      else if ((a.z + b.z + c.z) / 3 > 4.55 && y < -6.7 && y > -19.2) k = [1, 0.9, 0];   // raised label panel on the front
       for (let j = 0; j < 3; j++) { col[(i + j) * 3] = k[0]; col[(i + j) * 3 + 1] = k[1]; col[(i + j) * 3 + 2] = k[2]; }
     }
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); geo.computeVertexNormals();
@@ -180,26 +181,39 @@ const View3D = (() => {
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setIndex(new THREE.BufferAttribute(idx, 1)); geo.computeVertexNormals();
       const r = ROLE[m.i] || 'white';
-      const painted = r === 'ee' || r === 'sv';
+      const painted = r === 'ee' || r === 'sv' || r === 'sensor';
       const mesh = new THREE.Mesh(painted ? paintFaces(geo, r) : geo, painted ? MATS.vc : MATS[r]);
       partMeshes[m.i] = mesh; root.add(mesh);
     }
   })();
 
   // anchors measured from the CAD model (scene units)
+  // colour details seen on the real unit: yellow label across the lower front of the safety dump, blue bowl latch + window on the filter
+  const flat = (w, h, color, x, y, z) => add(new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ color, roughness: 0.6 })), x, y, z, root);
+  flat(8.6, 12.3, 0xffe600, 22.5, -12.85, 4.53);
+  box(2.0, 2.8, 0.9, MATS.dark.clone ? new THREE.MeshStandardMaterial({ color: 0x1e88ff, roughness: 0.5 }) : MATS.dark, 2.7, -5.8, 3.1);
+  flat(2.5, 6.9, 0xe9ecee, -0.65, -11.0, 4.06);
+  const frame = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(2.5, 6.9)), new THREE.LineBasicMaterial({ color: 0x2b2e33 })); frame.position.set(-0.65, -11.0, 4.07); root.add(frame);
+
   const X_FILTER = 0, X_CIP = 9.0, X_D1 = 15.75, X_SV = 22.5, X_D2 = 29.25, X_PORT_IN = -8.3, X_PORT_OUT = 35.3;
   const cx = X_CIP, sx = X_SV;
   const hoseM = new THREE.MeshStandardMaterial({ color: 0x2c5fa8, transparent: true, opacity: 0.55, roughness: 0.3 });
   cyl(1.2, 14, hoseM, X_PORT_IN - 7, AX, 0, 'x', root, 20);               // supply hose
   bore(X_PORT_IN - 14, X_CIP, 'F'); bore(X_CIP, X_SV, 'A'); bore(X_SV, X_PORT_OUT, 'P2');
-  const filterLabel = label('MS6 FILTER', { bg: '#394b5c', w: 300, fs: 28 }); filterLabel.position.set(X_FILTER, 14, 0); root.add(filterLabel);
+  const nameLabels = [];   // grey name tags sit below the air-prep unit, with a thin leader up to each part
+  function nameTag(text, x, y, topY, o) {
+    const l = label(text, Object.assign({ bg: '#394b5c', w: 260, fs: 26 }, o)); l.position.set(x, y, 8); root.add(l);
+    const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, y + 1.2, 8), new THREE.Vector3(x, topY, 8)]), new THREE.LineBasicMaterial({ color: 0x6c7a89, depthTest: false, transparent: true, opacity: 0.7 }));
+    ln.renderOrder = 8; root.add(ln); return l;
+  }
+  nameTag('MS6 FILTER', X_FILTER, -37, -22.5, { w: 300, fs: 28 });
   const cipLabel = label('CIP   V2S1', { w: 300, fs: 30 }); cipLabel.position.set(X_CIP, 26, 0); root.add(cipLabel);
   const cipOpt = label('(optional)', { bg: '#555f6a', w: 220, h: 48, fs: 24 }); cipOpt.position.set(X_CIP, 22.2, 0); root.add(cipOpt);
-  const d1Label = label('DIST. BLOCK', { bg: '#394b5c', w: 260, fs: 26 }); d1Label.position.set(X_D1, 12, 0); root.add(d1Label);
-  const d2Label = label('DIST. BLOCK', { bg: '#394b5c', w: 260, fs: 26 }); d2Label.position.set(X_D2, 20, 0); root.add(d2Label);
+  nameTag('DIST. BLOCK', X_D1, -41, -19);
+  nameTag('DIST. BLOCK', X_D2, -41, -8);
   const svL1 = label('MAIN   V1S1', { w: 250, h: 52, fs: 26, scale: 0.045 }); svL1.position.set(X_SV - 2.2, 26, 0); root.add(svL1);
   const svL2 = label('V1S2', { w: 130, h: 52, fs: 26, scale: 0.045 }); svL2.position.set(X_SV + 3.6, 26, 0); root.add(svL2);
-  const svName = label('MS6-SV-D  SAFETY DUMP (PLd)', { bg: '#394b5c', w: 430, h: 52, fs: 24, scale: 0.045 }); svName.position.set(X_SV, 31, 0); root.add(svName);
+  nameTag('MS6-SV-D  SAFETY DUMP (PLd)', X_SV + 1, -37, -31.5, { w: 430, h: 52, fs: 24, scale: 0.045 });
 
   // LED heads on the three M12 solenoid plugs: left half green (24 V good), right half yellow (coil energised)
   function ledFace(x, y, z, r) {
@@ -242,7 +256,7 @@ const View3D = (() => {
   // moving internals, visible in X-ray: CIP poppet and the safety-dump spool
   const cipPoppet = cyl(0.8, 1.6, new THREE.MeshStandardMaterial({ color: 0xff9a2a }), X_CIP, -0.9, 0, 'y', root, 16);
   const spool = box(2.2, 4.4, 2.2, new THREE.MeshStandardMaterial({ color: 0xff9a2a }), X_SV, 0, 0);
-  V.exhaustSV = new THREE.Vector3(X_SV, -30.6, 0);
+  V.exhaustSV = new THREE.Vector3(X_SV, -30.6, 0);   // plume falls to the floor
   V.exhaustCIP = new THREE.Vector3(X_CIP, -27.6, 0);
   V.exhaustSVe = { origin: V.exhaustSV }; V.exhaustCIPe = { origin: V.exhaustCIP };
 
@@ -278,7 +292,7 @@ const View3D = (() => {
 
   // pendant: E-STOP + CONTROL RESET (blue lamp)
   const px = -34, pz = 4;
-  box(11, 29, 8, M.dark, px, -17.5, pz);
+  box(11, 41, 8, M.dark, px, -23.5, pz);
   box(12, 8.5, 6.4, M.dark, px, -1.5, pz);
   const pf = pz + 3.3;
   box(4.6, 4.6, 0.6, M.yellow, px - 3, -1.5, pf);
@@ -338,8 +352,8 @@ const View3D = (() => {
   function pAt(px, s) { return px < xmid.cip ? s.pF : px < xmid.sv ? s.pa : s.p2; }
 
   /* ---------- camera / orbit ---------- */
-  const target = new THREE.Vector3(30, 0, 0);
-  const orbit = { az: 0.45, el: 0.3, r: 125 };
+  const target = new THREE.Vector3(30, -4, 0);
+  const orbit = { az: 0.45, el: 0.3, r: 135 };
   const goal = { az: orbit.az, el: orbit.el, r: orbit.r, tx: target.x, ty: target.y, tz: target.z };
   function applyCam() {
     orbit.az += (goal.az - orbit.az) * 0.15; orbit.el += (goal.el - orbit.el) * 0.15; orbit.r += (goal.r - orbit.r) * 0.15;
@@ -349,9 +363,9 @@ const View3D = (() => {
   }
   const presets = {
     sensors: { az: 1.25, el: 0.12, r: 30, tx: 26.9, ty: -12, tz: 0 },
-    iso:    { az: 0.45, el: 0.3, r: 125, tx: 30, ty: 0, tz: 0 },
-    front:  { az: 0,    el: 0.02, r: 120, tx: 30, ty: 0,  tz: 0 },
-    top:    { az: 0,    el: 1.5,  r: 125, tx: 30, ty: 0,  tz: 0 },
+    iso:    { az: 0.45, el: 0.3, r: 135, tx: 30, ty: -4, tz: 0 },
+    front:  { az: 0,    el: 0.02, r: 135, tx: 30, ty: -4,  tz: 0 },
+    top:    { az: 0,    el: 1.5,  r: 125, tx: 30, ty: -6,  tz: 0 },
     safety: { az: 0.25, el: 0.2,  r: 62,  tx: X_SV, ty: -4, tz: 0 },
     cip:    { az: -0.2, el: 0.2,  r: 62,  tx: X_CIP, ty: -4, tz: 0 },
   };
