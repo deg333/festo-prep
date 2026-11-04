@@ -46,8 +46,9 @@ const View3D = (() => {
     gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(255,255,255,.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
     g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
   })();
-  function halo(color, size, parent, x, y, z) {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+  function halo(color, size, parent, x, y, z, through) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: !through }));
+    if (through) s.renderOrder = 9;
     s.scale.set(size, size, 1); add(s, x, y, z, parent); return s;
   }
   function label(text, o = {}) {
@@ -107,6 +108,7 @@ const View3D = (() => {
     face.position.z = 0.62; g.add(face);
     let last = -1;
     return {
+      group: g,
       set(p) {
         if (Math.abs(p - last) < 0.02) return; last = p;
         const x2 = c.getContext('2d'); x2.fillStyle = '#f4f4f0'; x2.fillRect(0, 0, 128, 128);
@@ -166,6 +168,7 @@ const View3D = (() => {
     geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); geo.computeVertexNormals();
     return geo;
   }
+  const partMeshes = [];
   (() => {
     const bin = atob(MS6_MODEL.b64), u8 = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
@@ -178,7 +181,8 @@ const View3D = (() => {
       geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setIndex(new THREE.BufferAttribute(idx, 1)); geo.computeVertexNormals();
       const r = ROLE[m.i] || 'white';
       const painted = r === 'ee' || r === 'sv';
-      root.add(new THREE.Mesh(painted ? paintFaces(geo, r) : geo, painted ? MATS.vc : MATS[r]));
+      const mesh = new THREE.Mesh(painted ? paintFaces(geo, r) : geo, painted ? MATS.vc : MATS[r]);
+      partMeshes[m.i] = mesh; root.add(mesh);
     }
   })();
 
@@ -210,17 +214,20 @@ const View3D = (() => {
   V.v1s1Conn = ledFace(21.2, 17.25, -3.74, 1.0);
   V.v1s2Conn = ledFace(23.8, 17.25, -3.74, 1.0);
 
-  // FS1 / FS2 proximity-switch LEDs (lit = 24 V = normal position) on the SV front sensor
-  function sensorLed(x, y, z) {
-    const lm = new THREE.MeshStandardMaterial({ color: 0x4d3b00, emissive: 0xffb300, emissiveIntensity: 0, roughness: 0.3 });
-    add(new THREE.Mesh(new THREE.SphereGeometry(0.38, 14, 10), lm), x, y, z, root);
-    const hl = halo(0xffb300, 3.2, root, x, y, z + 0.5);
-    return { set(on) { lm.emissiveIntensity = on ? 2.6 : 0; hl.material.opacity = on ? 0.85 : 0; } };
+  // FS1 / FS2: yellow LEDs on the two M8 proximity sensors (S1, S2) in the slots on the port-2 side of the MS6-SV-D.
+  // lit = 24 V = normal position. They sit behind the clamp plate and distribution block 2, so the glow shows through
+  // and the "M8 sensors" view hides those parts.
+  function m8Led(z, y, lx, ly, lz, name) {
+    const lm = new THREE.MeshStandardMaterial({ color: 0x4d3b00, emissive: 0xffd400, emissiveIntensity: 0, roughness: 0.3 });
+    add(new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.42, 0.85), lm), 26.97, y, z, root);
+    const hl = halo(0xffd400, 2.6, root, 27.3, y, z, true);
+    const lbl = label(name, { bg: '#c9322f', w: 120, h: 44, fs: 26, scale: 0.04 }); lbl.position.set(lx, ly, lz); root.add(lbl);
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(27.1, y, z), new THREE.Vector3(lx, ly, lz)]), new THREE.LineBasicMaterial({ color: 0xff7b72, depthTest: false, transparent: true, opacity: 0.8 }));
+    line.renderOrder = 9; root.add(line);
+    return { set(on) { lm.emissiveIntensity = on ? 3 : 0; hl.material.opacity = on ? 0.9 : 0; } };
   }
-  V.fs1 = sensorLed(18.75, -9.6, 10.72);
-  V.fs2 = sensorLed(18.5, -11.8, 10.72);
-  const fs1L = label('FS1', { bg: '#c9322f', w: 120, h: 44, fs: 26, scale: 0.04 }); fs1L.position.set(15.6, -9.6, 11.5); root.add(fs1L);
-  const fs2L = label('FS2', { bg: '#c9322f', w: 120, h: 44, fs: 26, scale: 0.04 }); fs2L.position.set(15.6, -12.2, 11.5); root.add(fs2L);
+  V.fs1 = m8Led(1.83, -14.1, 33, -19.5, 9, 'FS1 (S1)');
+  V.fs2 = m8Led(-2.33, -13.5, 33, -23, -2, 'FS2 (S2)');
 
   // gauges on the distribution blocks
   V.gauge1 = gauge(root, X_D1, -1.0, 4.5 + 0.6);
@@ -341,13 +348,19 @@ const View3D = (() => {
     camera.lookAt(target);
   }
   const presets = {
+    sensors: { az: 1.25, el: 0.12, r: 30, tx: 26.9, ty: -12, tz: 0 },
     iso:    { az: 0.45, el: 0.3, r: 125, tx: 30, ty: 0, tz: 0 },
     front:  { az: 0,    el: 0.02, r: 120, tx: 30, ty: 0,  tz: 0 },
     top:    { az: 0,    el: 1.5,  r: 125, tx: 30, ty: 0,  tz: 0 },
     safety: { az: 0.25, el: 0.2,  r: 62,  tx: X_SV, ty: -4, tz: 0 },
     cip:    { az: -0.2, el: 0.2,  r: 62,  tx: X_CIP, ty: -4, tz: 0 },
   };
-  function view(name) { Object.assign(goal, presets[name]); }
+  const SERVICE_HIDE = [8, 24, 25, 26, 27, 44, 45];   // distribution block 2 + its clamp, to expose the M8 sensors
+  function view(name) {
+    Object.assign(goal, presets[name]);
+    for (const i of SERVICE_HIDE) if (partMeshes[i]) partMeshes[i].visible = name !== 'sensors';
+    V.gauge2.group.visible = name !== 'sensors';
+  }
   let drag = null;
   canvas.addEventListener('contextmenu', e => e.preventDefault());
   canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); drag = { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, pan: e.button === 2 || e.shiftKey }; });
