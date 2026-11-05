@@ -71,8 +71,8 @@ hl = {
  'sv':   [('svV', 614.75, 47.491), ('svF', 614.75, 78.741), ('svR', 614.75, 109.991)],
 }
 LED = {   # coil LEDs travel with the stack they belong to: green = 24 V good, yellow = coil energised
- 'cip': [('svgCipG', 391.5, 46.5), ('svgCipY', 391.5, 54)],
- 'sv': [('svgV1G', 579.5, 45.5), ('svgV1Y', 579.5, 52.5), ('svgV2G', 579.5, 63.5), ('svgV2Y', 579.5, 70.5)],
+ 'cip': [('svgCipG', 399, 35), ('svgCipY', 404.5, 35)],
+ 'sv': [('svgV1G', 586.5, 35), ('svgV1Y', 592.5, 35), ('svgV2G', 598.5, 35), ('svgV2Y', 604.5, 35)],
 }
 frag = []
 frag += out
