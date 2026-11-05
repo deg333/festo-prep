@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Festo MS6 Air Prep Schematic</title>
+<style>/*TAILWIND*/
+.hl{fill:transparent;stroke:none}.ld{display:none}</style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-900 antialiased">
+<div class="mx-auto max-w-7xl p-3 sm:p-6">
+  <nav class="mb-3 flex flex-wrap gap-x-5 gap-y-1 text-sm"><a class="text-blue-700 hover:underline" href="festo-air-prep-sim.html">&larr; 3D simulation</a><a class="text-blue-700 hover:underline" href="air-prep-info.html">Air-prep information</a><span class="font-medium text-slate-900 underline decoration-2 underline-offset-4">Pneumatic schematic</span></nav>
+  <header class="mb-4 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h1 class="text-xl font-semibold tracking-tight sm:text-2xl">Main pneumatic circuit &mdash; Festo MS6 air-prep unit</h1>
+      <p id="state" class="mt-1 text-sm font-semibold text-blue-700">&nbsp;</p>
+      <p class="text-sm text-slate-600">919111B on/off solenoid (V2S1) and 919111A soft-start safety dump (V1S1 &amp; V1S2, PLd). Use the switches to slide the ISO position blocks up and down.</p>
+    </div>
+    <div class="flex flex-wrap gap-2" role="group" aria-label="Valve controls">
+      <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm shadow-sm">
+        <input id="tSupply" type="checkbox" checked class="h-4 w-4 accent-blue-600"> Supply (919127A open)
+      </label>
+      <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm shadow-sm">
+        <input id="tCip" type="checkbox" class="h-4 w-4 accent-blue-600"> V2S1 energised
+      </label>
+      <div class="inline-flex overflow-hidden rounded-lg border border-slate-300 bg-white text-sm shadow-sm" role="radiogroup" aria-label="Safety valve">
+        <button data-sv="0" class="sv-btn px-3 py-1.5 font-medium">V1S1+V1S2 off</button>
+        <button data-sv="1" class="sv-btn border-l border-slate-300 px-3 py-1.5 font-medium">Soft-start</button>
+        <button data-sv="2" class="sv-btn border-l border-slate-300 px-3 py-1.5 font-medium">Full flow</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="rounded-xl border border-slate-300 bg-white p-2 shadow-sm sm:p-4">
+    <svg id="sch" viewBox="0 -45 760 385" class="h-auto w-full" role="img" aria-label="Pneumatic schematic: supply, lock-out valve, filter, on/off valve, soft-start safety dump valve and pressure sensors" font-family="'Arial Narrow',Arial,Helvetica,sans-serif" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10" fill="#111">
+      /*PNEUFRAG*/
+      <g font-weight="300" stroke="none">/*PNEULABELS*/</g>
+    </svg>
+  </main>
+
+  <footer class="mt-3 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-slate-600">
+    <span class="inline-flex items-center gap-2"><i class="inline-block h-0.5 w-8 bg-blue-600"></i> pressurised</span>
+    <span class="inline-flex items-center gap-2"><i class="inline-block h-0.5 w-8 bg-slate-900"></i> vented / unpressurised</span>
+    <span class="inline-flex items-center gap-2"><i class="inline-block h-3 w-3 rounded-sm border-2 border-emerald-600 bg-emerald-100"></i> active ISO position block</span>
+    <span>Dotted lines = exhaust (port 3) to silencer. Dashed line = pilot feedback.</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const st = { supply: true, cip: false, sv: 0 };          // sv: 0 off (spring), 1 soft-start (middle block), 2 full flow (top block)
+  const BH = 31.25, slide = { lock: 0, cip: 0, sv: 0 };
+  const stacks = { lock: $('stLock'), cip: $('stCip'), sv: $('stSv') };
+  const target = () => ({ lock: st.supply ? -BH : 0, cip: st.cip && st.supply ? BH : 0, sv: st.supply && st.cip ? [0, BH, 2 * BH][st.sv] : 0 });
+  const zone = () => { const F = st.supply, A = F && st.cip, P = A && st.sv > 0; return { F, A, P }; };
+  const pipes = [...document.querySelectorAll('#sch .pp')], pil = [...document.querySelectorAll('#sch .pil')];
+  const hl = (ids, k) => ids.forEach((id, i) => { $(id).style.fill = i === k ? 'rgba(5,150,105,.22)' : 'transparent'; });
+  const BLUE = '#2563eb', INK = '#111';
+
+  function paint() {
+    const z = zone();
+    pipes.forEach(p => { const on = z[p.dataset.p]; p.style.stroke = on ? BLUE : INK; p.style.strokeWidth = on ? '1.7px' : '0.9px'; });
+    pil.forEach(p => { p.style.stroke = z.P ? BLUE : INK; }); $('pilotA').style.stroke = z.P ? BLUE : INK;
+    $('eCip').style.stroke = st.supply && !st.cip ? BLUE : INK; $('eSv').style.stroke = z.A && st.sv === 0 ? BLUE : INK;
+    hl(['lkA', 'lkB'], st.supply ? 1 : 0); hl(['cE', 'cS'], st.cip && st.supply ? 0 : 1); hl(['svV', 'svF', 'svR'], st.supply && st.cip ? [2, 1, 0][st.sv] : 2);
+    $('state').textContent = !st.supply ? 'Supply locked out' : !st.cip ? 'V2S1 closed: downstream vented' : st.sv === 0 ? 'Safety valve exhausting (spring return)' : st.sv === 1 ? 'Soft-start (middle block, throttled fill)' : 'Full flow (top block)';
+  }
+  function tick() {
+    const t = target();
+    for (const k in slide) { slide[k] += (t[k] - slide[k]) * 0.2; stacks[k].setAttribute('transform', 'translate(0,' + slide[k].toFixed(2) + ')'); }
+    $('pilotA').setAttribute('d', 'M622.75,' + (20.991 + slide.sv).toFixed(2) + 'L622.75,14.741L630.5,14.741'); $('pilotA').style.strokeDasharray = '2.5 2';
+    requestAnimationFrame(tick);
+  }
+  const sync = () => {
+    st.supply = $('tSupply').checked; st.cip = $('tCip').checked;
+    document.querySelectorAll('.sv-btn').forEach(b => { const on = +b.dataset.sv === st.sv; b.classList.toggle('bg-blue-600', on); b.classList.toggle('text-white', on); b.classList.toggle('bg-white', !on); });
+    paint();
+  };
+  $('tSupply').addEventListener('change', sync); $('tCip').addEventListener('change', sync);
+  document.querySelectorAll('.sv-btn').forEach(b => b.addEventListener('click', () => { st.sv = +b.dataset.sv; sync(); }));
+  sync(); tick();
+})();
+</script>
+</body>
+</html>
