@@ -128,58 +128,42 @@
       (plc.diag ? ' | diag step ' + plc.diag + '/4' : plc.diagResult ? ' | last diagnostic: ' + plc.diagResult : '');
   }
 
-  /* ---------------- pneumatic diagram (CAD style, valve boxes slide up/down) ---------------- */
+  /* ---------------- pneumatic diagram: the supplied CAD schematic (assets/air-prep-schem.svg), position blocks slide up/down ---------------- */
   const S = id => $(id);
-  const ledFill = (id, on, col) => { const e = S(id); e.setAttribute('fill', on ? col : '#e1e5ea'); e.setAttribute('stroke', on ? '#333' : '#8a929b'); e.setAttribute('stroke-width', on ? 1.5 : 1); };
+  const ledFill = (id, on, col) => { const e = S(id); e.style.fill = on ? col : '#e1e5ea'; e.style.stroke = on ? '#333' : '#8a929b'; };
+  const lc = p => p < 0.05 ? '#111' : pcol(p);          // unpressurised lines stay black like the drawing
   let dash = 0;
-  const slide = { lock: 0, cip: 0, sv: 0 };   // sv in drawing units of the scaled symbol (128 per box)
-  const SC = { lock: 'lockStack', cip: 'cipStack', sv: 'svStack' };
-  function setBoxes(ids, active) {
-    ids.forEach((id, i) => { const r = S(id), on = i === active; r.setAttribute('stroke', on ? '#0a9d5a' : '#111'); r.setAttribute('stroke-width', on ? 3.6 : 2.2); r.setAttribute('fill', on ? 'rgba(10,157,90,.10)' : 'none'); });
-  }
+  const BH = 31.25;                                      // height of one ISO block in the drawing
+  const slide = { lock: 0, cip: 0, sv: 0 }, SC = { lock: 'stLock', cip: 'stCip', sv: 'stSv' };
+  const pipes = [...document.querySelectorAll('#pneu .pp')], pils = [...document.querySelectorAll('#pneu .pil')];
+  const hl = (ids, k) => ids.forEach((id, i) => { S(id).style.fill = i === k ? 'rgba(10,157,90,.22)' : 'transparent'; });
   S('lkHit').addEventListener('click', () => { const c = $('cSupply'); c.checked = !c.checked; c.dispatchEvent(new Event('input')); c.dispatchEvent(new Event('change')); });
   function updatePneu(dt) {
     const s = P.s, c = P.cfg, co = P.coils();
-    dash = (dash - dt * (20 + s.q / 8)) % 1000;
-    const stroke = (id, p, flowing) => { const e = S(id); e.setAttribute('stroke', pcol(p)); e.setAttribute('stroke-dasharray', flowing && p > 0.1 ? '12 9' : ''); e.setAttribute('stroke-dashoffset', dash); };
-    const col = (ids, p) => ids.forEach(id => { const e = S(id); if (e.tagName === 'path' && /h$/.test(id)) e.setAttribute('fill', pcol(p)); else e.setAttribute('stroke', pcol(p)); });
-    const fl = s.q > 1 || (s.pa > 0.1 && s.pa < s.pF - 0.05);
-    // pipes
-    stroke('pS0', s.pF, fl); stroke('pS1', s.pF, fl); stroke('pS2', s.pF, fl);
-    stroke('pCipOut', s.pa, s.q > 1); stroke('pSvOut', s.p2, s.q > 1); stroke('pM', s.p2, false); stroke('pB0', s.p2, s.q > 1);
-    stroke('pT1', s.pa, false); stroke('pT2', s.p2, false);
-    stroke('pLeak', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01); stroke('pLeak2', s.qLeak > 0.01 ? s.p2 : 0, s.qLeak > 0.01);
-    // lock-out valve 919127A: open when supply is on
+    dash = (dash - dt * (14 + s.q / 20)) % 1000;
+    const zone = { F: s.pF, A: s.pa, P: s.p2 }, flow = s.q > 1;
+    pipes.forEach(e => { const p = zone[e.dataset.p], on = p > 0.05;
+      e.style.stroke = lc(p); e.style.strokeWidth = on ? '1.7px' : '0.9px';
+      e.style.strokeDasharray = on && flow && e.dataset.p !== 'F' ? '4 3' : ''; e.style.strokeDashoffset = dash; });
+    pils.forEach(e => { e.style.stroke = lc(s.p2); });
     const open = !c.cipFitted || co.cip.yellow, sOn = c.supplyOn;
-    // slide the position boxes so the active one sits on the port line
-    const targets = { lock: sOn ? 44 : 0, cip: open ? 46 : 0, sv: s.stage === 2 ? 256 : s.stage === 1 ? 128 : 0 };   // soft-start = middle box, full flow = top box
-    for (const k in slide) { slide[k] += (targets[k] - slide[k]) * Math.min(1, dt * 9); S(SC[k]).setAttribute('transform', 'translate(0,' + slide[k].toFixed(1) + ')'); }
-    setBoxes(['lkB', 'lkA'], sOn ? 0 : 1); setBoxes(['cipE', 'cipS'], open ? 0 : 1); setBoxes(['svV', 'svF', 'svR'], s.stage === 1 ? 1 : s.stage === 2 ? 0 : 2);
-    col(['lkBa', 'lkBh'], s.pF); col(['lkAa', 'lkAh'], 0);
-    col(['cEa', 'cEh'], s.pF); col(['cSa', 'cSh'], s.pa); stroke('pE1', open ? 0 : s.pa, !open && s.qExCip > 1);
-    col(['sVa', 'sVh'], s.pa); col(['sFa', 'sFh'], s.pa); col(['sRa', 'sRh'], s.p2); stroke('pE2', s.stage === 0 ? s.p2 : 0, s.qEx > 1);
-    S('pE1').setAttribute('stroke-dasharray', '2 6'); S('pE2').setAttribute('stroke-dasharray', '2 6');
-    S('thr').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#111'); S('thrA').setAttribute('stroke', s.stage === 1 ? '#7a3aa8' : '#111'); S('thrH').setAttribute('fill', s.stage === 1 ? '#7a3aa8' : '#111');
-    // dashed pilot feedback follows the pilot triangle on the sliding stack
-    S('pFb2').setAttribute('d', 'M320 96V' + (96 + slide.sv).toFixed(1));
-    S('svPos').textContent = ['EXHAUST (spring return)', 'SOFT-START (throttled)', 'FULL FLOW'][s.stage] + (s.stage === 0 && co.v1s1.yellow && co.v1s2.yellow ? ' - pilots shifting' : '');
-    S('svPos').setAttribute('fill', ['#c0392b', '#7a3aa8', '#0a8a4f'][s.stage]);
+    const targets = { lock: sOn ? -BH : 0, cip: open ? BH : 0, sv: s.stage === 2 ? 2 * BH : s.stage === 1 ? BH : 0 };
+    for (const k in slide) { slide[k] += (targets[k] - slide[k]) * Math.min(1, dt * 9); S(SC[k]).setAttribute('transform', 'translate(0,' + slide[k].toFixed(2) + ')'); }
+    hl(['lkA', 'lkB'], sOn ? 1 : 0); hl(['cE', 'cS'], open ? 0 : 1); hl(['svV', 'svF', 'svR'], s.stage === 2 ? 0 : s.stage === 1 ? 1 : 2);
+    S('pilotA').setAttribute('d', 'M622.75,' + (20.991 + slide.sv).toFixed(2) + 'L622.75,14.741L630.5,14.741'); S('pilotA').style.stroke = lc(s.p2); S('pilotA').style.strokeDasharray = '2.5 2';
+    S('eCip').style.stroke = !open && s.pa > 0.1 ? pcol(s.pa) : '#111'; S('eSv').style.stroke = s.stage === 0 && s.p2 > 0.1 ? pcol(s.p2) : '#111';
+    S('stCip').style.opacity = c.cipFitted ? 1 : 0.45;
     ledFill('svgCipG', co.cip.green, '#22cc66'); ledFill('svgCipY', co.cip.yellow, '#f2b705');
     ledFill('svgV1G', co.v1s1.green, '#22cc66'); ledFill('svgV1Y', co.v1s1.yellow, '#f2b705');
-    ledFill('svgV2G', co.v2s2 ? co.v2s2.green : co.v1s2.green, '#22cc66'); ledFill('svgV2Y', co.v1s2.yellow, '#f2b705');
-    const f1 = P.fs1(), f2 = P.fs2();
-    ledFill('svgFS1', f1, '#f2b705'); ledFill('svgFS2', f2, '#f2b705');
-    S('tFS1').textContent = '= ' + (f1 ? '1' : '0'); S('tFS2').textContent = '= ' + (f2 ? '1' : '0');
-    S('lockStack').setAttribute('opacity', 1); S('cipStack').parentNode.setAttribute('opacity', c.cipFitted ? 1 : 0.9);
-    S('cipNF').textContent = c.cipFitted ? '' : 'CIP NOT FITTED - bypassed';
+    ledFill('svgV2G', co.v1s2.green, '#22cc66'); ledFill('svgV2Y', co.v1s2.yellow, '#f2b705');
     S('tP0').textContent = fmt(s.pF) + ' bar'; S('tPa').textContent = fmt(s.pa) + ' bar'; S('tP2').textContent = fmt(s.p2) + ' bar';
-    S('tN').textContent = 'screw n = ' + fmt(c.n) + ' (' + fmt(SIM.qn(c.n, Math.max(s.pa, c.supplyOn ? c.P0 : 0)), 0) + ' l/min)';
-    S('tFlow').textContent = s.q > 1 ? 'flow ' + fmt(s.q, 0) + ' l/min' : s.qEx > 1 ? 'exhausting ' + fmt(s.qEx, 0) + ' l/min' : '';
-    S('tV').textContent = c.V + ' L';
-    S('tLeakPct').textContent = fmt(c.leakPct, 0) + ' % open';
-    S('tLeak').textContent = s.qLeak > 0.005 ? 'leak ' + fmt(s.qLeak, 1) + ' SCFM' : '';
-    const h = 80 * Math.min(1, s.p2 / 10), tf = S('tankFill');
-    tf.setAttribute('y', 252 - h); tf.setAttribute('height', Math.max(0, h - 3)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.45);
+    S('tFlow').textContent = s.q > 1 ? 'flow ' + fmt(s.q, 0) + ' l/min' : s.qEx > 1 ? 'exhaust ' + fmt(s.qEx, 0) + ' l/min' : '';
+    S('tV').textContent = c.V + ' L'; S('tLeakPct').textContent = fmt(c.leakPct, 0) + ' % open';
+    S('tLeak').textContent = s.qLeak > 0.005 ? fmt(s.qLeak, 1) + ' SCFM' : '';
+    const h = 56 * Math.min(1, s.p2 / 10), tf = S('tankFill');
+    tf.setAttribute('y', 146 - h); tf.setAttribute('height', Math.max(0, h - 1)); tf.setAttribute('fill', pcol(s.p2)); tf.setAttribute('opacity', 0.45);
+    const f1 = P.fs1(), f2 = P.fs2(), pos = ['EXHAUST (spring return)', 'SOFT-START (throttled)', 'FULL FLOW'][s.stage];
+    S('pneuStat').innerHTML = '<span>Safety valve: <b>' + pos + (s.stage === 0 && co.v1s1.yellow && co.v1s2.yellow ? ' - pilots shifting' : '') + '</b></span><span>FS1 (I301) <b>' + (f1 ? 1 : 0) + '</b></span><span>FS2 (I302) <b>' + (f2 ? 1 : 0) + '</b></span><span>screw n = <b>' + fmt(c.n) + '</b> (' + fmt(SIM.qn(c.n, Math.max(s.pa, c.supplyOn ? c.P0 : 0)), 0) + ' l/min)</span>' + (c.cipFitted ? '' : '<span><b>CIP valve not fitted - bypassed</b></span>');
   }
 
   /* ---------------- electro-pneumatic wiring ladder (IEC-style symbols, live) ---------------- */

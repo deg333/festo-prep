@@ -85,3 +85,7 @@ table.io th { color: var(--mut); font-weight: 600; }
 @media (max-width: 1100px) { .hud.xr { width: 62%; } }
 
 #elec { width: 100%; height: auto; display: block; border-radius: 4px; }
+.hl { fill: transparent; stroke: none; }
+.ld { fill: #e1e5ea; stroke: #8a929b; stroke-width: .6px; }
+.pstat { margin: 6px 2px 0; font-size: 12px; color: var(--mut); display: flex; flex-wrap: wrap; gap: 4px 14px; } .pstat b { color: var(--fg); }
+#pneu { min-width: 0; }

@@ -10,5 +10,6 @@ for key, path in [('/*STYLE*/', 'src/style.css'), ('/*THREE*/', 'vendor/three.mi
 import base64
 html = html.replace('/*XRAYVIDEO*/', 'data:video/mp4;base64,' + base64.b64encode((r / 'assets/safety-dump-xray.mp4').read_bytes()).decode())
 html = html.replace('/*MODELMETA*/', rd('assets/ms6-model.json')).replace('/*MODELB64*/', base64.b64encode((r / 'assets/ms6-model.bin').read_bytes()).decode())
+html = html.replace('/*PNEUFRAG*/', rd('assets/air-prep-schem.frag.svg')).replace('/*PNEULABELS*/', rd('assets/air-prep-schem.labels.svg'))
 (r / 'festo-air-prep-sim.html').write_text(html, encoding='utf8')
 print('wrote festo-air-prep-sim.html', len(html) // 1024, 'KB')

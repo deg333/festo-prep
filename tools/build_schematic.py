@@ -9,5 +9,7 @@ with tempfile.TemporaryDirectory() as d:
     css_in.write_text('@tailwind base;\n@tailwind components;\n@tailwind utilities;\n')
     subprocess.run(['npx', '--yes', 'tailwindcss@3.4.17', '-i', str(css_in), '-o', str(css_out), '--content', str(src), '--minify'], check=True)
     css = css_out.read_text()
-(root / 'pneumatic-schematic.html').write_text(src.read_text().replace('/*TAILWIND*/', css), encoding='utf8')
+html = src.read_text().replace('/*TAILWIND*/', css)
+html = html.replace('/*PNEUFRAG*/', (root / 'assets' / 'air-prep-schem.frag.svg').read_text()).replace('/*PNEULABELS*/', (root / 'assets' / 'air-prep-schem.labels.svg').read_text())
+(root / 'pneumatic-schematic.html').write_text(html, encoding='utf8')
 print('wrote pneumatic-schematic.html')
