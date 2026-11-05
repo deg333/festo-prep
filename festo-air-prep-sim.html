@@ -1223,9 +1223,9 @@ const View3D = (() => {
     // lock-out valve 919127A: open when supply is on
     const open = !c.cipFitted || co.cip.yellow, sOn = c.supplyOn;
     // slide the position boxes so the active one sits on the port line
-    const targets = { lock: sOn ? 44 : 0, cip: open ? 46 : 0, sv: s.stage === 2 ? 128 : s.stage === 1 ? 256 : 0 };
+    const targets = { lock: sOn ? 44 : 0, cip: open ? 46 : 0, sv: s.stage === 2 ? 256 : s.stage === 1 ? 128 : 0 };   // soft-start = middle box, full flow = top box
     for (const k in slide) { slide[k] += (targets[k] - slide[k]) * Math.min(1, dt * 9); S(SC[k]).setAttribute('transform', 'translate(0,' + slide[k].toFixed(1) + ')'); }
-    setBoxes(['lkB', 'lkA'], sOn ? 0 : 1); setBoxes(['cipE', 'cipS'], open ? 0 : 1); setBoxes(['svV', 'svF', 'svR'], s.stage === 1 ? 0 : s.stage === 2 ? 1 : 2);
+    setBoxes(['lkB', 'lkA'], sOn ? 0 : 1); setBoxes(['cipE', 'cipS'], open ? 0 : 1); setBoxes(['svV', 'svF', 'svR'], s.stage === 1 ? 1 : s.stage === 2 ? 0 : 2);
     col(['lkBa', 'lkBh'], s.pF); col(['lkAa', 'lkAh'], 0);
     col(['cEa', 'cEh'], s.pF); col(['cSa', 'cSh'], s.pa); stroke('pE1', open ? 0 : s.pa, !open && s.qExCip > 1);
     col(['sVa', 'sVh'], s.pa); col(['sFa', 'sFh'], s.pa); col(['sRa', 'sRh'], s.p2); stroke('pE2', s.stage === 0 ? s.p2 : 0, s.qEx > 1);

@@ -147,7 +147,7 @@
   const $ = id => document.getElementById(id);
   const st = { supply: true, cip: false, sv: 0 };
   const slide = { lock: 0, cip: 0, sv: 0 };
-  const target = () => ({ lock: st.supply ? 46 : 0, cip: st.cip && st.supply ? 46 : 0, sv: st.supply && st.cip ? [0, 92, 46][st.sv] : 0 });
+  const target = () => ({ lock: st.supply ? 46 : 0, cip: st.cip && st.supply ? 46 : 0, sv: st.supply && st.cip ? [0, 46, 92][st.sv] : 0 });
   const level = () => { const F = st.supply, A = F && st.cip, P = A && st.sv > 0; return { F, A, P }; };
   const BLUE = ['stroke-blue-600'], INK = ['stroke-slate-900'];
 
@@ -155,7 +155,7 @@
     const L = level();
     document.querySelectorAll('#pipes path').forEach(p => { const on = L[p.dataset.p]; p.classList.remove(...(on ? INK : BLUE)); p.classList.add(...(on ? BLUE : INK)); });
     const act = (ids, k) => ids.forEach((id, i) => { const r = $(id), on = i === k; r.setAttribute('stroke-width', on ? 4 : 2.6); r.classList.toggle('stroke-emerald-600', on); r.classList.toggle('stroke-slate-900', !on); r.setAttribute('fill', on ? '#d1fae5' : 'none'); r.setAttribute('fill-opacity', on ? 0.55 : 0); });
-    act(['lkB', 'lkA'], st.supply ? 0 : 1); act(['cE', 'cS'], st.cip && st.supply ? 0 : 1); act(['svV', 'svF', 'svR'], st.supply && st.cip ? [2, 0, 1][st.sv] : 2);
+    act(['lkB', 'lkA'], st.supply ? 0 : 1); act(['cE', 'cS'], st.cip && st.supply ? 0 : 1); act(['svV', 'svF', 'svR'], st.supply && st.cip ? [2, 1, 0][st.sv] : 2);   // soft-start = middle box, full flow = top (variable) box
     $('state').textContent = !st.supply ? 'Supply locked out' : !st.cip ? 'V2S1 closed: downstream vented' : st.sv === 0 ? 'Safety valve exhausting' : st.sv === 1 ? 'Soft-start (throttled fill)' : 'Full flow';
   }
   function tick() {
