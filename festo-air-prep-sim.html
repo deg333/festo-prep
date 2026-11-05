@@ -96,12 +96,15 @@ table.io th { color: var(--mut); font-weight: 600; }
 .ld { fill: #e1e5ea; stroke: #8a929b; stroke-width: .6px; }
 .pstat { margin: 6px 2px 0; font-size: 12px; color: var(--mut); display: flex; flex-wrap: wrap; gap: 4px 14px; } .pstat b { color: var(--fg); }
 #pneu { min-width: 0; }
+header .topnav { display: flex; gap: 14px; margin-left: auto; font-size: 13px; order: 3; }
+header .topnav a { color: #7fb4ff; text-decoration: none; border-bottom: 1px solid transparent; } header .topnav a:hover { border-bottom-color: #7fb4ff; }
 
 </style>
 </head>
 <body>
 <header>
   <h1>Festo MS6 air-prep unit &mdash; 3D simulation</h1>
+  <nav class="topnav"><a href="air-prep-info.html">Air-prep information</a><a href="pneumatic-schematic.html">Pneumatic schematic</a></nav>
   <span class="sub">Filter &rarr; On/Off valve (CIP&nbsp;V2S1) &rarr; dist. block &rarr; MS6-SV-D safety dump (V1S1 / V1S2, PLd) &rarr; dist. block &nbsp;|&nbsp; flow left &rarr; right</span>
 </header>
 <main id="layout">

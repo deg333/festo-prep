@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Festo Air Prep &amp; Safety Exhaust Valve Information</title>
+<style>/*TAILWIND*/
+dialog::backdrop{background:rgba(15,23,42,.8)}</style>
+</head>
+<body class="min-h-screen bg-slate-100 text-slate-800 antialiased">
+
+<nav class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-5 gap-y-1 px-4 py-2 text-sm">
+    <span class="font-semibold text-slate-900">Festo MS6 air prep</span>
+    <a class="text-blue-700 hover:underline" href="festo-air-prep-sim.html">3D simulation</a>
+    <a class="text-blue-700 hover:underline" href="pneumatic-schematic.html">Pneumatic schematic</a>
+    <a class="font-medium text-slate-900 underline decoration-2 underline-offset-4" href="air-prep-info.html" aria-current="page">Air-prep information</a>
+    <span class="ml-auto hidden gap-3 text-slate-500 sm:flex"><a class="hover:text-blue-700" href="#cip">CIP</a><a class="hover:text-blue-700" href="#main">Main valves</a><a class="hover:text-blue-700" href="#softstart">Soft-start</a><a class="hover:text-blue-700" href="#switching">Switching</a><a class="hover:text-blue-700" href="#wiring">Wiring</a><a class="hover:text-blue-700" href="#safety">Safety</a></span>
+  </div>
+</nav>
+
+<main class="mx-auto max-w-5xl px-4 py-6 sm:py-10">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Festo Safety Exhaust Valve &amp; air prep information</h1>
+    <p class="mt-3 max-w-3xl text-lg text-slate-600">How the machine air-prep unit works: filter, optional CIP on/off valve (V2S1) and the dual-channel MS6-SV-D soft-start safety dump valve (V1S1 / V1S2, PLd).</p>
+  </header>
+
+  <section class="mb-10 grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:items-start">
+    <figure class="rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-200">
+      <button type="button" class="zoom block w-full"><img src="assets/info/overview.png" alt="Air-prep unit with CIP valve V2S1 and MAIN valves V1S1 and V1S2, connector LEDs and proximity switches" class="mx-auto h-auto max-h-[34rem] w-auto rounded-lg" loading="lazy"></button>
+      <figcaption class="mt-2 text-center text-sm text-slate-500">The unit: CIP (V2S1) on the left, MAIN (V1S1 and V1S2) on the right. Each coil connector carries a green and a yellow LED.</figcaption>
+    </figure>
+    <div class="space-y-4">
+      <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+        <h2 class="text-lg font-semibold text-slate-900">Indicator lights</h2>
+        <dl class="mt-3 divide-y divide-slate-100 text-sm">
+          <div class="flex items-start gap-3 py-2"><span class="mt-1 h-3 w-3 shrink-0 rounded-full bg-emerald-500 ring-2 ring-emerald-200"></span><div><dt class="font-medium">Green &mdash; 24 VDC good</dt><dd class="text-slate-600">24 V is present at the coil connector.</dd></div></div>
+          <div class="flex items-start gap-3 py-2"><span class="mt-1 h-3 w-3 shrink-0 rounded-full bg-amber-400 ring-2 ring-amber-200"></span><div><dt class="font-medium">Yellow &mdash; coil energised</dt><dd class="text-slate-600">The PLC output to the coil is on.</dd></div></div>
+          <div class="flex items-start gap-3 py-2"><span class="mt-1 h-3 w-3 shrink-0 rounded-full bg-blue-500 ring-2 ring-blue-200"></span><div><dt class="font-medium">Blue &mdash; Control Reset lamp</dt><dd class="text-slate-600">Solid and not blinking when the machine air is enabled.</dd></div></div>
+        </dl>
+      </div>
+      <div class="rounded-2xl bg-blue-50 p-5 text-sm ring-1 ring-blue-200">
+        <p class="font-medium text-blue-900">Try it</p>
+        <p class="mt-1 text-blue-900/80">The <a class="font-semibold underline" href="festo-air-prep-sim.html">3D simulation</a> runs this unit with the PLC logic, and the <a class="font-semibold underline" href="pneumatic-schematic.html">pneumatic schematic</a> shows how the valve position blocks slide.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cip" class="mb-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+    <h2 class="text-xl font-semibold text-slate-900">V2S1 &mdash; the CIP unit</h2>
+    <p class="mt-3 leading-relaxed">The first valve, <strong>V2S1</strong>, is the CIP unit. It has only <strong>one coil</strong>. The green light on the connector indicates good 24 VDC; the yellow light indicates a signal to the coil (energised). When you press the <strong>Control Reset</strong> button you should see the two lights on the coil turn on (green and yellow). CIP functionality is <em>optional</em> on a machine.</p>
+  </section>
+
+  <section id="main" class="mb-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+    <h2 class="text-xl font-semibold text-slate-900">V1S1 &amp; V1S2 &mdash; the main machine air valves</h2>
+    <p class="mt-3 leading-relaxed">The second set of valves, <strong>V1S1</strong> and <strong>V1S2</strong>, are the main machine air-pressure valves. They give you <strong>dual safety redundancy coils</strong> and <strong>dual proximity-sensor feedback</strong> (FS1 and FS2). The connector lights work the same way: green = good 24 VDC, yellow = coil energised.</p>
+    <p class="mt-3 rounded-lg bg-emerald-50 p-3 text-emerald-900 ring-1 ring-emerald-200">When you press <strong>Control Reset</strong> you should see <strong>all six indicator lights on all three coils</strong> turn on, and the <strong>blue light solid</strong> and not blinking.</p>
+  </section>
+
+  <section id="softstart" class="mb-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+    <h2 class="text-xl font-semibold text-slate-900">Soft-start</h2>
+    <p class="mt-3 leading-relaxed">V1S1 and V1S2 are the <strong>soft-start safety valves</strong>. The set screw controls how fast the soft start is: turning it <strong>counter-clockwise, or (+)</strong>, gives faster flow, so pressure accumulates faster &mdash; or instantaneously.</p>
+    <div class="mt-5 grid gap-5 md:grid-cols-2">
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/screw.png" alt="MS6-SV-D with the flow control screw for the soft-start function marked" class="mx-auto h-auto max-h-96 w-auto" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">The flow-control screw (end cap) sets the soft-start rate.</figcaption>
+      </figure>
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/symbol.png" alt="Circuit symbol of the soft-start / quick exhaust valve, annotated" class="h-auto w-full" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">Tab. 4 &mdash; circuit symbol: supply 1, working air out 2, exhaust 3; V1S1/V1S2 air-pilot solenoids; FS1/FS2 switches; pressure actuated at about 50 %.</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="mt-8 text-lg font-semibold text-slate-900">More about the soft start</h3>
+    <p class="mt-2 leading-relaxed">There is a flow-control screw in the end cap. It generates a gradual pressure build-up of the output pressure p2. The flow, and so the pressure rise, can be adjusted by turning the screw. When p2 reaches about <strong>50 %</strong> of the operating pressure p1, the maximum flow rate is enabled.</p>
+    <div class="mt-5 grid gap-5 md:grid-cols-2">
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/switch-through.png" alt="Switch-through pressure tolerance field: ratio of p2 to p1 against filling time" class="h-auto w-full" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">Fig. 5 &mdash; switch-through pressure tolerance field (30 to 70 % of p1, about 50 % typical).</figcaption>
+      </figure>
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/filling-flow.png" alt="Filling flow: throttle flow rate against the number of rotations of the flow control screw, for 4, 6, 8 and 10 bar" class="h-auto w-full" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">Fig. 10 &mdash; throttle flow rate qn against screw rotations n (p1 = 4, 6, 8 and 10 bar = 58, 87, 116 and 145 psi).</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="switching" class="mb-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+    <h2 class="text-xl font-semibold text-slate-900">Switching characteristics &amp; diagnostics</h2>
+    <p class="mt-3 leading-relaxed">The normal position, &ldquo;bled off&rdquo;, is sensed by the proximity switches S1 (FS1) and S2 (FS2): they read 1 (24 V) in the normal position and change to 0 shortly after the pilot valves V1 and V2 are energised. <strong>No third sensor (S3) is fitted</strong> on this unit.</p>
+    <div class="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/switching.png" alt="Fig. 4: input and output switching characteristics in normal status" class="mx-auto h-auto max-h-[30rem] w-auto" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">Fig. 4 &mdash; p1, p2, V1S1, V1S2, FS1 and FS2 over time. The grey bands are the response times; the soft-start ramp is marked.</figcaption>
+      </figure>
+      <div class="space-y-5">
+        <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+          <button type="button" class="zoom block w-full"><img src="assets/info/response-times.jpg" alt="Tab. 5: proximity switch response times" class="h-auto w-full" loading="lazy"></button>
+          <figcaption class="mt-2 text-sm text-slate-500">Tab. 5 &mdash; proximity-switch response times (maximum 4 s after the signal at V1 / V2).</figcaption>
+        </figure>
+        <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+          <button type="button" class="zoom block w-full"><img src="assets/info/diagnostics.jpg" alt="Tab. 6: recommendation for activation and diagnostics" class="mx-auto h-auto max-h-80 w-auto" loading="lazy"></button>
+          <figcaption class="mt-2 text-sm text-slate-500">Tab. 6 &mdash; recommended activation and diagnostics sequence (V1 then S1, V2 then S2). The simulation&rsquo;s DIAGNOSTIC TEST button runs this.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <figure class="mt-5 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+      <button type="button" class="zoom block w-full"><img src="assets/info/sensors.png" alt="Proximity switches S1 and S2 on the side of the MS6-SV-D" class="mx-auto h-auto max-h-96 w-auto" loading="lazy"></button>
+      <figcaption class="mt-2 text-center text-sm text-slate-500">S1 and S2: the two M8 proximity switches on the port-2 side of the valve body.</figcaption>
+    </figure>
+  </section>
+
+  <section id="wiring" class="mb-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+    <h2 class="text-xl font-semibold text-slate-900">Electrical connections</h2>
+    <p class="mt-3 leading-relaxed">The main pneumatic safety solenoid (PLd) block (631) has the two proximity switches and the two coils; the optional CIP coil is block (632).</p>
+    <div class="mt-4 overflow-x-auto"><table class="w-full min-w-[28rem] text-left text-sm">
+      <thead class="border-b border-slate-200 text-slate-500"><tr><th class="py-2 pr-4 font-medium">Signal</th><th class="py-2 pr-4 font-medium">Address</th><th class="py-2 font-medium">Function</th></tr></thead>
+      <tbody class="divide-y divide-slate-100">
+        <tr><td class="py-2 pr-4 font-mono">PL-FS1</td><td class="py-2 pr-4 font-mono">I301</td><td class="py-2">Proximity switch S1 (1 = normal position)</td></tr>
+        <tr><td class="py-2 pr-4 font-mono">PL-FS2</td><td class="py-2 pr-4 font-mono">I302</td><td class="py-2">Proximity switch S2</td></tr>
+        <tr><td class="py-2 pr-4 font-mono">PL-V1S1</td><td class="py-2 pr-4 font-mono">224T</td><td class="py-2">Safety coil 1 (V1)</td></tr>
+        <tr><td class="py-2 pr-4 font-mono">PL-V1S2</td><td class="py-2 pr-4 font-mono">224T</td><td class="py-2">Safety coil 2 (V2)</td></tr>
+        <tr><td class="py-2 pr-4 font-mono">PL-V2S1</td><td class="py-2 pr-4 font-mono">224T2</td><td class="py-2">CIP coil (optional)</td></tr>
+      </tbody></table></div>
+    <figure class="mt-5 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+      <button type="button" class="zoom block w-full"><img src="assets/info/wiring.png" alt="Electrical schematic of the main pneumatic safety solenoid and main pneumatic solenoid" class="h-auto w-full rounded" loading="lazy"></button>
+      <figcaption class="mt-2 text-sm text-slate-500">Wiring: FS1 / FS2 to inputs I301 / I302, V1S1 / V1S2 to 224T, V2S1 to 224T2.</figcaption>
+    </figure>
+  </section>
+
+  <section id="safety" class="mb-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+    <h2 class="text-xl font-semibold text-slate-900">Safety category</h2>
+    <p class="mt-3 leading-relaxed">The MS6-SV-D can achieve various categories and safety levels to EN ISO 13849-1, depending on how the directional control valves are monitored &mdash; with appropriate integration into the control chain and appropriate linking of the signals for initial-position sensing with the signals for activation (plausibility checking).</p>
+    <p class="mt-3 rounded-lg bg-amber-50 p-3 text-amber-900 ring-1 ring-amber-200"><strong>Performance Level d / category 3</strong> to EN ISO 13849-1 and EN ISO 13849-2 can be achieved when using sensors <strong>S1 and S2</strong>.</p>
+    <div class="mt-5 grid gap-5 md:grid-cols-3">
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/safety-chars.jpg" alt="Tab. 12: safety characteristics of the MS6-SV-D" class="h-auto w-full" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">Tab. 12 &mdash; safety characteristics.</figcaption>
+      </figure>
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/circuit-examples.jpg" alt="Example of circuits with standard PLC and safety device" class="mx-auto h-auto max-h-80 w-auto" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">Example circuits (standard PLC / safety device).</figcaption>
+      </figure>
+      <figure class="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+        <button type="button" class="zoom block w-full"><img src="assets/info/example-circuit.jpg" alt="Example circuit with safety device, V1, V2, S1, S2" class="h-auto w-full" loading="lazy"></button>
+        <figcaption class="mt-2 text-sm text-slate-500">Example circuit with safety device, V1/V2 and S1/S2.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <footer class="mt-10 flex flex-wrap gap-x-6 gap-y-2 border-t border-slate-200 pt-4 text-sm text-slate-500">
+    <a class="text-blue-700 hover:underline" href="festo-air-prep-sim.html">&larr; 3D simulation</a>
+    <a class="text-blue-700 hover:underline" href="pneumatic-schematic.html">Pneumatic schematic</a>
+    <span>Figures and tables are from the Festo MS6-SV-..-D-10V24 documentation.</span>
+  </footer>
+</main>
+
+<dialog id="dlg" class="max-h-[92vh] max-w-[94vw] rounded-xl border-0 bg-white p-2 shadow-2xl">
+  <form method="dialog" class="flex justify-end"><button class="rounded-md px-3 py-1 text-sm text-slate-600 hover:bg-slate-100" aria-label="Close">Close &#x2715;</button></form>
+  <img id="dlgImg" alt="" class="mx-auto max-h-[82vh] w-auto max-w-full">
+</dialog>
+<script>
+(() => {
+  const dlg = document.getElementById('dlg'), img = document.getElementById('dlgImg');
+  document.querySelectorAll('.zoom').forEach(b => b.addEventListener('click', () => {
+    const i = b.querySelector('img'); img.src = i.src; img.alt = i.alt; dlg.showModal();
+  }));
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+})();
+</script>
+</body>
+</html>

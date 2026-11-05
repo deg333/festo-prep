@@ -21,5 +21,7 @@ MS6-SV-D safety dump (**V1S1 / V1S2**, dual coil, **FS1 / FS2** proximity switch
 
 The 3D unit is the real Festo 919111 CAD assembly (STEP) converted to a compact mesh (`assets/ms6-model.*`, made with `tools/step_to_mesh.py`); LEDs, labels, gauges, hoses, tank and leak valve are added on top.
 
+Pages: `festo-air-prep-sim.html` (3D simulation), `pneumatic-schematic.html` (schematic) and `air-prep-info.html` (the Festo air-prep / safety exhaust valve information page, built by `tools/build_info.py`, images in `assets/info/`) link to each other.
+
 Build: `python3 build.py` inlines `src/*` and `vendor/three.min.js` (three.js r160, MIT).
 Logic only (no DOM): `src/sim.js` can be run in node.
