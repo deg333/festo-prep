@@ -21,9 +21,9 @@
     <div class="hud tl">
       <div id="plcState" class="chip">&nbsp;</div>
       <div class="readout">
-        <span class="chip">P1 supply <b id="rP0">0.0</b> bar</span>
-        <span class="chip">p1 valve in <b id="rPa">0.0</b> bar</span>
-        <span class="chip">p2 out <b id="rP2">0.0</b> bar <small id="rP2psi">(0 psi)</small></span>
+        <span class="chip">P1 supply <b id="rP0">0.0 bar</b></span>
+        <span class="chip">p1 valve in <b id="rPa">0.0 bar</b></span>
+        <span class="chip">p2 out <b id="rP2">0.0 bar</b></span>
         <span class="chip">flow <b id="rQ">0</b> l/min</span>
         <span class="chip">leak <b id="rLeak">0.0</b> SCFM</span>
         <span class="chip">stage <b id="rStage">EXHAUST</b></span>
@@ -62,6 +62,7 @@
       <h2>Air &amp; soft-start settings</h2>
       <label class="chk"><input type="checkbox" id="cSupply" checked> Supply air ON</label>
       <div class="row"><label>Supply P1</label><input type="range" id="sP0" min="0" max="10" step="0.1" value="6"><output id="oP0"></output></div>
+      <p class="note" id="p0Note"></p>
       <div class="row"><label>Soft-start screw n</label><input type="range" id="sN" min="0" max="10" step="0.1" value="5"><output id="oN"></output></div>
       <p class="note" id="nNote"></p>
       <div class="row"><label>Switch-through</label><input type="range" id="sRatio" min="30" max="70" step="1" value="50"><output id="oRatio"></output></div>

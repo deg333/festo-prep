@@ -122,7 +122,7 @@ const View3D = (() => {
           x2.beginPath(); x2.moveTo(ca * 52, sa * 52); x2.lineTo(ca * (i % 2 ? 58 : 62), sa * (i % 2 ? 58 : 62)); x2.stroke();
           if (i % 2 === 0) x2.fillText(String(i), ca * 42, sa * 42 + 4);
         }
-        x2.fillText('bar', 0, 26);
+        x2.font = '11px Arial'; x2.fillText('bar', 0, 20); x2.fillText(Math.round(p * 14.5038) + ' psi', 0, 31); x2.fillText((p / 10).toFixed(2) + ' MPa', 0, 42); x2.font = '12px Arial';
         const a = (-225 + SIM.clamp(p, 0, 10) * 27) * Math.PI / 180;
         x2.strokeStyle = '#c00'; x2.lineWidth = 3; x2.beginPath(); x2.moveTo(0, 0); x2.lineTo(Math.cos(a) * 46, Math.sin(a) * 46); x2.stroke();
         x2.fillStyle = '#222'; x2.beginPath(); x2.arc(0, 0, 4, 0, 7); x2.fill();

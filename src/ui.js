@@ -5,6 +5,8 @@
   window.festoSim = P; // handy for experiments from the browser console
   const plc = P.plc.m;
   const fmt = (v, d = 1) => v.toFixed(d);
+  const psiOf = b => b * 14.5038, mpaOf = b => b / 10;
+  const pAll = b => fmt(b) + ' bar \u00b7 ' + fmt(psiOf(b), psiOf(b) < 100 ? 1 : 0) + ' psi \u00b7 ' + (mpaOf(b)).toFixed(2) + ' MPa';
   const pcol = p => p < 0.05 ? '#9aa3ad' : 'hsl(212,88%,' + Math.max(34, 62 - 3.2 * p) + '%)';   // blue = compressed air, darker = higher pressure
 
   /* ---------------- controls ---------------- */
@@ -15,7 +17,7 @@
   };
   function refreshNotes() {
     const c = P.cfg;
-    $('oP0').textContent = fmt(c.P0) + ' bar';
+    $('oP0').textContent = fmt(c.P0) + ' bar'; $('p0Note').textContent = '= ' + fmt(psiOf(c.P0), 1) + ' psi = ' + mpaOf(c.P0).toFixed(2) + ' MPa';
     $('oN').textContent = fmt(c.n) + ' turns';
     $('oRatio').textContent = fmt(c.ratio * 100, 0) + ' % p1';
     $('oV').textContent = fmt(c.V) + ' L';
@@ -156,7 +158,8 @@
     ledFill('svgCipG', co.cip.green, '#22cc66'); ledFill('svgCipY', co.cip.yellow, '#f2b705');
     ledFill('svgV1G', co.v1s1.green, '#22cc66'); ledFill('svgV1Y', co.v1s1.yellow, '#f2b705');
     ledFill('svgV2G', co.v1s2.green, '#22cc66'); ledFill('svgV2Y', co.v1s2.yellow, '#f2b705');
-    S('tP0').textContent = fmt(s.pF) + ' bar'; S('tPa').textContent = fmt(s.pa) + ' bar'; S('tP2').textContent = fmt(s.p2) + ' bar';
+    const pv = (id, b) => { const e = S(id), x = e.getAttribute('x'); e.innerHTML = '<tspan x="' + x + '">' + fmt(b) + ' bar</tspan><tspan x="' + x + '" dy="9">' + fmt(psiOf(b), 1) + ' psi</tspan><tspan x="' + x + '" dy="9">' + mpaOf(b).toFixed(2) + ' MPa</tspan>'; };
+    pv('tP0', s.pF); pv('tPa', s.pa); pv('tP2', s.p2);
     S('tFlow').textContent = s.q > 1 ? 'flow ' + fmt(s.q, 0) + ' l/min' : s.qEx > 1 ? 'exhaust ' + fmt(s.qEx, 0) + ' l/min' : '';
     S('tV').textContent = c.V + ' L'; S('tLeakPct').textContent = fmt(c.leakPct, 0) + ' % open';
     S('tLeak').textContent = s.qLeak > 0.005 ? fmt(s.qLeak, 1) + ' SCFM' : '';
@@ -297,7 +300,7 @@
     g.fillStyle = '#6c7a89'; g.textAlign = 'center';
     for (let k = 0; k <= 4; k++) { const tt = t0 + k * WIN / 4; g.fillText(fmt(Math.max(0, tt), 0) + ' s', X(tt), h - 8); }
     g.fillStyle = '#b48be0'; g.textAlign = 'left'; g.fillText('soft-start', L + 4, T + 8);
-    g.fillStyle = '#6c7a89'; g.textAlign = 'right'; g.fillText('analogue rows: 0-10 bar', w - R, T + 8);
+    g.fillStyle = '#6c7a89'; g.textAlign = 'right'; g.fillText('analogue rows: 0-10 bar (0-145 psi, 0-1 MPa)', w - R, T + 8);
   }
   function drawFlow() {
     const { g, w, h } = fit(cvF); g.clearRect(0, 0, w, h);
@@ -364,8 +367,8 @@
     if (uiAcc > 0.1) {
       uiAcc = 0; updatePLC(); updateLadder();
       const s = P.s;
-      $('rP0').textContent = fmt(s.pF); $('rPa').textContent = fmt(s.pa); $('rP2').textContent = fmt(s.p2);
-      $('rP2psi').textContent = '(' + fmt(s.p2 * 14.504, 0) + ' psi)'; $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rLeak').textContent = fmt(s.qLeak, 1); $('rStage').textContent = stageNames[s.stage];
+      $('rP0').textContent = pAll(s.pF); $('rPa').textContent = pAll(s.pa); $('rP2').textContent = pAll(s.p2);
+      $('rQ').textContent = fmt(Math.max(s.q, s.qEx), 0); $('rLeak').textContent = fmt(s.qLeak, 1); $('rStage').textContent = stageNames[s.stage];
       const el = $('plcState'); el.textContent = plc.msg;
       el.className = 'chip ' + (plc.FAULT || P.ctl.estop ? 'bad' : plc.RUN ? 'ok' : 'warn');
     }
