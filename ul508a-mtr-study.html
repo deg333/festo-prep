@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UL 508A MTR Exam Study Guide</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16202c;--mut:#5b6877;--line:#d9dee5;--acc:#1f5fd1;--acc2:#e8f0fe;--ok:#14803c;--okbg:#e6f6ec;--bad:#c62828;--badbg:#fdecec;--warn:#9a6700;--warnbg:#fff6dd;--ph-a:#d63031;--ph-b:#2563eb;--ph-c:#15803d;--cur:#b7791f;--code:#eef1f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1319;--card:#171e27;--ink:#e6ebf1;--mut:#9aa7b6;--line:#2a3441;--acc:#6ea0ff;--acc2:#1a2a47;--ok:#4ade80;--okbg:#10301e;--bad:#ff7b7b;--badbg:#3a1717;--warn:#f2c14e;--warnbg:#33290d;--ph-a:#ff6b6b;--ph-b:#6ea0ff;--ph-c:#4ade80;--cur:#f2c14e;--code:#222c38}}
+:root[data-theme=dark]{--bg:#0e1319;--card:#171e27;--ink:#e6ebf1;--mut:#9aa7b6;--line:#2a3441;--acc:#6ea0ff;--acc2:#1a2a47;--ok:#4ade80;--okbg:#10301e;--bad:#ff7b7b;--badbg:#3a1717;--warn:#f2c14e;--warnbg:#33290d;--ph-a:#ff6b6b;--ph-b:#6ea0ff;--ph-c:#4ade80;--cur:#f2c14e;--code:#222c38}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;gap:12px;padding:10px 0;flex-wrap:wrap}
+h1{font-size:1.15rem;margin:0;flex:1;min-width:200px}
+h1 small{display:block;font-weight:400;color:var(--mut);font-size:.78rem}
+nav{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px}
+nav button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 13px;border-radius:8px;cursor:pointer;white-space:nowrap}
+nav button.on,.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn:hover,nav button:hover{border-color:var(--acc)}
+.btn.sm{padding:3px 9px;font-size:.85rem}
+main{padding:18px 0 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;background:var(--acc2);color:var(--acc);font-weight:600}
+.tag.d{background:var(--code);color:var(--mut)}
+.q{font-weight:600;margin:8px 0}
+.ans{background:var(--okbg);border-left:4px solid var(--ok);padding:10px 12px;border-radius:6px;margin:10px 0}
+.steps{background:var(--code);border-radius:8px;padding:10px 14px 10px 34px;margin:10px 0}
+.steps li{margin:4px 0}
+.why{background:var(--warnbg);border-left:4px solid var(--warn);padding:10px 12px;border-radius:6px;margin:10px 0}
+.hide{display:none}
+code,.m{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px;font-size:.92em}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+input,select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%}
+input[type=range]{padding:0;width:200px}
+label{font-size:.9rem;color:var(--mut)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.fld{display:flex;flex-direction:column;gap:3px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+th{background:var(--code)}
+.tbl{overflow-x:auto}
+.note{font-size:.85rem;color:var(--mut)}
+.banner{background:var(--warnbg);border:1px solid var(--warn);color:var(--ink);border-radius:10px;padding:10px 14px;font-size:.88rem;margin-bottom:14px}
+svg text{fill:var(--ink);font-family:system-ui,sans-serif}
+.big{font-size:1.5rem;font-weight:700}
+.pill{padding:6px 12px;border-radius:8px;font-weight:700;display:inline-block}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.bad{background:var(--badbg);color:var(--bad)}
+canvas{width:100%;display:block;background:var(--card);border:1px solid var(--line);border-radius:8px}
+.prog{height:8px;background:var(--code);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ok)}
+.sub{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.sub button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:5px 11px;border-radius:99px;cursor:pointer}
+.sub button.on{background:var(--acc2);border-color:var(--acc);color:var(--acc);font-weight:600}
+@media(max-width:560px){body{font-size:15px}.card{padding:12px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+ <div class="top"><h1>UL 508A MTR Exam Study Guide<small>Industrial Control Panels · Manufacturer Technical Representative</small></h1>
+  <span id="score" class="note"></span>
+  <button class="btn sm" id="theme" title="Toggle dark / light">◐</button></div>
+ <nav id="nav"></nav>
+</div></header>
+<main class="wrap" id="main"></main>
+
+<script>
+'use strict';
+/* ============================== helpers ============================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=(x,d=2)=>Number(x).toLocaleString('en-US',{maximumFractionDigits:d});
+const SQ3=Math.sqrt(3);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ============================== reference data ============================== */
+// NEC Table 430.250 (3-phase) – UL 508A Table 50.1 uses the same values
+const FLC3={
+ 208:{0.5:2.4,0.75:3.5,1:4.6,1.5:6.6,2:7.5,3:10.6,5:16.7,7.5:24.2,10:30.8,15:46.2,20:59.4,25:74.8,30:88,40:114,50:143,60:169,75:211,100:273},
+ 230:{0.5:2.2,0.75:3.2,1:4.2,1.5:6,2:6.8,3:9.6,5:15.2,7.5:22,10:28,15:42,20:54,25:68,30:80,40:104,50:130,60:154,75:192,100:248},
+ 460:{0.5:1.1,0.75:1.6,1:2.1,1.5:3,2:3.4,3:4.8,5:7.6,7.5:11,10:14,15:21,20:27,25:34,30:40,40:52,50:65,60:77,75:96,100:124},
+ 575:{0.5:0.9,0.75:1.3,1:1.7,1.5:2.4,2:2.7,3:3.9,5:6.1,7.5:9,10:11,15:17,20:22,25:27,30:32,40:41,50:52,60:62,75:77,100:99}};
+// NEC Table 430.248 (single-phase)
+const FLC1={
+ 115:{0.5:9.8,0.75:13.8,1:16,1.5:20,2:24,3:34,5:56,7.5:80,10:100},
+ 230:{0.5:4.9,0.75:6.9,1:8,1.5:10,2:12,3:17,5:28,7.5:40,10:50}};
+const STD=[1,3,6,10,15,20,25,30,35,40,45,50,60,70,80,90,100,110,125,150,175,200,225,250,300,350,400,450,500,600,700,800,1000,1200];
+const STDCB=STD.filter(x=>x>=15);
+const W60=[['14',15],['12',20],['10',30],['8',40],['6',55],['4',70],['3',85],['2',95],['1',110],['1/0',125],['2/0',145],['3/0',165],['4/0',195]];
+const W75=[['14',20],['12',25],['10',35],['8',50],['6',65],['4',85],['3',100],['2',115],['1',130],['1/0',150],['2/0',175],['3/0',200],['4/0',230]];
+const nextUp=(x,list=STD)=>list.find(v=>v>=x-1e-9)||null;
+const nextDown=(x,list=STD)=>[...list].reverse().find(v=>v<=x+1e-9)||null;
+const wireFor=(amps,isHigh)=>{const t=(isHigh?W75:W60).find(w=>w[1]>=amps-1e-9);return t?t[0]:'larger than 4/0'};
+
+/* ============================== questions ============================== */
+const TOPICS={scope:'Scope & Marking',motor:'Motor Circuits',sccr:'SCCR & Fault Current',xfmr:'Transformers',wire:'Conductors & Grounding',math:'Electrical Math',ctrl:'Controls & Protection'};
+const Q=[
+/* ---------- SCOPE ---------- */
+{id:'scope-1',t:'scope',d:1,q:'What is the difference between UL 508 and UL 508A?',
+ a:'<b>UL 508</b> covers industrial control <i>equipment</i> (individual components: contactors, starters, switches, relays, etc.). <b>UL 508A</b> covers industrial control <i>panels</i> – assemblies built from those components.',
+ why:'A panel shop is evaluated against UL 508A. The components inside are evaluated to their own standards (UL 508, UL 489, UL 248, UL 1077 …). A panel is only as acceptable as its parts: every power-circuit part must be Listed/Recognized for the use.'},
+{id:'scope-2',t:'scope',d:1,q:'What does UL 508A cover, and what is outside its scope?',
+ a:'Covers <b>industrial control panels for general industrial use, 1000 V or less (typically ≤ 600 V), in ordinary (non-hazardous) locations</b>, intended to control other equipment (power + control circuits, enclosure, disconnect, protection).<br>Outside scope: panels for <b>hazardous (classified) locations</b> (see UL 698A), and special-purpose panels with their own standard (e.g. HVAC, elevators, marine, etc.).',
+ why:'Industrial control panels are an NEC Article 409 product. UL 508A is the product standard that lets the panel be Listed and field-accepted by the AHJ.'},
+{id:'scope-3',t:'scope',d:2,q:'List the main markings required on a UL 508A industrial control panel nameplate.',
+ a:'<ul><li>Manufacturer name / trademark</li><li>Supply <b>voltage, phases, frequency</b></li><li><b>Full-load current</b> rating (total) and <b>FLC of the largest motor</b></li><li><b>Short-circuit current rating (SCCR)</b></li><li><b>Enclosure type</b></li><li><b>Wiring diagram number</b> / schematic reference</li><li>Date or serial / file number; “Industrial Control Panel” (UL Listing mark when listed)</li></ul>',
+ why:'The nameplate lets the installer size supply conductors, feeder protection and verify SCCR ≥ available fault current (NEC 409.110, 409.22). <span class="note">Check the exact marking clause in your edition.</span>'},
+{id:'scope-4',t:'scope',d:2,q:'What is the difference between a <i>Listed</i> and a <i>Recognized</i> component, and where may each be used?',
+ a:'<b>Listed</b> – evaluated for the end use by itself; may be used on its own (e.g. a UL 489 circuit breaker used as branch-circuit protection).<br><b>Recognized</b> – evaluated for use <i>as a part</i> of another product only, with <b>conditions of acceptability</b>; must be used inside the panel and meet those conditions (e.g. a Recognized terminal block, power supply).',
+ why:'Recognized components often must be installed where they are not exposed to user contact, or need specific enclosures/branch protection. Always read the conditions of acceptability.'},
+{id:'scope-5',t:'scope',d:2,q:'Match the enclosure type: (a) Type 1  (b) Type 3R  (c) Type 4  (d) Type 4X  (e) Type 12  (f) Type 13',
+ a:'<b>1</b> – indoor, protects against contact with enclosed equipment &amp; falling dirt.<br><b>3R</b> – outdoor, rain, sleet, ice formation (not watertight).<br><b>4</b> – indoor/outdoor, windblown dust, splashing &amp; hose-directed water.<br><b>4X</b> – same as 4 + <b>corrosion</b> resistance.<br><b>12</b> – indoor, dust, dripping non-corrosive liquids, falling dirt.<br><b>13</b> – indoor, dust, spraying water, <b>oil and non-corrosive coolant</b>.',
+ why:'Enclosure type is one of the markings. The enclosure type chosen by the panel shop must be at least what the environment requires.'},
+{id:'scope-6',t:'scope',d:2,q:'In UL 508A, what is a <i>power circuit</i> versus a <i>control circuit</i>, and why does it matter?',
+ a:'<b>Power circuit</b> – carries the main load current (supply, disconnect, branch protection, motor controllers, motors, heaters). <b>Control circuit</b> – carries signals that control the power circuit (coils, pilot devices, PLC I/O).<br>It matters because <b>SCCR is determined from the power circuit components</b> and branch-circuit rules apply to power circuits; control circuits have their own protection and wiring rules.',
+ why:'Many SCCR errors come from forgetting a power component (terminal block, PDB, fuseholder) that has a low default SCCR.'},
+/* ---------- MOTOR ---------- */
+{id:'motor-1',t:'motor',d:1,q:'What is the full-load current (FLC) to use for sizing the branch circuit of a <b>10 hp, 460 V, 3-phase</b> motor whose nameplate reads 13.2 A?',
+ num:{v:14,tol:0.01,u:'A'},
+ a:'<b>14 A</b> – taken from the table, <u>not</u> the nameplate.',
+ steps:['Branch-circuit conductors and short-circuit/ground-fault protection are sized from the <b>table FLC</b> (NEC 430.250, same values as UL 508A Table 50.1).','Table, 3-phase, 460 V, 10 hp → <code>14 A</code>.','The <b>nameplate current (13.2 A)</b> is only used to size/set the <b>overload protection</b>.'],
+ why:'Using table values makes branch-circuit sizing independent of which manufacturer’s motor is installed later.',fig:'pct'},
+{id:'motor-2',t:'motor',d:2,q:'Minimum branch-circuit conductor ampacity for a <b>25 hp, 460 V, 3-phase</b> motor, and the smallest copper wire (60 °C column)?',
+ num:{v:42.5,tol:0.01,u:'A'},
+ a:'Required ampacity <b>42.5 A</b> → <b>6 AWG</b> copper (55 A at 60 °C).',
+ steps:['Table FLC, 25 hp @ 460 V 3φ = <code>34 A</code>.','Conductors must carry <b>125 %</b> of motor FLC: <code>34 × 1.25 = 42.5 A</code>.','Circuits ≤ 100 A use the <b>60 °C</b> ampacity column: 8 AWG = 40 A (too small), 6 AWG = 55 A ✔.'],
+ why:'125 % covers the continuous nature of motor duty. Using the 75 °C column would allow 8 AWG (50 A) only if every termination is rated 75 °C <i>and</i> the rule allows it – exam questions normally expect 60 °C for ≤ 100 A.',sim:'motor'},
+{id:'motor-3',t:'motor',d:2,q:'Maximum rating of an <b>inverse-time circuit breaker</b> for short-circuit &amp; ground-fault protection of a <b>15 hp, 460 V, 3-phase</b> motor?',
+ num:{v:60,tol:0.001,u:'A'},
+ a:'<b>60 A</b>.',
+ steps:['FLC (table) 15 hp @ 460 V = <code>21 A</code>.','Inverse-time breaker max = <b>250 %</b> of FLC: <code>21 × 2.50 = 52.5 A</code>.','52.5 A is not a standard size; the <b>next higher standard size</b> is permitted → standard sizes …50, <b>60</b> → <code>60 A</code>.'],
+ why:'The “next size up” exception (NEC 430.52(C)(1) Exc. 1) applies to motor branch-circuit protection – a key difference from feeders, where you go <i>down</i> (see next questions).',fig:'pct',sim:'motor'},
+{id:'motor-4',t:'motor',d:2,q:'Maximum <b>dual-element (time-delay) fuse</b> for the same 15 hp, 460 V, 3-phase motor (FLC 21 A)?',
+ num:{v:40,tol:0.001,u:'A'},
+ a:'<b>40 A</b>.',
+ steps:['Dual-element fuse max = <b>175 %</b> of FLC.','<code>21 × 1.75 = 36.75 A</code>.','Next higher standard size → <code>40 A</code> (30 A is the next lower).'],
+ why:'Rule of thumb % of FLC (max): <b>inverse-time CB 250 %</b>, <b>dual-element fuse 175 %</b>, <b>non-time-delay fuse 300 %</b>, <b>instantaneous-trip CB (MCP) 800 %</b>.'},
+{id:'motor-5',t:'motor',d:2,q:'A motor nameplate reads <b>13.5 A</b>, service factor <b>1.15</b>. What is the maximum overload relay trip setting (normal case)?',
+ num:{v:16.9,tol:0.01,u:'A'},
+ a:'<b>≈ 16.9 A</b> (125 % of nameplate).',
+ steps:['Overloads are based on <b>nameplate</b> current.','SF ≥ 1.15 (or temperature rise ≤ 40 °C) → <b>125 %</b>; otherwise <b>115 %</b>.','<code>13.5 × 1.25 = 16.875 ≈ 16.9 A</code>.','If that setting won’t carry the starting current, it may be raised to <b>140 %</b> (SF ≥ 1.15) or <b>130 %</b> (others): <code>13.5 × 1.40 = 18.9 A</code>.'],
+ why:'The branch device handles short circuits; the overload relay handles sustained overcurrent. They protect different things, which is why each uses a different current basis (table vs. nameplate).'},
+{id:'motor-6',t:'motor',d:3,q:'Two motors share one feeder at 460 V 3φ: <b>10 hp</b> (FLC 14 A) and <b>5 hp</b> (FLC 7.6 A). What minimum feeder ampacity is required?',
+ num:{v:25.1,tol:0.01,u:'A'},
+ a:'<b>25.1 A</b> → 10 AWG copper (30 A @ 60 °C).',
+ steps:['125 % of the <b>largest</b> motor: <code>14 × 1.25 = 17.5 A</code>.','Plus 100 % of the others: <code>+ 7.6 A</code>.','Total <code>17.5 + 7.6 = 25.1 A</code>.','60 °C column: 12 AWG = 20 A (too small), <b>10 AWG = 30 A</b> ✔.'],
+ why:'Only the largest motor gets the 125 % factor.'},
+{id:'motor-7',t:'motor',d:3,q:'Same feeder as above (10 hp + 5 hp @ 460 V, inverse-time breakers on each branch). What is the <b>maximum feeder breaker</b> rating?',
+ num:{v:40,tol:0.001,u:'A'},
+ a:'<b>40 A</b>.',
+ steps:['Largest branch breaker (10 hp): <code>14 × 2.5 = 35 A</code> → 35 A is a standard size.','Feeder max = largest branch device + sum of the other FLCs: <code>35 + 7.6 = 42.6 A</code>.','For feeders, if the result is not a standard size use the <b>next LOWER</b> standard size → <code>40 A</code>.'],
+ why:'Branch circuit: round <i>up</i>. Feeder: round <i>down</i>. This trap appears often.'},
+{id:'motor-8',t:'motor',d:3,q:'The 250 % inverse-time breaker you chose trips when the motor starts. By how much may the rating be increased?',
+ a:'Inverse-time CB: up to <b>400 %</b> of FLC if FLC ≤ 100 A, <b>300 %</b> if FLC > 100 A.<br>Other limits: non-time-delay fuse (≤ 600 A) 400 %; dual-element fuse 225 %.',
+ why:'Only allowed when the standard maximum will not let the motor start. Overload protection must still be set per its own rules. <span class="note">(NEC 430.52(C)(1) Exception 2 – verify against your reference edition.)</span>'},
+{id:'motor-9',t:'motor',d:1,q:'What is the FLC for a <b>3 hp, 115 V, single-phase</b> motor and what table is used?',
+ num:{v:34,tol:0.01,u:'A'},
+ a:'<b>34 A</b>, from the <b>single-phase</b> table (NEC 430.248 / UL 508A Table 50.2).',
+ steps:['Single-phase motors use a different table than 3-phase.','115 V column, 3 hp → <code>34 A</code>.','Conductor: <code>34 × 1.25 = 42.5 A</code> → 6 AWG (60 °C).']},
+/* ---------- SCCR ---------- */
+{id:'sccr-1',t:'sccr',d:2,q:'A panel has these power-circuit parts, all with <u>no marked SCCR</u>: bus bar (50 kA default), fuse holders (10 kA), terminal blocks (10 kA), a disconnect switch (5 kA), a motor starter with overload (5 kA). What is the panel SCCR?',
+ num:{v:5,tol:0.001,u:'kA'},
+ a:'<b>5 kA</b> – the lowest component rating (“weakest link”).',
+ steps:['List every <b>power-circuit</b> component and its SCCR (marked, else the default value from the standard’s Supplement SB table).','Panel SCCR = <b>lowest</b> component SCCR (unless a current-limiting device or tested combination raises it).','Lowest = 5 kA (disconnect, starter).'],
+ why:'Default SCCR values (Supplement SB, Table SB4.1): bus bar 50 kA · fuse holder 10 kA · terminal block / power-distribution block 10 kA · circuit breaker 5 kA · switch 5 kA · motor controller 5 kA · overload relay 5 kA. <span class="note">Verify in your edition.</span>',fig:'bars1',sim:'sccr'},
+{id:'sccr-2',t:'sccr',d:3,q:'To raise the panel above, the starter/overload and disconnect are replaced by a <b>tested combination rated 65 kA</b> with Class J fuses (200 kA IR). What is the new panel SCCR?',
+ num:{v:10,tol:0.001,u:'kA'},
+ a:'<b>10 kA</b> – now limited by the fuse holders and terminal blocks.',
+ steps:['Combination (65 kA) and fuses (200 kA) and bus bar (50 kA) are no longer limiting.','Remaining lowest: fuse holders and terminal blocks = <code>10 kA</code>.','To go higher: use higher-rated (marked) fuse holders and terminal blocks, or place a current-limiting device upstream.'],
+ why:'Keep removing the weakest link until the required rating is reached – that is exactly how panel shops “upgrade” SCCR.',fig:'bars2',sim:'sccr'},
+{id:'sccr-3',t:'sccr',d:2,q:'Available fault current at a <b>150 kVA, 480 V, 3-phase</b> transformer secondary with <b>3.5 % impedance</b> (infinite primary)? Is a 5 kA panel acceptable there?',
+ num:{v:5.155,tol:0.02,u:'kA'},
+ a:'<b>≈ 5.16 kA</b>. A 5 kA-rated panel is <span class="bad">NOT</span> acceptable (5.16 > 5).',
+ steps:['Secondary full-load current: <code>I<sub>FL</sub> = kVA×1000 / (√3 × V) = 150 000 / (1.732 × 480) = 180.4 A</code>.','Fault current: <code>I<sub>sc</sub> = I<sub>FL</sub> / %Z = 180.4 / 0.035 = 5 155 A ≈ 5.16 kA</code>.','Panel SCCR (5 kA) must be ≥ available fault current (5.16 kA) → <b>fails</b>.'],
+ why:'NEC 409.22 requires the panel SCCR to be at least the available fault current at its line terminals. This is the “infinite bus” (worst-case) calculation; real upstream impedance lowers it.',sim:'xfmr'},
+{id:'sccr-4',t:'sccr',d:3,q:'Available fault current at a <b>75 kVA, 208 V, 3-phase</b> transformer with <b>2.5 %</b> impedance?',
+ num:{v:8.33,tol:0.02,u:'kA'},
+ a:'<b>≈ 8.33 kA</b>.',
+ steps:['<code>I<sub>FL</sub> = 75 000 / (1.732 × 208) = 208.2 A</code>.','<code>I<sub>sc</sub> = 208.2 / 0.025 = 8 327 A ≈ 8.33 kA</code>.'],
+ why:'Low-voltage secondaries carry more current per kVA, so fault current is high even on small transformers.',sim:'xfmr'},
+{id:'sccr-5',t:'sccr',d:3,q:'Same 150 kVA / 480 V transformer, but with a <b>low-impedance 1.75 %</b> unit. New available fault current?',
+ num:{v:10.31,tol:0.02,u:'kA'},
+ a:'<b>≈ 10.3 kA</b> – halving %Z doubles the fault current.',
+ steps:['<code>I<sub>FL</sub> = 180.4 A</code> (unchanged).','<code>I<sub>sc</sub> = 180.4 / 0.0175 = 10 309 A ≈ 10.3 kA</code>.'],
+ why:'Fault current is inversely proportional to impedance. A 5 kA panel is now far too low; you need ≥ 10.3 kA, practically a 14 kA, 18 kA or higher-rated panel.',sim:'xfmr'},
+{id:'sccr-6',t:'sccr',d:2,q:'What does the SCCR marking on the panel mean and who must compare it with what?',
+ a:'SCCR is the <b>maximum available fault current</b> the panel can safely withstand. The installer/designer must verify <b>panel SCCR ≥ available fault current at the point of installation</b> (NEC 409.22, 110.10).',
+ why:'SCCR is not the same as the interrupting rating of one device; it is the rating of the <i>whole assembly</i> (lowest power-circuit component, modified by current-limiting protection or tested combinations).'},
+{id:'sccr-7',t:'sccr',d:3,q:'How can a current-limiting device (e.g. Class J or CC fuse) increase panel SCCR?',
+ a:'A listed current-limiting device limits the <b>peak let-through current and I²t</b> to downstream parts. Downstream components that are tested/marked for use with that device (a <b>combination rating</b> in the manufacturer’s tables) may be assigned the higher rating, so the downstream weak links no longer limit the panel.',
+ why:'The device itself must also have an interrupting rating ≥ the available fault current. Use only <b>manufacturer-published</b> combination ratings or the let-through tables in Supplement SB.'},
+/* ---------- TRANSFORMERS ---------- */
+{id:'xfmr-1',t:'xfmr',d:2,q:'A <b>500 VA, 480 V → 120 V</b> control transformer has primary protection only. Primary current and maximum primary fuse?',
+ num:{v:1.04,tol:0.02,u:'A'},
+ a:'Primary current <b>1.04 A</b> (< 2 A) → max <b>300 %</b> = 3.1 A → use a <b>3 A</b> fuse.',
+ steps:['<code>I<sub>p</sub> = VA / V = 500 / 480 = 1.04 A</code>.','Primary-only protection (NEC 450.3(B)): I<sub>p</sub> ≥ 9 A → 125 %; I<sub>p</sub> &lt; 9 A → 167 %; I<sub>p</sub> &lt; 2 A → <b>300 %</b>.','<code>1.04 × 3.00 = 3.125 A</code> → largest standard fuse not exceeding it: <code>3 A</code>.'],
+ why:'Small transformers have large inrush; that is why the permitted percentage rises as primary current falls.',sim:'xfmr'},
+{id:'xfmr-2',t:'xfmr',d:2,q:'For the same transformer, with <b>secondary</b> protection added, what is the secondary current and its maximum fuse? (primary protection then may go to 250 %)',
+ num:{v:6.96,tol:0.02,u:'A'},
+ a:'Secondary current <b>4.17 A</b>; limit 167 % = <b>6.96 A</b> → <b>6 A</b> fuse.',
+ steps:['<code>I<sub>s</sub> = 500 / 120 = 4.17 A</code>.','Secondary &lt; 9 A → 167 %: <code>4.17 × 1.67 = 6.96 A</code>.','Use a standard fuse not above that: <code>6 A</code>.'],
+ why:'With secondary protection the primary device may be up to 250 % of primary current. <span class="note">Verify percentages for your edition.</span>',sim:'xfmr'},
+{id:'xfmr-3',t:'xfmr',d:3,q:'Size the control transformer: 3 contactor coils (10 VA sealed, 100 VA inrush each), 3 relays (2 VA each), 4 pilot lights (3 W each). Assume only one coil is pulling in at a time.',
+ num:{v:138,tol:0.01,u:'VA'},
+ a:'Peak load <b>≈ 138 VA</b> → choose a <b>150 VA</b> (or next size up, e.g. 250 VA for spare/regulation).',
+ steps:['Sealed (steady) load: coils <code>3×10 = 30</code> + relays <code>3×2 = 6</code> + lights <code>4×3 = 12</code> → <code>48 VA</code>.','Largest inrush adds: <code>100 − 10 = 90 VA</code> extra when one coil closes.','Peak = <code>48 + 90 = 138 VA</code>.','Pick the next standard size (150 VA).'],
+ why:'Sealed VA decides heating; inrush VA decides voltage dip (coils chatter if the secondary sags). <span class="note">Practical design rule – not a code requirement.</span>'},
+{id:'xfmr-4',t:'xfmr',d:3,q:'A <b>75 kVA, 480 V</b> 3-phase transformer feeds a panel. Full-load primary current and max primary-only breaker?',
+ num:{v:90.2,tol:0.01,u:'A'},
+ a:'<b>90.2 A</b>; max primary-only protection 125 % = 112.8 A → <b>125 A</b> (next higher standard size allowed).',
+ steps:['<code>I = 75 000 / (1.732 × 480) = 90.2 A</code>.','I ≥ 9 A → 125 %: <code>90.2 × 1.25 = 112.8 A</code>.','112.8 is not standard; next higher permitted → <code>125 A</code>.']},
+/* ---------- WIRE ---------- */
+{id:'wire-1',t:'wire',d:2,q:'What is the smallest copper equipment grounding conductor (AWG) for circuits protected by a <b>100 A</b> breaker?',
+ num:{v:8,tol:0.001,u:'AWG'},
+ a:'<b>8 AWG</b> copper.',
+ steps:['Size the EGC from the <b>rating of the overcurrent device</b> ahead of the circuit (NEC 250.122 / UL 508A Table 33.1 style).','15 A → 14 · 20 A → 12 · 60 A → 10 · <b>100 A → 8</b> · 200 A → 6 · 300 A → 4 · 400 A → 3 · 500 A → 2 · 600 A → 1.'],
+ why:'The EGC must carry fault current long enough for the breaker/fuse to open. The size follows the device, not the load.'},
+{id:'wire-2',t:'wire',d:1,q:'What colors identify the grounded conductor and the equipment-grounding conductor in a panel?',
+ a:'Grounded (neutral) conductor: <b>white or natural gray</b>. Equipment-grounding conductor: <b>green or green with yellow stripe</b> (bare also acceptable). Never use these colors for ungrounded conductors.',
+ why:'UL 508A does not require specific colors for hot conductors. (NFPA 79 for machinery typically uses black = AC/DC power, red = AC control, blue = DC control, yellow = interlocked external power.)'},
+{id:'wire-3',t:'wire',d:2,q:'Which ampacity column do you normally use for panel field-wiring terminals on circuits of 100 A or less, and why?',
+ a:'The <b>60 °C</b> column (unless the terminals are marked for 75 °C or higher and all other limits allow it).',
+ why:'Equipment ≤ 100 A is assumed to have 60 °C terminals unless marked otherwise. For > 100 A, 75 °C is assumed.'},
+{id:'wire-4',t:'wire',d:3,q:'What is the allowable current of a <b>copper bus bar 1/4 in. × 2 in.</b> using the UL 508A rule of thumb?',
+ num:{v:500,tol:0.001,u:'A'},
+ a:'<b>500 A</b> (1000 A per in² of copper).',
+ steps:['Cross-section: <code>0.25 × 2 = 0.5 in²</code>.','Current density rule: copper <b>1000 A/in²</b> (aluminum about 700 A/in²).','<code>0.5 × 1000 = 500 A</code>.'],
+ why:'Bus bars can be sized by area (or by a heating test). <span class="note">Verify density values in your edition.</span>'},
+{id:'wire-5',t:'wire',d:3,q:'Voltage drop: a 3-phase 460 V circuit, <b>24 A</b>, <b>100 ft</b> one-way, <b>10 AWG copper</b> (R ≈ 1.24 Ω/1000 ft). Find the drop and percentage.',
+ num:{v:5.15,tol:0.02,u:'V'},
+ a:'<b>≈ 5.2 V → 1.12 %</b> (within the common 3 % guideline).',
+ steps:['Resistance of one conductor: <code>R = 1.24 × 100/1000 = 0.124 Ω</code>.','3-phase drop: <code>V<sub>d</sub> = √3 × I × R = 1.732 × 24 × 0.124 = 5.15 V</code>.','Percent: <code>5.15 / 460 = 1.12 %</code>.'],
+ why:'Voltage drop is a design recommendation (NEC informational note), not a UL 508A pass/fail rule – but good practice.'},
+{id:'wire-6',t:'wire',d:3,q:'A 480 V, 3-phase panel (use the 460 V motor table) runs: 15 hp (21 A), 5 hp (7.6 A), 2 hp (3.4 A) and a 5 kW, 480 V resistive 3-phase heater. Find (a) total full-load current, (b) minimum supply conductor ampacity, (c) minimum disconnect current rating (115 % rule).',
+ num:{v:38.0,tol:0.01,u:'A'},
+ a:'(a) <b>38.0 A</b> (b) <b>43.3 A → 6 AWG (60 °C)</b> (c) <b>≥ 43.7 A → next available disconnect, e.g. 60 A</b>.',
+ steps:['Heater: <code>I = 5000 / (1.732 × 480) = 6.01 A</code>.','Total FLC: <code>21 + 7.6 + 3.4 + 6.01 = 38.0 A</code> (marked as panel FLC).','Supply conductors: 125 % of largest motor + the rest → <code>1.25×21 + 7.6 + 3.4 + 6.01 = 43.3 A</code> → 8 AWG = 40 A ✘, <b>6 AWG = 55 A</b> ✔.','Disconnect: <code>38.0 × 1.15 = 43.7 A</code> → select the next standard rating (60 A).'],
+ why:'If the heater nameplate gives amps, use that value. Motor FLC comes from the table (460 V column covers 440–480 V systems).'},
+/* ---------- MATH ---------- */
+{id:'math-1',t:'math',d:2,q:'Estimate the 3-phase input current of a <b>20 hp</b> motor at <b>460 V</b>, efficiency <b>92 %</b>, power factor <b>0.85</b>. Compare to the table FLC.',
+ num:{v:24,tol:0.03,u:'A'},
+ a:'<b>≈ 24 A</b> actual (table FLC = 27 A, intentionally higher).',
+ steps:['Output power: <code>20 × 0.746 = 14.92 kW</code>.','Input power: <code>14.92 / 0.92 = 16.22 kW</code>.','<code>I = P / (√3 × V × PF) = 16 217 / (1.732 × 460 × 0.85) = 16 217 / 677.2 = 23.95 A</code>.'],
+ why:'The tables assume conservative efficiency/PF, so table FLC ≥ typical real current.',sim:'wave'},
+{id:'math-2',t:'math',d:1,q:'A 3-phase <b>480Y/277 V</b> wye system: what is line-to-neutral voltage?',
+ num:{v:277,tol:0.01,u:'V'},
+ a:'<b>277 V</b>.',
+ steps:['Wye: <code>V<sub>L-L</sub> = √3 × V<sub>L-N</sub></code>.','<code>V<sub>L-N</sub> = 480 / 1.732 = 277 V</code>.','Similarly 208Y → 120 V.']},
+{id:'math-3',t:'math',d:2,q:'Full-load current of a <b>5 kW, 480 V, 3-phase</b> resistive heater?',
+ num:{v:6.01,tol:0.02,u:'A'},
+ a:'<b>6.01 A</b>.',
+ steps:['Resistive load: PF = 1.','<code>I = P / (√3 × V) = 5000 / (1.732 × 480) = 6.01 A</code>.']},
+{id:'math-4',t:'math',d:3,q:'A load draws <b>30 A</b> at <b>460 V, 3-phase</b>, PF 0.80. Find S (kVA), P (kW) and Q (kvar).',
+ num:{v:19.1,tol:0.02,u:'kW'},
+ a:'S = <b>23.9 kVA</b>, P = <b>19.1 kW</b>, Q = <b>14.3 kvar</b>.',
+ steps:['<code>S = √3 V I = 1.732 × 460 × 30 = 23 902 VA</code>.','<code>P = S × PF = 23 902 × 0.8 = 19 122 W</code>.','<code>Q = S × sin φ = 23 902 × 0.6 = 14 341 var</code> (cos φ = 0.8 → sin φ = 0.6).'],
+ why:'Check: S² = P² + Q² (power triangle).',fig:'tri',sim:'wave'},
+/* ---------- CONTROLS ---------- */
+{id:'ctrl-1',t:'ctrl',d:2,q:'What is the difference between a <i>branch-circuit</i> protective device and a <i>supplemental</i> protective device? Give examples.',
+ a:'<b>Branch-circuit rated</b>: may be the main short-circuit protection for a branch circuit – UL 489 molded-case breakers, UL 248 fuses (Class J, CC, T, RK1/RK5 …).<br><b>Supplemental</b>: only for additional protection <i>downstream</i> of a branch device – UL 1077 breakers (“recognized”/tripping devices), UL 248-14 supplemental fuses (e.g. GMC, midget-type).',
+ why:'A UL 1077 supplemental protector cannot replace the branch device, and its short-circuit rating (5 kA default; limited by fuse upstream) often sets panel SCCR.'},
+{id:'ctrl-2',t:'ctrl',d:2,q:'What do overload relay trip classes 10, 20 and 30 mean?',
+ a:'The class is the <b>maximum time in seconds</b> the relay takes to trip at <b>600 % (6×) of its set current</b>: Class 10 ≤ 10 s, Class 20 ≤ 20 s, Class 30 ≤ 30 s.',
+ why:'Class 10 for ordinary starting; class 20 for heavier loads (fans, pumps); class 30 for very long acceleration (large inertia). Try it in the overload simulator.',sim:'starter'},
+{id:'ctrl-3',t:'ctrl',d:2,q:'List the four functions a complete motor branch circuit must provide.',
+ a:'<ol><li><b>Disconnect</b> means</li><li><b>Short-circuit / ground-fault protection</b> (branch circuit protective device)</li><li><b>Motor controller</b> (contactor / starter)</li><li><b>Overload protection</b></li></ol>',
+ why:'Combination starters (e.g. MCP + contactor + overload) integrate some of these. A tested combination often also raises SCCR.',sim:'motor'},
+{id:'ctrl-4',t:'ctrl',d:2,q:'Explain the standard 3-wire start/stop circuit: contact types and why a power failure does not restart the motor.',
+ a:'<b>Stop</b> = normally <b>closed</b> in series; <b>Start</b> = normally <b>open</b>; an auxiliary contact <b>M</b> (normally open) in <b>parallel</b> with Start “seals in” the coil; overload contacts (normally closed) in series with the coil.<br>If power is lost the coil drops out, the M contact opens and <b>the circuit stays off until Start is pressed again</b> (low-voltage protection).',
+ why:'A wire-break in the stop circuit stops the motor (fail-safe) – that’s why Stop is NC. See the animated ladder in the simulator.',sim:'starter'},
+{id:'ctrl-5',t:'ctrl',d:3,q:'What is the difference between Type 1 and Type 2 coordination of a motor starter with its short-circuit protective device?',
+ a:'<b>Type 1</b>: after a short-circuit the starter may be <b>damaged and need repair or replacement</b>, but there is no danger to people.<br><b>Type 2</b>: after a short-circuit the starter is <b>suitable for further use</b>; only light contact welding that is easily separated is allowed.',
+ why:'Type 2 is the better (and often higher-SCCR) combination; check the manufacturer’s tables.'},
+{id:'ctrl-6',t:'ctrl',d:2,q:'Why must the overload relay and the branch short-circuit device be sized from different current values?',
+ a:'The branch device must tolerate motor starting current but clear short circuits: it is sized as a % of the <b>table FLC</b>. The overload relay protects the actual motor against sustained overcurrent: it is sized from the motor’s <b>nameplate FLA</b> (+ service factor).',
+ why:'If the overload was sized from the table value it could be set above what the motor can tolerate.'},
+];
+
+/* ============================== figures ============================== */
+function figPct(){ // percent of FLC ladder
+ const items=[['Dual-element fuse',175],['Inverse-time CB',250],['Non-time-delay fuse',300],['Instantaneous (MCP)',800]];
+ let s='<svg viewBox="0 0 520 170" role="img" aria-label="Maximum branch protection as percent of FLC" style="width:100%;max-width:560px"><text x="8" y="16" font-size="13" font-weight="700">Max short-circuit device, % of table FLC</text>';
+ items.forEach((it,i)=>{const w=it[1]/800*300,y=30+i*32;
+  s+=`<text x="8" y="${y+15}" font-size="12">${it[0]}</text><rect x="150" y="${y}" width="${w}" height="20" rx="4" fill="var(--acc)"/><text x="${156+w}" y="${y+15}" font-size="12" font-weight="700">${it[1]}%</text>`});
+ return s+'</svg>'}
+function barSvg(list,fault){ // list of [name,kA]
+ const W=520,L=170,H=24+list.length*28+22,max=Math.log10(300),min=list.reduce((a,b)=>Math.min(a,b[1]),1e9);
+ const X=v=>L+(Math.log10(Math.max(v,1))/max)*(W-L-30);
+ let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:600px" role="img" aria-label="SCCR of each component"><text x="8" y="16" font-size="12" font-weight="700">Component SCCR (kA, log scale)</text>`;
+ list.forEach((it,i)=>{const y=26+i*28,low=it[1]===min;
+  s+=`<text x="8" y="${y+15}" font-size="12">${it[0]}</text><rect x="${L}" y="${y}" width="${Math.max(X(it[1])-L,2)}" height="20" rx="4" fill="${low?'var(--bad)':'var(--acc)'}" opacity="${low?1:.75}"/><text x="${X(it[1])+5}" y="${y+15}" font-size="12" font-weight="700">${it[1]}</text>`});
+ if(fault){const fx=X(fault);s+=`<line x1="${fx}" x2="${fx}" y1="20" y2="${H-14}" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5 3"/><text x="${fx}" y="${H-2}" font-size="11" text-anchor="middle" fill="var(--warn)" style="fill:var(--warn)">available ${fault} kA</text>`}
+ return s+'</svg>'}
+function figTri(){return `<svg viewBox="0 0 360 190" style="width:100%;max-width:380px" aria-label="power triangle"><polygon points="30,160 260,160 260,45" fill="var(--acc2)" stroke="var(--acc)" stroke-width="2"/><text x="120" y="180" font-size="13" text-anchor="middle">P = 19.1 kW (real)</text><text x="270" y="108" font-size="13">Q = 14.3 kvar</text><text x="100" y="92" font-size="13" transform="rotate(-27 100 92)">S = 23.9 kVA</text><path d="M70 160 A40 40 0 0 0 64 145" fill="none" stroke="var(--ink)"/><text x="78" y="150" font-size="12">φ = 36.9°</text></svg>`}
+const FIGS={pct:figPct,bars1:()=>barSvg([['Bus bar',50],['Fuse holder',10],['Terminal block',10],['Disconnect switch',5],['Starter + overload',5]]),
+ bars2:()=>barSvg([['Bus bar',50],['Fuse holder',10],['Terminal block',10],['Class J fuse (IR)',200],['65 kA combination',65]]),tri:figTri};
+
+/* ============================== question cards ============================== */
+const prog=store.get('ul508a.prog',{});
+function saveProg(){store.set('ul508a.prog',prog);updateScore()}
+function updateScore(){const g=Object.values(prog).filter(v=>v==='got').length;$('#score').textContent=`Knew it: ${g}/${Q.length}`}
+function cardHTML(q,i,opts={}){
+ const st=prog[q.id];
+ return `<article class="card" data-id="${q.id}">
+  <div class="row"><span class="tag">${TOPICS[q.t]}</span><span class="tag d">${'●'.repeat(q.d)}${'○'.repeat(3-q.d)}</span>${st?`<span class="tag ${st==='got'?'':'d'}">${st==='got'?'✓ knew it':'✗ review'}</span>`:''}
+   ${q.sim?`<button class="btn sm" data-sim="${q.sim}">Try in simulator →</button>`:''}</div>
+  <div class="q">${opts.n!=null?`Q${opts.n}. `:''}${q.q}</div>
+  ${q.num?`<div class="row"><label>Your answer (${q.num.u}): <input type="number" step="any" class="guess" style="width:110px"></label><button class="btn sm chk">Check</button><span class="res"></span></div>`:''}
+  <div class="row" style="margin-top:8px"><button class="btn pri sm rev">Show answer</button></div>
+  <div class="reveal hide">
+   <div class="ans"><b>Answer:</b> ${q.a}</div>
+   ${q.steps?`<div class="note" style="margin-top:8px"><b>Math / steps</b></div><ol class="steps">${q.steps.map(s=>`<li>${s}</li>`).join('')}</ol>`:''}
+   ${q.fig?`<div>${FIGS[q.fig]()}</div>`:''}
+   ${q.why?`<div class="why"><b>Why / explanation:</b> ${q.why}</div>`:''}
+   <div class="row"><span class="note">How did you do?</span><button class="btn sm got">✓ I knew it</button><button class="btn sm miss">✗ Need review</button></div>
+  </div></article>`}
+function wireCards(root,onMark){
+ root.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const c=b.closest('.card');if(!c&&!b.dataset.sim)return;
+  if(b.dataset.sim){go('sim',b.dataset.sim);return}
+  const q=Q.find(x=>x.id===c.dataset.id);
+  if(b.classList.contains('rev')){const r=$('.reveal',c);r.classList.toggle('hide');b.textContent=r.classList.contains('hide')?'Show answer':'Hide answer'}
+  else if(b.classList.contains('chk')){const v=parseFloat($('.guess',c).value),res=$('.res',c);
+   if(isNaN(v)){res.textContent='Enter a number first.';return}
+   const ok=Math.abs(v-q.num.v)<=Math.abs(q.num.v)*q.num.tol+1e-9;
+   res.innerHTML=ok?'<span class="ok">✓ Correct</span>':'<span class="bad">✗ Not quite – open the answer and steps</span>'}
+  else if(b.classList.contains('got')||b.classList.contains('miss')){prog[q.id]=b.classList.contains('got')?'got':'miss';saveProg();onMark&&onMark(q,c)}
+ })}
+
+/* ---------- Study view ---------- */
+function viewStudy(){
+ const m=$('#main');let topic=store.get('ul508a.topic','all');
+ m.innerHTML=`<div class="banner"><b>Read first:</b> Built from the UL 508A standard structure and NEC motor tables (Tables 430.248/.250). Treat percentages, defaults and table values as study aids and <b>verify against the edition your exam references</b>. Answers are hidden – try to work each one first; numeric questions have a checker.</div>
+ <div class="card"><div class="row"><label>Topic <select id="ft"><option value="all">All topics</option>${Object.entries(TOPICS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
+ <button class="btn sm" id="showAll">Show all answers</button><button class="btn sm" id="hideAll">Hide all</button><button class="btn sm" id="resetP">Reset progress</button></div>
+ <div class="prog" style="margin-top:10px"><i id="pbar"></i></div></div><div id="list"></div>`;
+ const list=$('#list');
+ const draw=()=>{const qs=Q.filter(q=>topic==='all'||q.t===topic);
+  list.innerHTML=qs.map((q,i)=>cardHTML(q,i)).join('');
+  const g=Object.values(prog).filter(v=>v==='got').length;$('#pbar').style.width=(g/Q.length*100)+'%'};
+ $('#ft').value=topic;$('#ft').onchange=e=>{topic=e.target.value;store.set('ul508a.topic',topic);draw()};
+ $('#showAll').onclick=()=>$$('.reveal',list).forEach(r=>r.classList.remove('hide'));
+ $('#hideAll').onclick=()=>$$('.reveal',list).forEach(r=>r.classList.add('hide'));
+ $('#resetP').onclick=()=>{if(confirm('Clear all progress?')){for(const k in prog)delete prog[k];saveProg();draw()}};
+ wireCards(list,(q,c)=>{c.outerHTML=cardHTML(q,0).replace('reveal hide','reveal');const g=Object.values(prog).filter(v=>v==='got').length;$('#pbar').style.width=(g/Q.length*100)+'%'});
+ draw()}
+
+/* ---------- Quiz view ---------- */
+function viewQuiz(){
+ const m=$('#main');
+ m.innerHTML=`<div class="card"><div class="row"><label>Topic <select id="qt"><option value="all">All topics</option>${Object.entries(TOPICS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
+ <label><input type="checkbox" id="qm"> Only questions I missed / haven’t answered</label><button class="btn pri" id="qs">Start quiz</button></div></div><div id="quiz"></div>`;
+ $('#qs').onclick=()=>{
+  let qs=Q.filter(q=>$('#qt').value==='all'||q.t===$('#qt').value);
+  if($('#qm').checked)qs=qs.filter(q=>prog[q.id]!=='got');
+  qs=qs.map(q=>[Math.random(),q]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  if(!qs.length){$('#quiz').innerHTML='<div class="card">Nothing to quiz – you’ve marked everything as known 🎉</div>';return}
+  let i=0,got=0;const box=$('#quiz');
+  const show=()=>{
+   if(i>=qs.length){box.innerHTML=`<div class="card"><div class="big">Done: ${got} / ${qs.length}</div><p>${got/qs.length>=.8?'Nice – you’re exam-ready on this set.':'Re-run with “only missed” to drill the weak ones.'}</p></div>`;return}
+   box.innerHTML=`<div class="note">Question ${i+1} of ${qs.length}</div><div class="prog" style="margin:6px 0 12px"><i style="width:${i/qs.length*100}%"></i></div>`+cardHTML(qs[i],i,{n:i+1});
+   const c=$('.card',box);$('.row:last-of-type',$('.reveal',c)).innerHTML='<button class="btn pri sm got">✓ Got it – next</button><button class="btn sm miss">✗ Missed – next</button>'};
+  box.onclick=null;
+  wireCards(box,(q)=>{if(prog[q.id]==='got')got++;i++;show()});
+  show()}}
+
+/* ---------- Reference view ---------- */
+function viewRef(){
+ const m=$('#main');
+ const flcRows=(T,volts)=>{const hps=[...new Set(volts.flatMap(v=>Object.keys(T[v]).map(Number)))].sort((a,b)=>a-b);
+  return `<table><tr><th>hp</th>${volts.map(v=>`<th>${v} V</th>`).join('')}</tr>${hps.map(h=>`<tr><td>${h}</td>${volts.map(v=>`<td>${T[v][h]??'–'}</td>`).join('')}</tr>`).join('')}</table>`};
+ m.innerHTML=`<div class="banner">Reference tables reproduced for study. Always confirm against the standard / NEC edition used in your exam.</div>
+ <div class="card"><h3>Motor full-load current (A)</h3><div class="grid"><div class="tbl"><b>3-phase (NEC 430.250 / UL 508A Table 50.1)</b>${flcRows(FLC3,[208,230,460,575])}</div><div class="tbl"><b>Single-phase (NEC 430.248)</b>${flcRows(FLC1,[115,230])}</div></div></div>
+ <div class="card"><h3>Motor branch-circuit rules (max % of table FLC)</h3><div class="tbl"><table><tr><th>Item</th><th>Rule</th></tr>
+ <tr><td>Conductors</td><td>125 % of FLC (largest motor) + 100 % others</td></tr>
+ <tr><td>Non-time-delay fuse</td><td>300 % (up to 400 % if it blocks starting)</td></tr>
+ <tr><td>Dual-element fuse</td><td>175 % (225 %)</td></tr>
+ <tr><td>Inverse-time breaker</td><td>250 % (400 % ≤ 100 A / 300 % &gt; 100 A)</td></tr>
+ <tr><td>Instantaneous-trip breaker (MCP)</td><td>800 % (1300 % for some Design B high-efficiency)</td></tr>
+ <tr><td>Overload (nameplate)</td><td>125 % (SF ≥ 1.15 or ≤ 40 °C rise) / 115 % others; up to 140 % / 130 %</td></tr>
+ <tr><td>Branch device rounding</td><td>round <b>up</b> to next standard size</td></tr>
+ <tr><td>Feeder device</td><td>largest branch device + other FLCs, round <b>down</b></td></tr></table></div></div>
+ <div class="card"><h3>Copper conductor ampacity (A)</h3><div class="tbl"><table><tr><th>AWG</th>${W60.map(w=>`<td>${w[0]}</td>`).join('')}</tr><tr><th>60 °C</th>${W60.map(w=>`<td>${w[1]}</td>`).join('')}</tr><tr><th>75 °C</th>${W75.map(w=>`<td>${w[1]}</td>`).join('')}</tr></table></div><p class="note">≤ 100 A circuits: use the 60 °C column. 14/12/10 AWG overcurrent limits: 15/20/30 A.</p></div>
+ <div class="card"><h3>Standard overcurrent device ratings (NEC 240.6)</h3><p><code>${STD.join(', ')}</code> A &nbsp;(1, 3, 6, 10 A are fuse sizes; breakers start at 15 A)</p></div>
+ <div class="card"><h3>Default component SCCR (Supplement SB, no marked value)</h3><div class="tbl"><table><tr><th>Component</th><th>kA</th></tr>
+ <tr><td>Bus bar</td><td>50</td></tr><tr><td>Fuse holder</td><td>10</td></tr><tr><td>Terminal block / power distribution block</td><td>10</td></tr><tr><td>Circuit breaker (UL 489)</td><td>5</td></tr><tr><td>Disconnect / switch unit</td><td>5</td></tr><tr><td>Motor controller (contactor, starter)</td><td>5</td></tr><tr><td>Overload relay</td><td>5</td></tr></table></div><p class="note">Marked values override defaults. Control-circuit parts behind a small, protected control transformer are generally excluded from the SCCR evaluation.</p></div>
+ <div class="card"><h3>Formulas</h3><ul>
+ <li>3-phase apparent power <code>S = √3 · V · I</code></li><li>Real power <code>P = √3 · V · I · PF</code>; <code>Q = √3 · V · I · sin φ</code></li>
+ <li>hp ↔ kW: <code>1 hp = 0.746 kW</code></li><li>Single-phase current <code>I = VA / V</code></li>
+ <li>Transformer FLA (3φ) <code>I = kVA·1000 / (√3·V)</code>; fault current <code>I<sub>sc</sub> = I<sub>FL</sub> / %Z</code></li>
+ <li>Voltage drop (3φ) <code>V<sub>d</sub> = √3 · I · R · L</code></li><li>Wye: <code>V<sub>LL</sub> = √3 · V<sub>LN</sub></code>, <code>I<sub>L</sub> = I<sub>ph</sub></code>; Delta: <code>I<sub>L</sub> = √3 · I<sub>ph</sub></code></li>
+ <li>Control transformer protection (primary only): ≥ 9 A → 125 %; &lt; 9 A → 167 %; &lt; 2 A → 300 %</li></ul></div>`}
+
+/* ============================== simulators ============================== */
+const SIMS={sccr:'SCCR builder',motor:'Motor circuit',starter:'Starter & overload',wave:'3-phase power',xfmr:'Fault current & transformers'};
+let simTab=store.get('ul508a.sim','sccr'), stopFn=null;
+function viewSim(){
+ const m=$('#main');
+ m.innerHTML=`<div class="sub" id="subnav">${Object.entries(SIMS).map(([k,v])=>`<button data-s="${k}" class="${k===simTab?'on':''}">${v}</button>`).join('')}</div><div id="simbox"></div>`;
+ $('#subnav').onclick=e=>{const b=e.target.closest('button');if(!b)return;simTab=b.dataset.s;store.set('ul508a.sim',simTab);viewSim()};
+ if(stopFn){stopFn();stopFn=null}
+ ({sccr:simSCCR,motor:simMotor,starter:simStarter,wave:simWave,xfmr:simXfmr})[simTab]($('#simbox'))}
+
+/* ---------- SCCR ---------- */
+const SC_TYPES=[['Bus bar',50],['Circuit breaker (UL 489)',5],['Fuse holder',10],['Fuse – marked IR (Class J/CC/T)',200],['Motor starter / contactor',5],['Overload relay',5],['Disconnect switch',5],['Terminal block',10],['Power distribution block',10],['VFD / soft starter (marked)',5],['Tested combination (marked)',65],['Other (enter marked value)',10]];
+const SC_PRESETS={
+ 'Typical panel (weak links)':[[0,50],[6,5],[2,10],[4,5],[5,5],[7,10]],
+ 'Upgraded: combination + J fuses':[[0,50],[10,65],[3,200],[2,10],[7,10]],
+ 'High-SCCR build (all ≥ 65 kA)':[[0,50],[10,65],[3,200],[2,100],[7,100]]};
+function simSCCR(box){
+ let rows=SC_PRESETS['Typical panel (weak links)'].map(r=>({type:r[0],v:r[1]})),fault=5.16;
+ box.innerHTML=`<div class="card"><h3 style="margin-top:0">SCCR weakest-link builder</h3><p class="note">Add the power-circuit components. The panel SCCR is the lowest component value; compare it with the available fault current (calculate it on the “Fault current” tab).</p>
+ <div class="row"><label>Preset <select id="pre">${Object.keys(SC_PRESETS).map(k=>`<option>${k}</option>`).join('')}</select></label><label>Available fault current (kA) <input id="af" type="number" step="0.1" value="${fault}" style="width:90px"></label><button class="btn sm" id="add">+ Add component</button></div>
+ <div class="tbl" style="margin-top:10px"><table id="tb"></table></div></div><div class="card" id="out"></div>`;
+ const rowsEl=$('#tb',box);
+ const draw=()=>{
+  rowsEl.innerHTML='<tr><th>Component type</th><th>SCCR (kA)</th><th></th></tr>'+rows.map((r,i)=>`<tr><td><select data-i="${i}" class="ty">${SC_TYPES.map((t,j)=>`<option value="${j}" ${j==r.type?'selected':''}>${t[0]}</option>`).join('')}</select></td><td><input type="number" min="0.1" step="any" data-i="${i}" class="vv" value="${r.v}" style="width:90px"></td><td><button class="btn sm del" data-i="${i}">✕</button></td></tr>`).join('');
+  const min=Math.min(...rows.map(r=>+r.v)),lows=rows.filter(r=>+r.v===min).map(r=>SC_TYPES[r.type][0]);
+  const ok=min>=fault;
+  $('#out',box).innerHTML=`<div class="row"><div><div class="note">Panel SCCR</div><div class="big">${fmt(min)} kA</div></div>
+   <div><span class="pill ${ok?'ok':'bad'}">${ok?'✓ Adequate':'✗ Too low'} for ${fmt(fault)} kA available</span></div></div>
+   <p>Limiting component${lows.length>1?'s':''}: <b>${[...new Set(lows)].join(', ')}</b>. ${ok?'':'Replace with higher-rated / tested-combination parts or add upstream current limiting.'}</p>${barSvg(rows.map(r=>[SC_TYPES[r.type][0].replace(/ \(.*\)/,''),+r.v]),fault)}
+   <p class="note">Default values are for components without a marked SCCR. A marked value or a tested combination can replace the default.</p>`};
+ box.onchange=e=>{const t=e.target;if(t.classList.contains('ty')){rows[t.dataset.i].type=+t.value;rows[t.dataset.i].v=SC_TYPES[+t.value][1];draw()}
+  else if(t.classList.contains('vv')){rows[t.dataset.i].v=Math.max(0.1,+t.value||0.1);draw()}
+  else if(t.id==='af'){fault=Math.max(0,+t.value||0);draw()}
+  else if(t.id==='pre'){rows=SC_PRESETS[t.value].map(r=>({type:r[0],v:r[1]}));draw()}};
+ box.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='add'){rows.push({type:7,v:10});draw()}else if(b.classList.contains('del')&&rows.length>1){rows.splice(+b.dataset.i,1);draw()}};
+ draw()}
+
+/* ---------- Motor circuit ---------- */
+function simMotor(box){
+ box.innerHTML=`<div class="card"><h3 style="margin-top:0">Motor branch-circuit calculator</h3>
+ <div class="grid"><div class="fld"><label>Phase</label><select id="ph"><option value="3">3-phase</option><option value="1">Single-phase</option></select></div>
+ <div class="fld"><label>Voltage</label><select id="vv"></select></div><div class="fld"><label>Horsepower</label><select id="hp"></select></div>
+ <div class="fld"><label>Nameplate FLA (A, blank = table)</label><input id="np" type="number" step="any" placeholder="e.g. 13.2"></div>
+ <div class="fld"><label>Service factor</label><select id="sf"><option>1.15</option><option>1.0</option></select></div>
+ <div class="fld"><label>Branch protective device</label><select id="dev"><option value="250">Inverse-time breaker (250 %)</option><option value="175">Dual-element fuse (175 %)</option><option value="300">Non-time-delay fuse (300 %)</option><option value="800">Instantaneous-trip (MCP, 800 %)</option></select></div></div></div>
+ <div class="card" id="mo"></div>`;
+ const sel=(id,opts,cur)=>{const e=$(id,box);e.innerHTML=opts.map(o=>`<option ${String(o)===String(cur)?'selected':''}>${o}</option>`).join('')};
+ const fill=()=>{const T=$('#ph',box).value==='3'?FLC3:FLC1,vs=Object.keys(T),cv=$('#vv',box).value;sel('#vv',vs,vs.includes(cv)?cv:vs.includes('460')?'460':vs[0]);
+  const hps=Object.keys(T[$('#vv',box).value]),ch=$('#hp',box).value;sel('#hp',hps,hps.includes(ch)?ch:hps.includes('10')?'10':hps[0])};
+ const calc=()=>{
+  const T=$('#ph',box).value==='3'?FLC3:FLC1,v=$('#vv',box).value,hp=$('#hp',box).value,flc=T[v][hp],
+   pct=+$('#dev',box).value,sf=+$('#sf',box).value,np=parseFloat($('#np',box).value)||null;
+  const cond=flc*1.25,wire=wireFor(cond,cond>100);
+  const maxD=flc*pct/100,dev=pct===800?maxD:nextUp(maxD,pct===250?STDCB:STD);
+  const base=np||flc,olp=sf>=1.15?1.25:1.15,ol=base*olp,ol2=base*(sf>=1.15?1.4:1.3);
+  $('#mo',box).innerHTML=`<h3 style="margin-top:0">Result: ${hp} hp, ${v} V, ${$('#ph',box).value==='3'?'3-phase':'single-phase'}</h3>
+  <ol class="steps"><li>Table FLC = <b>${flc} A</b></li>
+  <li>Conductor ampacity = 125 % × FLC = ${fmt(flc,2)} × 1.25 = <b>${fmt(cond)} A</b> → <b>${wire} AWG Cu</b> (${cond>100?'75':'60'} °C column)</li>
+  <li>Branch device max = ${pct} % × ${flc} = <b>${fmt(maxD)} A</b>${pct===800?' (adjustable MCP setting)':` → next standard size up: <b>${dev} A</b>`}</li>
+  <li>Overload (${np?'nameplate '+np+' A':'table FLC used – enter nameplate FLA for accuracy'}), SF ${sf}: max ${olp*100} % = <b>${fmt(ol)} A</b>; may be raised to ${(sf>=1.15?140:130)} % = ${fmt(ol2)} A if it trips on starting</li></ol>
+  <svg viewBox="0 0 560 92" style="width:100%;max-width:640px" aria-label="motor branch circuit one-line"><line x1="10" y1="46" x2="540" y2="46" stroke="var(--ink)" stroke-width="2"/>
+  ${[['Disconnect',70],['Branch SCPD '+(pct===800?fmt(maxD)+'A':dev+'A'),190],['Contactor',310],['Overload '+fmt(ol)+'A',420]].map(b=>`<rect x="${b[1]-48}" y="26" width="96" height="40" rx="6" fill="var(--acc2)" stroke="var(--acc)"/><text x="${b[1]}" y="51" font-size="11" text-anchor="middle">${b[0]}</text>`).join('')}
+  <circle cx="515" cy="46" r="22" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/><text x="515" y="51" font-size="14" text-anchor="middle" font-weight="700">M</text><text x="515" y="88" font-size="11" text-anchor="middle">${flc} A FLC</text>
+  <text x="300" y="14" font-size="11" text-anchor="middle">${wire} AWG Cu conductors</text></svg>`};
+ box.onchange=e=>{if(e.target.id==='ph'||e.target.id==='vv')fill();calc()};
+ fill();calc()}
+
+/* ---------- Starter & overload ---------- */
+function simStarter(box){
+ box.innerHTML=`<div class="card"><h3 style="margin-top:0">3-wire starter with thermal overload</h3>
+ <p class="note">Hold Start to energize the contactor (M seals in). Raise the motor load: a thermal overload integrates I²t and trips on the inverse-time curve. Press Stop to open the NC contact. After a trip, wait for cool-down then Reset.</p>
+ <div class="row"><button class="btn pri" id="bStart">Start</button><button class="btn" id="bStop">Stop</button><button class="btn" id="bReset">Reset OL</button>
+ <label>Motor current <input id="load" type="range" min="0.5" max="8" step="0.05" value="1"> <b id="lv">1.00 × FLA</b></label>
+ <label>Class <select id="cls"><option value="10">10</option><option value="20" selected>20</option><option value="30">30</option></select></label>
+ <label>Speed <select id="spd"><option value="1">1×</option><option value="5">5×</option><option value="20" selected>20×</option><option value="60">60×</option></select></label></div></div>
+ <div class="grid"><div class="card" style="margin:0"><svg id="lad" viewBox="0 0 560 250" style="width:100%"></svg></div>
+ <div class="card" style="margin:0"><canvas id="cv" height="250"></canvas></div></div>
+ <div class="card" style="margin-top:14px"><div class="row"><div style="flex:1;min-width:200px"><div class="note">Thermal element (trips at 100 %)</div><div class="prog" style="height:16px"><i id="heat" style="background:var(--warn)"></i></div></div><div id="stat" class="big" style="min-width:160px"></div></div></div>`;
+ const S={start:false,stop:false,m:false,trip:false,heat:0,t:0};
+ const hold=(id,k)=>{const b=$(id,box);const on=e=>{e.preventDefault();S[k]=true},off=()=>{S[k]=false};b.addEventListener('pointerdown',on);['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,off))};
+ hold('#bStart','start');hold('#bStop','stop');
+ $('#bReset',box).onclick=()=>{if(S.heat<0.5)S.trip=false};
+ $('#load',box).oninput=e=>$('#lv',box).textContent=(+e.target.value).toFixed(2)+' × FLA';
+ const cv=$('#cv',box),cx=cv.getContext('2d');
+ const resize=()=>{const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=250*d;cx.setTransform(d,0,0,d,0,0)};resize();
+ const tripTime=(M,N)=>M<=1.0?Infinity:35*N/(M*M-1);
+ function curve(M,N){
+  const W=cv.getBoundingClientRect().width,H=250,L=44,B=28,Rr=W-12,T=12,xs=v=>L+(Math.log10(v)-0)/(Math.log10(10))*(Rr-L),ys=v=>T+(1-(Math.log10(v)-Math.log10(1))/(Math.log10(10000)-0))*(H-B-T);
+  cx.clearRect(0,0,W,H);cx.fillStyle=css('--ink');cx.strokeStyle=css('--line');cx.font='11px system-ui';
+  for(const v of [1,2,3,5,10]){cx.beginPath();cx.moveTo(xs(v),T);cx.lineTo(xs(v),H-B);cx.stroke();cx.fillText(v+'×',xs(v)-6,H-12)}
+  for(const v of [1,10,100,1000,10000]){cx.beginPath();cx.moveTo(L,ys(v));cx.lineTo(Rr,ys(v));cx.stroke();cx.fillText(v>=1000?v/1000+'k':v,6,ys(v)+4)}
+  cx.fillText('Trip time (s) vs current (× FLA) – illustrative',L,10);
+  for(const n of [10,20,30]){cx.strokeStyle=n===N?css('--acc'):css('--line');cx.lineWidth=n===N?3:1.5;cx.beginPath();let f=true;
+   for(let m=1.06;m<=10;m*=1.02){const t=Math.min(Math.max(tripTime(m,n),1),10000);const x=xs(m),y=ys(t);f?cx.moveTo(x,y):cx.lineTo(x,y);f=false}cx.stroke();cx.fillStyle=css('--mut');cx.fillText('Class '+n,xs(8.5),ys(Math.max(tripTime(9,n),1))-4)}
+  cx.lineWidth=1;const mm=Math.min(Math.max(M,1.01),10);cx.fillStyle=S.trip?css('--bad'):css('--cur');cx.beginPath();cx.arc(xs(mm),ys(Math.min(Math.max(tripTime(mm,N),1),10000)),6,0,7);cx.fill()}
+ let last=performance.now(),raf;
+ const loop=now=>{const dt=Math.min((now-last)/1000,.1);last=now;
+  const N=+$('#cls',box).value,spd=+$('#spd',box).value,load=+$('#load',box).value;
+  const A=!S.stop,B=A&&(S.start||S.m),coil=B&&!S.trip;S.m=coil;
+  const M=S.m?load:0;
+  if(M>1)S.heat+=dt*spd*(M*M-1)/(35*N);else S.heat=Math.max(0,S.heat-dt*spd/(S.m?120:240));
+  if(S.heat>=1&&!S.trip){S.trip=true;S.m=false}
+  const on='var(--ok)',off='var(--mut)',c=b=>b?on:off,w=b=>`stroke="${c(b)}" stroke-width="${b?3.5:2}" fill="none"`;
+  const coilE=B&&!S.trip&&S.m;
+  $('#lad',box).innerHTML=`
+   <line x1="30" y1="20" x2="30" y2="170" ${w(true)}/><line x1="530" y1="20" x2="530" y2="170" stroke="${c(coilE||B)}" stroke-width="3" />
+   <text x="30" y="14" font-size="12" text-anchor="middle">L1</text><text x="530" y="14" font-size="12" text-anchor="middle">L2</text>
+   <polyline points="30,70 90,70" ${w(A)}/><text x="105" y="48" font-size="11" text-anchor="middle">STOP (NC)</text>
+   <polyline points="90,70 100,70" ${w(A)}/><line x1="100" y1="70" x2="122" y2="70" ${w(A)}/><line x1="100" y1="60" x2="100" y2="80" ${w(A)}/><line x1="122" y1="60" x2="122" y2="80" ${w(A)}/><line x1="95" y1="82" x2="128" y2="58" stroke="${c(A)}" stroke-width="2"/>
+   <polyline points="122,70 170,70 170,70" ${w(A)}/>
+   <polyline points="170,70 170,100 ${200},100" ${w(A&&S.m)}/><polyline points="170,70 200,70" ${w(A&&S.start)}/>
+   <text x="228" y="48" font-size="11" text-anchor="middle">START (NO)</text><line x1="200" y1="60" x2="200" y2="80" ${w(A&&S.start)}/><line x1="222" y1="60" x2="222" y2="80" ${w(B)}/><line x1="200" y1="70" x2="200" y2="70"/>
+   <text x="228" y="118" font-size="11" text-anchor="middle">M seal-in (NO)</text><line x1="200" y1="90" x2="200" y2="110" ${w(A&&S.m)}/><line x1="222" y1="90" x2="222" y2="110" ${w(B)}/>
+   <polyline points="222,70 260,70 260,100 222,100" ${w(B)}/><polyline points="222,70 300,70" ${w(B)}/>
+   <text x="330" y="48" font-size="11" text-anchor="middle">OL (NC)</text><line x1="300" y1="60" x2="300" y2="80" ${w(B)}/><line x1="322" y1="60" x2="322" y2="80" ${w(B&&!S.trip)}/>${S.trip?'<line x1="296" y1="82" x2="326" y2="58" stroke="var(--bad)" stroke-width="3"/>':''}
+   <polyline points="322,70 440,70" ${w(coilE)}/><circle cx="460" cy="70" r="20" fill="${coilE?'var(--okbg)':'var(--card)'}" stroke="${c(coilE)}" stroke-width="3"/><text x="460" y="75" font-size="14" font-weight="700" text-anchor="middle">M</text>
+   <polyline points="480,70 530,70" ${w(coilE)}/>
+   <rect x="60" y="150" width="440" height="80" rx="8" fill="var(--card)" stroke="var(--line)"/>
+   <text x="80" y="176" font-size="12">Contactor: <tspan font-weight="700" fill="${S.m?'var(--ok)':'var(--mut)'}" style="fill:${S.m?'var(--ok)':'var(--mut)'}">${S.m?'CLOSED':'OPEN'}</tspan> · Motor current: ${(M).toFixed(2)} × FLA</text>
+   <text x="80" y="198" font-size="12">Overload: <tspan font-weight="700" style="fill:${S.trip?'var(--bad)':'var(--ok)'}">${S.trip?'TRIPPED':'OK'}</tspan></text>
+   <g transform="translate(430 190)" style="transform-origin:center"><circle r="${S.m?18:18}" fill="none" stroke="${c(S.m)}" stroke-width="3"/><text y="5" text-anchor="middle" font-size="13" font-weight="700">M</text>${S.m?`<g style="transform-origin:0 0;transform:rotate(${(now/4)%360}deg)"><line x1="0" y1="0" x2="0" y2="-14" stroke="var(--ok)" stroke-width="3"/></g>`:''}</g>`;
+  $('#heat',box).style.width=Math.min(S.heat,1)*100+'%';
+  const eta=M>1?tripTime(M,N)*(1-S.heat):null;
+  $('#stat',box).innerHTML=S.trip?`<span class="bad">TRIPPED${S.heat>=.5?' – cooling':' – reset OK'}</span>`:S.m?(M>1?`Trips in ≈ ${fmt(eta,1)} s`:'<span class="ok">Running</span>'):'Stopped';
+  curve(load,N);
+  raf=requestAnimationFrame(loop)};
+ raf=requestAnimationFrame(loop);
+ stopFn=()=>cancelAnimationFrame(raf);
+ window.addEventListener('resize',resize)}
+
+/* ---------- 3-phase waves ---------- */
+function simWave(box){
+ box.innerHTML=`<div class="card"><h3 style="margin-top:0">3-phase voltage, current and power</h3>
+ <div class="grid"><div class="fld"><label>Line voltage (V)</label><select id="wv"><option>208</option><option>230</option><option selected>460</option><option>480</option><option>575</option></select></div>
+ <div class="fld"><label>Line current: <b id="wil">30</b> A</label><input id="wi" type="range" min="1" max="100" value="30"></div>
+ <div class="fld"><label>Power factor: <b id="wpf">0.80</b> (lagging)</label><input id="wp" type="range" min="0.3" max="1" step="0.01" value="0.8"></div></div></div>
+ <div class="grid"><div class="card" style="margin:0"><canvas id="wc" height="240"></canvas><p class="note">Solid: phase voltages (A red, B blue, C green). Dashed gold: phase-A current lagging by φ.</p></div>
+ <div class="card" style="margin:0"><canvas id="pc" height="240"></canvas><p class="note">Phasors rotate counter-clockwise, 120° apart.</p></div></div>
+ <div class="card" style="margin-top:14px" id="wo"></div>`;
+ const wc=$('#wc',box),pc=$('#pc',box);
+ const fit=c=>{const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=240*d;c.getContext('2d').setTransform(d,0,0,d,0,0);return r.width};
+ let W1=fit(wc),W2=fit(pc);const rs=()=>{W1=fit(wc);W2=fit(pc)};window.addEventListener('resize',rs);
+ let raf,t0=performance.now();
+ const loop=now=>{
+  const V=+$('#wv',box).value,I=+$('#wi',box).value,pf=+$('#wp',box).value,phi=Math.acos(pf);
+  $('#wil',box).textContent=I;$('#wpf',box).textContent=pf.toFixed(2);
+  const S=SQ3*V*I,P=S*pf,Q=S*Math.sin(phi);
+  $('#wo',box).innerHTML=`<div class="grid"><div><div class="note">Apparent S = √3·V·I</div><div class="big">${fmt(S/1000,2)} kVA</div></div><div><div class="note">Real P = S·PF</div><div class="big">${fmt(P/1000,2)} kW</div><div class="note">${fmt(P/746,1)} hp output-equivalent at 100 % eff.</div></div><div><div class="note">Reactive Q = S·sin φ</div><div class="big">${fmt(Q/1000,2)} kvar</div></div><div><div class="note">Phase angle φ</div><div class="big">${fmt(phi*180/Math.PI,1)}°</div></div></div>
+  <p class="note">V<sub>L-N</sub> = ${fmt(V/SQ3,0)} V · Steps: S = 1.732 × ${V} × ${I} = ${fmt(S)} VA; P = ${fmt(S)} × ${pf.toFixed(2)} = ${fmt(P)} W.</p>`;
+  const th=((now-t0)/1000)*2*Math.PI*0.5;
+  const ink=css('--ink'),line=css('--line'),cA=css('--ph-a'),cB=css('--ph-b'),cC=css('--ph-c'),cI=css('--cur');
+  let x=wc.getContext('2d');const H=240;x.clearRect(0,0,W1,H);x.strokeStyle=line;x.lineWidth=1;x.beginPath();x.moveTo(0,H/2);x.lineTo(W1,H/2);x.stroke();
+  [[cA,0],[cB,120],[cC,240]].forEach(([c,a])=>{x.strokeStyle=c;x.lineWidth=2.5;x.beginPath();for(let i=0;i<=W1;i+=2){const y=H/2-Math.sin(th-i/W1*4*Math.PI-a*Math.PI/180)*H*0.38;i?x.lineTo(i,y):x.moveTo(i,y)}x.stroke()});
+  x.strokeStyle=cI;x.setLineDash([6,4]);x.lineWidth=2.5;x.beginPath();for(let i=0;i<=W1;i+=2){const y=H/2-Math.sin(th-i/W1*4*Math.PI-phi)*H*0.25;i?x.lineTo(i,y):x.moveTo(i,y)}x.stroke();x.setLineDash([]);
+  x.fillStyle=ink;x.font='11px system-ui';x.fillText('+ V',4,14);
+  x=pc.getContext('2d');x.clearRect(0,0,W2,H);const cxp=W2/2,cyp=H/2,R=Math.min(W2,H)*0.4;x.strokeStyle=line;x.lineWidth=1;x.beginPath();x.arc(cxp,cyp,R,0,7);x.stroke();
+  const arrow=(a,r,c,w,lab,dash)=>{x.strokeStyle=c;x.fillStyle=c;x.lineWidth=w;x.setLineDash(dash?[6,4]:[]);const ex=cxp+Math.cos(a)*r,ey=cyp-Math.sin(a)*r;x.beginPath();x.moveTo(cxp,cyp);x.lineTo(ex,ey);x.stroke();x.setLineDash([]);x.beginPath();x.arc(ex,ey,4,0,7);x.fill();x.fillStyle=ink;x.font='bold 12px system-ui';x.fillText(lab,ex+Math.cos(a)*8-4,ey-Math.sin(a)*8+4)};
+  arrow(th,R,cA,3,'Va');arrow(th-2*Math.PI/3,R,cB,3,'Vb');arrow(th-4*Math.PI/3,R,cC,3,'Vc');arrow(th-phi,R*0.7,cI,3,'Ia',true);
+  x.strokeStyle=ink;x.lineWidth=1;x.beginPath();x.arc(cxp,cyp,R*0.25,th-phi,th,false);x.stroke();
+  raf=requestAnimationFrame(loop)};
+ raf=requestAnimationFrame(loop);stopFn=()=>{cancelAnimationFrame(raf);window.removeEventListener('resize',rs)}}
+
+/* ---------- Fault current & transformers ---------- */
+function simXfmr(box){
+ box.innerHTML=`<div class="grid"><div class="card" style="margin:0"><h3 style="margin-top:0">Available fault current (infinite bus)</h3>
+ <div class="grid"><div class="fld"><label>Transformer kVA</label><input id="kv" type="number" value="150"></div>
+ <div class="fld"><label>Secondary voltage (V, line-line)</label><input id="xv" type="number" value="480"></div>
+ <div class="fld"><label>Impedance %Z</label><input id="xz" type="number" step="0.05" value="3.5"></div>
+ <div class="fld"><label>Phases</label><select id="xp"><option value="3">3-phase</option><option value="1">Single-phase</option></select></div></div><div id="xo" style="margin-top:12px"></div></div>
+ <div class="card" style="margin:0"><h3 style="margin-top:0">Control transformer protection</h3>
+ <div class="grid"><div class="fld"><label>Rating (VA)</label><input id="cv_" type="number" value="500"></div><div class="fld"><label>Primary V</label><input id="cp" type="number" value="480"></div><div class="fld"><label>Secondary V</label><input id="cs" type="number" value="120"></div></div><div id="co" style="margin-top:12px"></div></div></div>`;
+ const calc=()=>{
+  const kva=+$('#kv',box).value,V=+$('#xv',box).value,z=+$('#xz',box).value/100,ph=$('#xp',box).value;
+  const fla=ph==='3'?kva*1000/(SQ3*V):kva*1000/V,isc=fla/z,ok=[5,10,14,18,22,25,30,35,42,50,65,85,100,200].find(k=>k*1000>=isc);
+  $('#xo',box).innerHTML=`<ol class="steps"><li>I<sub>FL</sub> = ${kva}×1000 / (${ph==='3'?'1.732 × ':''}${V}) = <b>${fmt(fla,1)} A</b></li><li>I<sub>sc</sub> = ${fmt(fla,1)} / ${z} = <b>${fmt(isc,0)} A</b> = <b>${fmt(isc/1000,2)} kA</b></li></ol>
+  <p>Panel SCCR must be ≥ <b>${fmt(isc/1000,2)} kA</b> → next common rating: <b>${ok||'>200'} kA</b>.</p>
+  <svg viewBox="0 0 320 60" style="width:100%"><rect x="0" y="22" width="320" height="16" rx="8" fill="var(--code)"/><rect x="0" y="22" width="${Math.min(isc/1000/100,1)*320}" height="16" rx="8" fill="var(--bad)"/><line x1="${5/100*320}" x2="${5/100*320}" y1="12" y2="48" stroke="var(--ink)"/><text x="${5/100*320}" y="58" font-size="10" text-anchor="middle">5 kA default</text><text x="316" y="14" font-size="10" text-anchor="end">scale 0–100 kA</text></svg>
+  <p class="note">Worst-case at transformer terminals. Conductor impedance and source impedance reduce it downstream.</p>`;
+  const va=+$('#cv_',box).value,vp=+$('#cp',box).value,vs=+$('#cs',box).value,ip=va/vp,is=va/vs;
+  const pp=ip>=9?1.25:ip>=2?1.67:3,ps=is>=9?1.25:1.67; // see note
+  const pOnly=ip*(ip>=9?1.25:ip<2?3:1.67),sMax=is*(is>=9?1.25:1.67);
+  $('#co',box).innerHTML=`<ol class="steps"><li>I<sub>p</sub> = ${va}/${vp} = <b>${fmt(ip,2)} A</b>, I<sub>s</sub> = ${va}/${vs} = <b>${fmt(is,2)} A</b></li>
+  <li>Primary-only: ${ip>=9?'125 %':ip<2?'300 %':'167 %'} → max ${fmt(pOnly,2)} A → ${ip>=9?'next higher std: <b>'+nextUp(pOnly)+' A</b>':'use <b>'+nextDown(pOnly)+' A</b>'}</li>
+  <li>With secondary protection: secondary max ${is>=9?'125 %':'167 %'} = ${fmt(sMax,2)} A → <b>${nextDown(sMax)} A</b>; primary may be up to 250 % = ${fmt(ip*2.5,2)} A → <b>${nextDown(ip*2.5)} A</b></li></ol>
+  <p class="note">Based on NEC 450.3(B) percentages; verify against your reference.</p>`};
+ box.oninput=calc;calc()}
+
+/* ============================== routing ============================== */
+const VIEWS={study:['Study Questions',viewStudy],quiz:['Quiz',viewQuiz],sim:['Simulators',viewSim],ref:['Reference',viewRef]};
+function go(v,sub){if(sub){simTab=sub;store.set('ul508a.sim',sub)}if(stopFn){stopFn();stopFn=null}location.hash=v;render()}
+function render(){
+ const v=(location.hash||'#study').slice(1);const cur=VIEWS[v]?v:'study';
+ $('#nav').innerHTML=Object.entries(VIEWS).map(([k,x])=>`<button data-v="${k}" class="${k===cur?'on':''}">${x[0]}</button>`).join('');
+ if(stopFn){stopFn();stopFn=null}
+ VIEWS[cur][1]();window.scrollTo(0,0)}
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.v)};
+window.addEventListener('hashchange',render);
+$('#theme').onclick=()=>{const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'};
+updateScore();render();
+</script>
+</body>
+</html>
