@@ -97,6 +97,7 @@ const wireFor=(amps,isHigh)=>{const t=(isHigh?W75:W60).find(w=>w[1]>=amps-1e-9);
 
 /* ============================== questions ============================== */
 const TOPICS={scope:'Scope & Marking',motor:'Motor Circuits',sccr:'SCCR & Fault Current',xfmr:'Transformers (Power & Control)',upsize:'Sizing Up & Feeders',xcur:'Transformer Current (Single- & 3-Phase)',wire:'Conductors & Grounding',math:'Electrical Math',ctrl:'Controls & Protection'};
+const SRC_L='Larson Electronics, “How to Calculate Transformer Primary and Secondary Current” (Jan 8, 2026)';
 const T450='<div class="tbl"><table><tr><th>Protection method</th><th>Primary device max</th><th>Secondary device max</th></tr><tr><td rowspan="3">Primary only</td><td>I<sub>p</sub> ≥ 9 A: <b>125 %</b> (next std size up allowed)</td><td>none required by the table</td></tr><tr><td>2 A ≤ I<sub>p</sub> &lt; 9 A: <b>167 %</b></td><td>–</td></tr><tr><td>I<sub>p</sub> &lt; 2 A: <b>300 %</b></td><td>–</td></tr><tr><td rowspan="2">Primary + secondary</td><td><b>250 %</b></td><td>I<sub>s</sub> ≥ 9 A: <b>125 %</b> (next std size up allowed)</td></tr><tr><td><b>250 %</b></td><td>I<sub>s</sub> &lt; 9 A: <b>167 %</b></td></tr></table></div>';
 const Q=[
 /* ---------- SCOPE ---------- */
@@ -332,6 +333,59 @@ const Q=[
  a:'Secondary <b>104.2 A</b>, primary <b>52.1 A</b>.',
  steps:['<code>I<sub>s</sub> = 25 000 ÷ 240 = 104.2 A</code>.','<code>I<sub>p</sub> = 25 000 ÷ 480 = 52.1 A</code>.','Primary protection (primary only, ≥ 9 A → 125 %): <code>52.1 × 1.25 = 65.1 A → 70 A</code> (next size up).'],
  why:'Rated current feeds directly into the overcurrent-protection sizing in the Transformers topic.'},
+{id:'xc-9',t:'xcur',d:2,src:SRC_L,q:'State the standard formulas for transformer current. (a) Single-phase, (b) 3-phase line-to-line, (c) what do you do if the load is given in kW and power factor?',
+ a:'(a) <code>I = VA ÷ V = (kVA × 1000) ÷ V</code><br>(b) <code>I = VA ÷ (√3 × V<sub>L-L</sub>) = (kVA × 1000) ÷ (1.732 × V<sub>L-L</sub>)</code><br>(c) Convert to apparent power first: <code>kVA = kW ÷ PF</code>, then use (a) or (b).',
+ steps:['Transformers are rated in <b>kVA</b> (apparent power), so currents are based on kVA, not kW.','Single-phase uses the voltage of that winding.','3-phase uses the <b>line-to-line</b> voltage and the factor √3 = 1.732.','If only kW is known: kVA = kW ÷ PF (PF is always ≤ 1, so kVA ≥ kW).'],
+ why:'Use the same rated voltage on each side to get each side’s current – the kVA is the same on both sides for an ideal transformer.'},
+{id:'xc-10',t:'xcur',d:3,src:SRC_L,q:'<b>3-phase</b>, <b>500 kVA</b>, 4160 V primary → 480 V secondary. Find the primary and secondary full-load current.',
+ num:{v:69.4,tol:0.01,u:'A (primary)'},sim:'xfmr',
+ a:'Primary <b>69.4 A</b>, secondary <b>601.4 A</b>.',
+ steps:['<code>I<sub>p</sub> = 500 000 ÷ (1.732 × 4160) = 500 000 ÷ 7 205 = 69.4 A</code>.','<code>I<sub>s</sub> = 500 000 ÷ (1.732 × 480) = 500 000 ÷ 831.4 = 601.4 A</code>.','Check with the voltage ratio: <code>69.4 × 4160 ÷ 480 = 601.4 A</code> ✔ (ratio 8.67 : 1).'],
+ why:'The secondary current is almost 9× the primary current – the secondary conductors/bus are far larger than the primary cable.'},
+{id:'xc-11',t:'xcur',d:2,src:SRC_L,q:'A <b>3-phase</b> 480 V load is given as <b>120 kW at PF 0.80</b>. (a) What kVA is it? (b) What current does it draw? (c) Which standard transformer size covers it?',
+ num:{v:150,tol:0.01,u:'kVA'},
+ a:'(a) <b>150 kVA</b> (b) <b>180.4 A</b> (c) <b>150 kVA</b> (zero spare capacity – pick 225 kVA if you need margin or expect growth).',
+ steps:['kVA = kW ÷ PF = <code>120 ÷ 0.80 = 150 kVA</code>.','Current: <code>150 000 ÷ (1.732 × 480) = 150 000 ÷ 831.4 = 180.4 A</code>.','Standard 3-phase sizes: 112.5, <b>150</b>, 225 kVA → 150 kVA just covers the load.'],
+ why:'Common mistake: sizing the transformer at 120 kVA (using kW) – that would be overloaded by 25 %.'},
+{id:'xc-12',t:'xcur',d:2,src:SRC_L,q:'Common mistake: for a <b>75 kVA 3-phase</b> 208Y/120 V secondary, a student uses the <b>120 V</b> (line-to-neutral) value in the 3-phase formula. What current do they get, and what is the correct rated secondary current?',
+ num:{v:360.8,tol:0.01,u:'A (wrong value)'},
+ a:'Wrong: <b>360.8 A</b>. Correct: <b>208.2 A</b>. The error factor is 208 ÷ 120 = <b>1.732 (√3)</b>.',
+ steps:['Wrong: <code>75 000 ÷ (1.732 × 120) = 75 000 ÷ 207.8 = 360.8 A</code>.','Correct: <code>75 000 ÷ (1.732 × 208) = 75 000 ÷ 360.3 = 208.2 A</code>.','Ratio: <code>360.8 ÷ 208.2 = 1.733</code>.'],
+ why:'3-phase current calculations use <b>line-to-line</b> voltage (208 V). The 120 V value is only for single-phase loads between a line and the neutral.'},
+{id:'xc-13',t:'xcur',d:2,src:SRC_L,q:'Which side of a transformer carries the higher current, and why can the actual primary current be slightly higher than the ideal calculation?',
+ a:'The <b>lower-voltage side</b> carries the higher current (kVA is equal on both sides, so current is inversely proportional to voltage). The real primary current is slightly higher than ideal because of <b>transformer losses</b> (core and winding losses), most noticeable at heavy load.',
+ steps:['Ideal transformer: <code>kVA<sub>primary</sub> = kVA<sub>secondary</sub></code>.','So <code>I × V</code> is the same both sides → higher voltage = lower current.','Real transformer: <code>input kVA = output kVA + losses</code> → primary current a little higher.'],
+ why:'For sizing, start from nameplate kVA and rated voltage, then apply code margins and derating factors.'},
+{id:'xc-14',t:'xcur',d:3,src:SRC_L,q:'In the field you measure <b>98 A</b> on the primary of a 75 kVA, 480 V 3-phase transformer at “full load”. What is the percentage of rated current, and what should you check?',
+ num:{v:108.6,tol:0.01,u:'%'},
+ a:'Rated primary current is 90.2 A → measured is <b>≈ 108.6 %</b> of rating. Verify <b>tap settings, actual voltage, harmonic content, load balance</b> and whether the load is cycling (motors/heaters).',
+ steps:['Rated primary: <code>75 000 ÷ (1.732 × 480) = 90.2 A</code>.','Percent: <code>98 ÷ 90.2 = 1.086 → 108.6 %</code>.','A reading meaningfully above the calculated value points to low supply voltage or tap position, non-linear loads (harmonics), unbalance, or a transformer that really is overloaded.'],
+ why:'Calculated rated current is the benchmark for field checks – a 3-phase transformer that reads above it needs investigation before it overheats.'},
+{id:'xc-15',t:'xcur',d:3,src:SRC_L,q:'A <b>3-phase</b> transformer feeds loads with phase currents of <b>95 A, 80 A and 65 A</b>. What is the average current and by how much is the highest phase above it?',
+ num:{v:118.75,tol:0.01,u:'% of average'},
+ a:'Average <b>80 A</b>; the highest phase is <b>118.75 %</b> of the average (15 A above).',
+ steps:['Average: <code>(95 + 80 + 65) ÷ 3 = 240 ÷ 3 = 80 A</code>.','Highest vs average: <code>95 ÷ 80 = 1.1875 → 118.75 %</code>.','Maximum deviation from average: <code>95 − 80 = 15 A</code> (15 ÷ 80 = 18.75 %).'],
+ why:'Unbalanced 3-phase loads can push one phase above the “average” calculated current, which is what heats the winding and trips protection. Balance the single-phase loads across the phases.'},
+{id:'xc-16',t:'xcur',d:3,src:SRC_L,q:'The 25 kVA single-phase transformer (240 V secondary) feeds a <b>continuous</b> control-panel load at full rating. Find the minimum secondary conductor ampacity using the 125 % continuous-load rule and select the copper size (75 °C column).',
+ num:{v:130.2,tol:0.01,u:'A'},sim:'motor',
+ a:'<b>130.2 A</b> → <b>1/0 AWG</b> Cu (150 A at 75 °C). 1 AWG (130 A) is just short.',
+ steps:['Secondary current: <code>25 000 ÷ 240 = 104.2 A</code>.','Continuous load: <code>104.17 × 1.25 = 130.2 A</code>.','Circuit &gt; 100 A → 75 °C column: 1 AWG = 130 A ✘ (just under 130.2 A), <b>1/0 = 150 A</b> ✔.'],
+ why:'The article notes many designs apply 125 % for continuous loads (NEC conductor/OCPD rules for the load type). Always compare the result against the exact ampacity, not the rounded one – 130 A fails against 130.2 A.'},
+{id:'xc-17',t:'xcur',d:3,src:SRC_L,q:'After calculating the transformer current, which NEC articles set the final design? Match: (a) Article 450 (b) Article 240 (c) Article 310 (d) Article 250.',
+ a:'<b>450</b> – transformer installation, ventilation and overcurrent protection (primary/secondary, next-standard-size rules).<br><b>240</b> – overcurrent protection requirements and limits.<br><b>310</b> – conductor ampacity tables and correction/adjustment factors (ambient temperature, bundling).<br><b>250</b> – grounding and bonding, including separately derived systems.',
+ why:'The article stresses that the current calculation is “the starting line, not the finish line”: code-driven conductor and OCPD sizing completes the job. Inrush must also be considered so that protection does not nuisance-trip.'},
+{id:'xc-18',t:'xcur',d:2,src:SRC_L,q:'List the six most common mistakes when calculating transformer current.',
+ a:'<ol><li>Using <b>kW instead of kVA</b> (convert with kVA = kW ÷ PF).</li><li>Mixing up <b>208 V line-to-line vs 120 V line-to-neutral</b>.</li><li>Forgetting <b>√3</b> on a 3-phase calculation (under-sizes conductors).</li><li>Ignoring <b>harmonics and neutral loading</b> from non-linear loads.</li><li>Assuming <b>perfect balance</b> on 3-phase loads.</li><li>Not accounting for <b>duty cycle, ambient temperature</b> or enclosure constraints (continuous loading may require upsizing).</li></ol>',
+ why:'Several exam items reduce to these traps: check the units (VA vs W), the voltage (line-to-line), and the phase count before calculating.'},
+{id:'xc-19',t:'xcur',d:2,src:SRC_L,q:'A transformer feeds many <b>switch-mode power supplies, VFDs and LED drivers</b>. What problem does this create and what are the remedies?',
+ a:'<b>Harmonic currents</b> raise winding/core heating and load the <b>neutral</b> heavily. Remedies: a <b>K-factor-rated</b> or harmonic-mitigating transformer, and verify (oversize) the neutral conductor.',
+ why:'A standard transformer sized only from fundamental-frequency kVA can overheat with non-linear loads even when the measured RMS current looks acceptable.'},
+{id:'xc-20',t:'xcur',d:2,src:SRC_L,q:'What information should you collect before specifying a transformer for an industrial application?',
+ a:'<ul><li><b>kVA</b> (or kW + power factor)</li><li><b>Primary voltage</b> and system type (single/3-phase, delta/wye)</li><li><b>Secondary voltage</b> and system type, and whether a <b>neutral</b> is required</li><li><b>Frequency</b> (60 Hz in the U.S.)</li><li><b>Load type</b> (motors/VFDs, rectifiers, LED drivers, UPS, welders)</li><li><b>Environment</b> (indoor/outdoor, corrosive, ambient, ventilation)</li><li><b>Installation/code constraints</b> (OCPD approach, separately derived system, grounding method)</li></ul>',
+ why:'Collecting these first avoids rework; load type and environment drive duty cycle, K-factor and enclosure choices.'},
+{id:'xc-21',t:'xcur',d:3,src:SRC_L,q:'When does a transformer create a <b>separately derived system</b>, and why does it matter for grounding?',
+ a:'When the transformer’s secondary has <b>no direct electrical connection</b> (other than grounding/bonding) to the supply conductors – typically a transformer with isolated windings. It matters because the <b>neutral-to-ground bonding location, grounding electrode conductor and bonding</b> must be set up at the transformer (NEC Article 250), and the design must match the system type (wye/delta, grounded/ungrounded, corner-grounded delta).',
+ why:'Typical error: bonding the neutral at both the transformer and the downstream panel, which puts neutral current on the grounding path.'},
 /* ---------- WIRE ---------- */
 {id:'wire-1',t:'wire',d:2,q:'What is the smallest copper equipment grounding conductor (AWG) for circuits protected by a <b>100 A</b> breaker?',
  num:{v:8,tol:0.001,u:'AWG'},
@@ -435,7 +489,7 @@ function cardHTML(q,i,opts={}){
  return `<article class="card" data-id="${q.id}">
   <div class="row"><span class="tag">${TOPICS[q.t]}</span><span class="tag d">${'●'.repeat(q.d)}${'○'.repeat(3-q.d)}</span>${st?`<span class="tag ${st==='got'?'':'d'}">${st==='got'?'✓ knew it':'✗ review'}</span>`:''}
    ${q.sim?`<button class="btn sm" data-sim="${q.sim}">Try in simulator →</button>`:''}</div>
-  <div class="q">${opts.n!=null?`Q${opts.n}. `:''}${q.q}</div>
+  <div class="q">${opts.n!=null?`Q${opts.n}. `:''}${q.q}</div>${q.src?`<div class="note">Source: ${q.src}</div>`:''}
   ${q.num?`<div class="row"><label>Your answer (${q.num.u}): <input type="number" step="any" class="guess" style="width:110px"></label><button class="btn sm chk">Check</button><span class="res"></span></div>`:''}
   <div class="row" style="margin-top:8px"><button class="btn pri sm rev">Show answer</button></div>
   <div class="reveal hide">
@@ -515,10 +569,11 @@ function viewRef(){
  <div class="card"><h3>Standard overcurrent device ratings (NEC 240.6)</h3><p><code>${STD.join(', ')}</code> A &nbsp;(1, 3, 6, 10 A are fuse sizes; breakers start at 15 A)</p></div>
  <div class="card"><h3>Default component SCCR (Supplement SB, no marked value)</h3><div class="tbl"><table><tr><th>Component</th><th>kA</th></tr>
  <tr><td>Bus bar</td><td>50</td></tr><tr><td>Fuse holder</td><td>10</td></tr><tr><td>Terminal block / power distribution block</td><td>10</td></tr><tr><td>Circuit breaker (UL 489)</td><td>5</td></tr><tr><td>Disconnect / switch unit</td><td>5</td></tr><tr><td>Motor controller (contactor, starter)</td><td>5</td></tr><tr><td>Overload relay</td><td>5</td></tr></table></div><p class="note">Marked values override defaults. Control-circuit parts behind a small, protected control transformer are generally excluded from the SCCR evaluation.</p></div>
+ <div class="card"><h3>Transformer rated current – examples (Larson Electronics)</h3><div class="tbl"><table><tr><th>Transformer</th><th>Primary A</th><th>Secondary A</th></tr><tr><td>Single-phase 25 kVA, 480 → 240 V</td><td>52.1</td><td>104.2</td></tr><tr><td>3-phase 75 kVA, 480 → 208Y/120 V</td><td>90.2</td><td>208.2</td></tr><tr><td>3-phase 500 kVA, 4160 → 480 V</td><td>69.4</td><td>601.4</td></tr></table></div></div>
  <div class="card"><h3>Formulas</h3><ul>
  <li>3-phase apparent power <code>S = √3 · V · I</code></li><li>Real power <code>P = √3 · V · I · PF</code>; <code>Q = √3 · V · I · sin φ</code></li>
  <li>hp ↔ kW: <code>1 hp = 0.746 kW</code></li><li>Single-phase current <code>I = VA / V</code></li>
- <li>Transformer FLA (3φ) <code>I = kVA·1000 / (√3·V)</code>; fault current <code>I<sub>sc</sub> = I<sub>FL</sub> / %Z</code></li>
+ <li>kVA from kW: <code>kVA = kW ÷ PF</code> (transformers are sized in kVA, not kW)</li><li>Transformer FLA (3φ) <code>I = kVA·1000 / (√3·V)</code>; fault current <code>I<sub>sc</sub> = I<sub>FL</sub> / %Z</code></li>
  <li>Voltage drop (3φ) <code>V<sub>d</sub> = √3 · I · R · L</code></li><li>Wye: <code>V<sub>LL</sub> = √3 · V<sub>LN</sub></code>, <code>I<sub>L</sub> = I<sub>ph</sub></code>; Delta: <code>I<sub>L</sub> = √3 · I<sub>ph</sub></code></li>
  <li>Control transformer protection (primary only): ≥ 9 A → 125 %; &lt; 9 A → 167 %; &lt; 2 A → 300 %</li></ul></div>`}
 
