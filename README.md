@@ -25,14 +25,3 @@ Pages: `festo-air-prep-sim.html` (3D simulation), `pneumatic-schematic.html` (sc
 
 Build: `python3 build.py` inlines `src/*` and `vendor/three.min.js` (three.js r160, MIT).
 Logic only (no DOM): `src/sim.js` can be run in node.
-
-## UL 508A MTR exam study site
-
-Open **`ul508a-mtr-study.html`** (single self-contained file, works offline, no build step).
-Study questions with hidden answers, worked math steps and explanations (numeric answer checker), quiz mode with progress tracking,
-reference tables, and simulators: SCCR weakest-link builder, motor branch-circuit calculator, animated start/stop ladder with a
-thermal-overload trip curve, 3-phase waveform/phasor/power-triangle, and fault-current / control-transformer calculators.
-Table values and percentages are study aids – verify against the edition of UL 508A / NEC your exam uses.
-
-Transformer and sizing topics are cross-checked against the Eaton *Control panel design guide (UL 508A)*: feeder sizing incl. transformer primary (p. 4),
-CPT table (p. 46), control-circuit tap table (p. 69), single motor + CPT shared branch device (p. 68), group motor (p. 10), heater branch protection (p. 30).
