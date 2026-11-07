@@ -96,7 +96,7 @@ const nextDown=(x,list=STD)=>[...list].reverse().find(v=>v<=x+1e-9)||null;
 const wireFor=(amps,isHigh)=>{const t=(isHigh?W75:W60).find(w=>w[1]>=amps-1e-9);return t?t[0]:'larger than 4/0'};
 
 /* ============================== questions ============================== */
-const TOPICS={scope:'Scope & Marking',motor:'Motor Circuits',sccr:'SCCR & Fault Current',xfmr:'Transformers (Power & Control)',upsize:'Sizing Up & Feeders',wire:'Conductors & Grounding',math:'Electrical Math',ctrl:'Controls & Protection'};
+const TOPICS={scope:'Scope & Marking',motor:'Motor Circuits',sccr:'SCCR & Fault Current',xfmr:'Transformers (Power & Control)',upsize:'Sizing Up & Feeders',xcur:'Transformer Current (1f / 3f)',wire:'Conductors & Grounding',math:'Electrical Math',ctrl:'Controls & Protection'};
 const T450='<div class="tbl"><table><tr><th>Protection method</th><th>Primary device max</th><th>Secondary device max</th></tr><tr><td rowspan="3">Primary only</td><td>I<sub>p</sub> ≥ 9 A: <b>125 %</b> (next std size up allowed)</td><td>none required by the table</td></tr><tr><td>2 A ≤ I<sub>p</sub> &lt; 9 A: <b>167 %</b></td><td>–</td></tr><tr><td>I<sub>p</sub> &lt; 2 A: <b>300 %</b></td><td>–</td></tr><tr><td rowspan="2">Primary + secondary</td><td><b>250 %</b></td><td>I<sub>s</sub> ≥ 9 A: <b>125 %</b> (next std size up allowed)</td></tr><tr><td><b>250 %</b></td><td>I<sub>s</sub> &lt; 9 A: <b>167 %</b></td></tr></table></div>';
 const Q=[
 /* ---------- SCOPE ---------- */
@@ -291,6 +291,47 @@ const Q=[
  a:'Feeder device: 125 + 3.4 + 7.6 + 14 + 20 + 1.95 = <b>172 A → 175 A</b> (guide: “closest size”). Conductors: <b>133.2 A</b> minimum for the load, but to be protected by a 175 A device they must have <b>≥ 175 A</b> (2/0 AWG Cu at 75 °C).',
  steps:['<b>Largest branch protective device</b> (not the largest motor): <code>125 A</code>.','Add the <b>FLC</b> of every other load, including the transformer primary: <code>3.4 + 7.6 + 14 + 20 + 1.95 = 46.95 A</code>.','Total <code>125 + 46.95 = 171.95 ≈ 172 A</code> → closest standard rating <code>175 A</code>.','Conductors for the load: <code>1.25×65 = 81.25</code>, heater <code>1.25×20 = 25</code>, others <code>3.4+7.6+14+1.95 = 26.95</code> → <code>133.2 A</code> → 1/0 AWG (150 A at 75 °C).','Rule from the guide: “the overcurrent feeder rating should not exceed the conductor ampacity on the load side” → the 175 A device needs 2/0 AWG (175 A at 75 °C) or larger.'],
  why:'This is why the feeder device is often much bigger than the load: the branch device with the highest rating is carried in the sum. Note the guide <u>rounds up</u> (172 → 175 A) whereas NEC 430.62 for motor feeders says not to exceed the computed value – for exam questions follow the reference your exam gives you and check the answer choices.'},
+/* ---------- TRANSFORMER CURRENT (1f / 3f) ---------- */
+{id:'xc-1',t:'xcur',d:1,q:'<b>1f</b> transformer, <b>10 kVA</b>, 480 V primary / 240 V secondary. Find the full-load primary and secondary current.',
+ num:{v:20.83,tol:0.01,u:'A (primary)'},sim:'xfmr',
+ a:'Primary <b>20.83 A</b>, secondary <b>41.67 A</b>.',
+ steps:['Single-phase: <code>I = kVA × 1000 ÷ V</code>.','Primary: <code>10 × 1000 ÷ 480 = 20.83 A</code>.','Secondary: <code>10 × 1000 ÷ 240 = 41.67 A</code>.','Check: the secondary current is higher by the voltage ratio <code>480 ÷ 240 = 2</code> → 20.83 × 2 = 41.67 ✔.'],
+ why:'Both windings carry the same kVA; the lower-voltage side carries proportionally more current.'},
+{id:'xc-2',t:'xcur',d:2,q:'<b>3f</b> transformer, <b>45 kVA</b>, 480 V primary / 208Y/120 V secondary. Find the full-load secondary current.',
+ num:{v:124.9,tol:0.01,u:'A (secondary)'},sim:'xfmr',
+ a:'Secondary <b>124.9 A</b> (primary 54.1 A).',
+ steps:['Three-phase: <code>I = kVA × 1000 ÷ (√3 × V<sub>L-L</sub>)</code>, with √3 = 1.732.','Secondary: <code>45 000 ÷ (1.732 × 208) = 45 000 ÷ 360.3 = 124.9 A</code>.','Primary: <code>45 000 ÷ (1.732 × 480) = 45 000 ÷ 831.4 = 54.1 A</code>.'],
+ why:'Always use the <b>line-to-line</b> voltage in the 3f formula (208 V, not 120 V). 120 V is the line-to-neutral value and would give a wrong current.'},
+{id:'xc-3',t:'xcur',d:2,q:'<b>3f</b> transformer, <b>112.5 kVA</b>, 480 V → 208Y/120 V. Find the primary and secondary full-load currents.',
+ num:{v:135.3,tol:0.01,u:'A (primary)'},sim:'xfmr',
+ a:'Primary <b>135.3 A</b>, secondary <b>312.3 A</b>.',
+ steps:['<code>I<sub>p</sub> = 112 500 ÷ (1.732 × 480) = 112 500 ÷ 831.4 = 135.3 A</code>.','<code>I<sub>s</sub> = 112 500 ÷ (1.732 × 208) = 112 500 ÷ 360.3 = 312.3 A</code>.','Check: <code>135.3 × 480 ÷ 208 = 312.2 A</code> ✔ (current ratio is the inverse of the voltage ratio).'],
+ why:'These two numbers are the starting point for the overcurrent-protection percentages (125 % / 250 %) in the transformer protection questions.'},
+{id:'xc-4',t:'xcur',d:2,q:'A <b>1f</b> 480 V → 120 V transformer supplies a load drawing <b>25 A</b> on the secondary. What primary current flows (ideal transformer)?',
+ num:{v:6.25,tol:0.01,u:'A'},
+ a:'<b>6.25 A</b>.',
+ steps:['Ideal transformer: V<sub>p</sub> × I<sub>p</sub> = V<sub>s</sub> × I<sub>s</sub>.','<code>I<sub>p</sub> = I<sub>s</sub> × V<sub>s</sub> ÷ V<sub>p</sub> = 25 × 120 ÷ 480 = 6.25 A</code>.','Load size: <code>25 × 120 = 3000 VA = 3 kVA</code>; primary <code>3000 ÷ 480 = 6.25 A</code> ✔.'],
+ why:'Current ratio = inverse of the turns/voltage ratio (4 : 1 here, so the primary carries a quarter of the secondary current).'},
+{id:'xc-5',t:'xcur',d:2,q:'A <b>3f</b> 480 V supply feeds a transformer drawing <b>60 A</b> on the primary at full load. What kVA is it, and which standard size would you select?',
+ num:{v:49.9,tol:0.01,u:'kVA'},
+ a:'<b>≈ 49.9 kVA → 50 kVA</b>.',
+ steps:['<code>kVA = √3 × V × I ÷ 1000</code>.','<code>1.732 × 480 × 60 ÷ 1000 = 49.9 kVA</code>.','Nearest standard 3f sizes: 45, <b>50</b>, 75 kVA → 50 kVA.'],
+ why:'Always round up to the next standard size when sizing for a load; never down.'},
+{id:'xc-6',t:'xcur',d:2,q:'<b>3f</b>, <b>75 kVA</b>, 480 V primary. A student forgets the √3 and divides by voltage only. What current do they get, what is the correct current, and by what factor are they wrong?',
+ num:{v:90.2,tol:0.01,u:'A (correct)'},
+ a:'Wrong: <b>156.3 A</b>. Correct: <b>90.2 A</b>. The error is a factor of √3 = <b>1.732</b>.',
+ steps:['Wrong (1f formula): <code>75 000 ÷ 480 = 156.25 A</code>.','Correct (3f): <code>75 000 ÷ (1.732 × 480) = 90.2 A</code>.','Factor: <code>156.25 ÷ 90.2 = 1.732</code>.'],
+ why:'The most common exam mistake: using the 1f formula on a 3f transformer. Whenever the problem says 3f, include √3.'},
+{id:'xc-7',t:'xcur',d:3,q:'A <b>3f</b> 30 kVA transformer (480 V → 208Y/120 V) supplies a panel carrying <b>85 A</b> at 208 V. What is the transformer’s rated secondary current, and is it overloaded?',
+ num:{v:83.3,tol:0.01,u:'A (rated)'},sim:'xfmr',
+ a:'Rated secondary <b>83.3 A</b>. The load is 85 A = 30.6 kVA → <b>slightly overloaded (≈ 102 %)</b>.',
+ steps:['Rated secondary: <code>30 000 ÷ (1.732 × 208) = 83.3 A</code>.','Load kVA: <code>1.732 × 208 × 85 ÷ 1000 = 30.6 kVA</code>.','Compare: <code>85 ÷ 83.3 = 1.02</code> → 102 % of rating.'],
+ why:'Transformer loading is judged on the secondary current against the rated secondary current (or kVA against nameplate kVA).'},
+{id:'xc-8',t:'xcur',d:2,q:'A <b>1f</b> 25 kVA transformer has a 480 V primary and a 240 V secondary (full winding). What are the full-load primary and secondary currents?',
+ num:{v:104.2,tol:0.01,u:'A (secondary)'},sim:'xfmr',
+ a:'Secondary <b>104.2 A</b>, primary <b>52.1 A</b>.',
+ steps:['<code>I<sub>s</sub> = 25 000 ÷ 240 = 104.2 A</code>.','<code>I<sub>p</sub> = 25 000 ÷ 480 = 52.1 A</code>.','Primary protection (primary only, ≥ 9 A → 125 %): <code>52.1 × 1.25 = 65.1 A → 70 A</code> (next size up).'],
+ why:'Rated current feeds directly into the overcurrent-protection sizing in the Transformers topic.'},
 /* ---------- WIRE ---------- */
 {id:'wire-1',t:'wire',d:2,q:'What is the smallest copper equipment grounding conductor (AWG) for circuits protected by a <b>100 A</b> breaker?',
  num:{v:8,tol:0.001,u:'AWG'},
