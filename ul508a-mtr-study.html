@@ -98,6 +98,7 @@ const wireFor=(amps,isHigh)=>{const t=(isHigh?W75:W60).find(w=>w[1]>=amps-1e-9);
 /* ============================== questions ============================== */
 const TOPICS={scope:'Scope & Marking',motor:'Motor Circuits',sccr:'SCCR & Fault Current',xfmr:'Transformers (Power & Control)',upsize:'Sizing Up & Feeders',xcur:'Transformer Current (Single- & 3-Phase)',wire:'Conductors & Grounding',math:'Electrical Math',ctrl:'Controls & Protection'};
 const SRC_L='Larson Electronics, “How to Calculate Transformer Primary and Secondary Current” (Jan 8, 2026)';
+const SRC_I='Industrial Monitor Direct, “480V to 120V Transformer Ampacity Calculation for Test Stations” (Apr 13, 2026)';
 const T450='<div class="tbl"><table><tr><th>Protection method</th><th>Primary device max</th><th>Secondary device max</th></tr><tr><td rowspan="3">Primary only</td><td>I<sub>p</sub> ≥ 9 A: <b>125 %</b> (next std size up allowed)</td><td>none required by the table</td></tr><tr><td>2 A ≤ I<sub>p</sub> &lt; 9 A: <b>167 %</b></td><td>–</td></tr><tr><td>I<sub>p</sub> &lt; 2 A: <b>300 %</b></td><td>–</td></tr><tr><td rowspan="2">Primary + secondary</td><td><b>250 %</b></td><td>I<sub>s</sub> ≥ 9 A: <b>125 %</b> (next std size up allowed)</td></tr><tr><td><b>250 %</b></td><td>I<sub>s</sub> &lt; 9 A: <b>167 %</b></td></tr></table></div>';
 const Q=[
 /* ---------- SCOPE ---------- */
@@ -386,6 +387,43 @@ const Q=[
 {id:'xc-21',t:'xcur',d:3,src:SRC_L,q:'When does a transformer create a <b>separately derived system</b>, and why does it matter for grounding?',
  a:'When the transformer’s secondary has <b>no direct electrical connection</b> (other than grounding/bonding) to the supply conductors – typically a transformer with isolated windings. It matters because the <b>neutral-to-ground bonding location, grounding electrode conductor and bonding</b> must be set up at the transformer (NEC Article 250), and the design must match the system type (wye/delta, grounded/ungrounded, corner-grounded delta).',
  why:'Typical error: bonding the neutral at both the transformer and the downstream panel, which puts neutral current on the grounding path.'},
+{id:'xi-1',t:'xcur',d:2,src:SRC_I,q:'A transformer rated for 480 V 3-phase input is wired to only <b>two legs</b> (line-to-line) of the supply. Do you use the 3-phase formula (with √3) or the single-phase formula?',
+ a:'Use the <b>single-phase</b> formulas: <code>I = (kVA × 1000) ÷ V</code> on each side. The √3 multiplier applies only to true 3-phase loads.',
+ steps:['Two legs of a 3-phase supply give a single 480 V line-to-line circuit feeding one winding.','Primary: <code>I<sub>p</sub> = VA ÷ 480</code>. Secondary: <code>I<sub>s</sub> = VA ÷ V<sub>s</sub></code>.','No √3 anywhere – there is only one phase of current in the transformer.'],
+ why:'The 3-phase formula divides by √3 because the power is shared across three conductors. With two legs all the power flows through one pair of conductors, so you must not divide by 1.732 (that would under-size the conductors and fuses).'},
+{id:'xi-2',t:'xcur',d:1,src:SRC_I,q:'A <b>0.85 kVA</b> (850 VA) transformer, 480 V primary (two legs) → 120 V secondary. Find the full-load primary and secondary current.',
+ num:{v:1.77,tol:0.01,u:'A (primary)'},sim:'xfmr',
+ a:'Primary <b>1.77 A</b>, secondary <b>7.08 A</b>.',
+ steps:['<code>I<sub>p</sub> = 850 ÷ 480 = 1.77 A</code>.','<code>I<sub>s</sub> = 850 ÷ 120 = 7.08 A</code>.','Check: <code>1.77 × (480 ÷ 120) = 7.08 A</code> ✔.'],
+ why:'These are the nameplate full-load currents. They set the protection sizes (see the fuse question) and the maximum load you can connect.'},
+{id:'xi-3',t:'xcur',d:3,src:SRC_I,q:'A builder calculates the primary current of the 850 VA, 480 V transformer as <b>1.28 A</b> using <code>((kVA×1000) ÷ (E × 1.73)) × 1.25</code>. Reproduce the 1.28 A, then give the correct single-phase value with the same 125 % factor.',
+ num:{v:1.28,tol:0.01,u:'A (3-phase formula)'},
+ a:'The 3-phase formula: <code>850 ÷ (1.73 × 480) = 1.02 A</code>, × 1.25 = <b>1.28 A</b> – that is why the builder gets 1.28 A.<br>Correct single-phase: <code>850 ÷ 480 = 1.77 A</code>, × 1.25 = <b>2.21 A</b>.',
+ steps:['Builder’s 3-phase result: <code>850 ÷ (1.73 × 480) = 850 ÷ 830.4 = 1.024 A</code>.','With 125 %: <code>1.024 × 1.25 = 1.28 A</code> ✔ (reproduces the number).','Correct single-phase (two legs): <code>850 ÷ 480 = 1.77 A</code>; × 1.25 = <code>2.21 A</code>.','The wrong formula is low by the factor <code>1.77 ÷ 1.02 = 1.73 (√3)</code>.'],
+ why:'A 1.28 A answer from the 3-phase formula is a sign the wrong formula was used. The 125 % factor is a conductor/continuous-load margin; it is not the way to choose a transformer fuse (see the fuse question). <span class="note">The source article’s FAQ attributes the 1.28 A to the actual load; the arithmetic above shows it equals the 3-phase-formula-with-125 % result.</span>'},
+{id:'xi-4',t:'xcur',d:2,src:SRC_I,q:'By what percentage would a <b>3-phase</b> formula under-state the primary current of the 850 VA transformer on a 2-leg 480 V connection?',
+ num:{v:42.3,tol:0.02,u:'% too low'},
+ a:'The 3-phase formula gives 1.02 A versus the true 1.77 A → it is <b>≈ 42 % too low</b> (1 − 1/1.732 = 42.3 %).',
+ steps:['3-phase formula: <code>850 ÷ (1.732 × 480) = 1.02 A</code>.','True single-phase: <code>850 ÷ 480 = 1.77 A</code>.','Error: <code>(1.77 − 1.02) ÷ 1.77 = 0.423 → 42.3 %</code>.'],
+ why:'Under-estimating current means under-sized conductors and fuses that blow or overheat. Check how the transformer is actually connected before choosing the formula.'},
+{id:'xi-5',t:'xfmr',d:3,src:SRC_I,q:'The 850 VA, 480/120 V transformer (primary 1.77 A, secondary 7.08 A) is to be fused. The source suggests a <b>2 A fast-blow</b> primary fuse (125 % of 1.77 A). What do the NEC 450.3(B) rules allow for (a) primary-only protection and (b) primary + secondary protection?',
+ num:{v:5.31,tol:0.01,u:'A (primary-only max)'},sim:'xfmr',
+ a:'(a) Primary only: I<sub>p</sub> &lt; 2 A → <b>300 %</b> = <b>5.31 A → 5 A</b> (time-delay).<br>(b) Primary + secondary: primary 250 % = 4.42 A → <b>4 A</b>; secondary 7.08 A (&lt; 9 A) × 167 % = 11.8 A → <b>10 A</b>.<br>A 2 A fuse is <i>within</i> the limit (113 % of 1.77 A) but gives little margin for inrush.',
+ steps:['<code>I<sub>p</sub> = 850 ÷ 480 = 1.77 A</code>; <code>I<sub>s</sub> = 850 ÷ 120 = 7.08 A</code>.','(a) I<sub>p</sub> &lt; 2 A, primary only → 300 %: <code>1.77 × 3.00 = 5.31 A</code> → <code>5 A</code>.','(b) Primary + secondary: <code>1.77 × 2.50 = 4.42 A → 4 A</code>; secondary &lt; 9 A → 167 %: <code>7.08 × 1.67 = 11.8 A → 10 A</code>.','Check the 2 A fuse: <code>2 ÷ 1.77 = 113 %</code> – allowed, but a transformer’s magnetising inrush (8–12× rated) can open a small fast-acting fuse.'],
+ why:'<b>Use a time-delay fuse</b> on a transformer primary because of inrush (the Eaton overview also lists time-delay fuses for transformer loads). The article’s statement that sub-1000 VA transformers need primary protection of 125 % is not what Table 450.3(B) gives for currents under 9 A (167 %) and 2 A (300 %), and a marked protection rating on the transformer overrides everything. <span class="note">Verify against your NEC edition and the transformer nameplate.</span>'},
+{id:'xi-6',t:'xcur',d:2,src:SRC_I,q:'A test station needs <b>9.5 A at 120 V</b> (continuous). What minimum kVA is required, and which standard size would you pick from 0.75, 1.0, 1.5 and 2.0 kVA? Give the secondary current of each size.',
+ num:{v:1.14,tol:0.01,u:'kVA'},sim:'xfmr',
+ a:'Load = 9.5 × 120 = <b>1.14 kVA</b> → pick <b>1.5 kVA</b> (12.5 A). With 125 % for continuous duty: 11.9 A → still 1.5 kVA.<br>Secondary currents: 0.75 kVA = 6.25 A; 1.0 kVA = 8.33 A; 1.5 kVA = 12.5 A; 2.0 kVA = 16.7 A.',
+ steps:['Load VA: <code>9.5 × 120 = 1140 VA = 1.14 kVA</code>.','Secondary current of each size: <code>kVA × 1000 ÷ 120</code> → 6.25, 8.33, 12.5, 16.7 A.','0.75 and 1.0 kVA are too small (6.25, 8.33 &lt; 9.5 A); 1.5 kVA supplies 12.5 A ≥ 9.5 A (and ≥ 11.9 A = 9.5 × 1.25).','Choose <b>1.5 kVA</b>.'],
+ why:'Always round up to the next standard transformer size, and leave headroom for inrush of control loads. The primary current of the 1.5 kVA unit at 480 V is <code>1500 ÷ 480 = 3.13 A</code>.'},
+{id:'xi-7',t:'xcur',d:2,src:SRC_I,q:'After installing a 480 V → 120 V transformer, what should you verify, and what are the acceptable voltage ranges? Give the low limit of the primary range.',
+ num:{v:432,tol:0.001,u:'V'},
+ a:'Primary within <b>±10 %</b> of 480 V → <b>432–528 V</b>. Secondary within <b>±5 %</b> of 120 V → <b>114–126 V</b> (under load). Primary current must not exceed the nameplate FLA. Check for abnormal heating after a <b>30-minute run</b>.',
+ steps:['Primary: <code>480 × 0.90 = 432 V</code>, <code>480 × 1.10 = 528 V</code>.','Secondary: <code>120 × 0.95 = 114 V</code>, <code>120 × 1.05 = 126 V</code>.','Compare measured primary current with the rated <code>1.77 A</code> (850 VA unit).','Feel/measure the enclosure temperature after about 30 minutes at load.'],
+ why:'Low primary voltage raises the current for the same kVA, and a loaded secondary that falls below −5 % often means the transformer is overloaded or the impedance is high.'},
+{id:'xi-8',t:'xcur',d:2,src:SRC_I,q:'The 120 V load of a test station exceeds the 7 A the small transformer can supply. List the alternatives.',
+ a:'<ol><li><b>Upsize the transformer</b> (1.5 kVA = 12.5 A, 2.0 kVA = 16.7 A).</li><li>Run a <b>direct 120 V circuit</b> (15 A or 20 A) from the building panel if one is nearby.</li><li>Install a larger <b>isolation transformer</b> sized for the maximum expected load.</li><li>Use <b>separate transformers</b> for different voltage needs inside the panel.</li></ol>',
+ why:'When changing the transformer remember to resize the primary fuse and primary/secondary conductors from the new nameplate currents.'},
 /* ---------- WIRE ---------- */
 {id:'wire-1',t:'wire',d:2,q:'What is the smallest copper equipment grounding conductor (AWG) for circuits protected by a <b>100 A</b> breaker?',
  num:{v:8,tol:0.001,u:'AWG'},
