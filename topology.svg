@@ -13,13 +13,13 @@
 
   <rect x="50" y="100" width="390" height="110" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
   <text x="245" y="128" text-anchor="middle" font-weight="bold" fill="#1e3a8a">Linux 12 (GPOS)</text>
-  <text x="245" y="148" text-anchor="middle" fill="#1e3a8a">Ext. NIC: 129.1.1.5</text>
+  <text x="245" y="148" text-anchor="middle" fill="#1e3a8a">Ext. NIC: DHCP (address to check)</text>
   <text x="245" y="166" text-anchor="middle" fill="#1e3a8a">Virtual NIC: 192.168.138.x (assumed .1)</text>
   <text x="245" y="186" text-anchor="middle" fill="#1e3a8a">Browser (kiosk) shows the HMI</text>
 
   <rect x="50" y="300" width="390" height="110" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
   <text x="245" y="328" text-anchor="middle" font-weight="bold" fill="#14532d">Hypervisor / Automation Runtime</text>
-  <text x="245" y="348" text-anchor="middle" fill="#14532d">192.168.138.2 (to verify)</text>
+  <text x="245" y="348" text-anchor="middle" fill="#14532d">Virtual 192.168.138.2, own port 129.1.1.5</text>
   <text x="245" y="366" text-anchor="middle" fill="#14532d">Runs PLC code + mapp View web server</text>
   <text x="245" y="386" text-anchor="middle" fill="#14532d">HMI served from here (HTTP :81 / HTTPS :443)</text>
 
@@ -33,7 +33,7 @@
   <text x="600" y="440" text-anchor="middle" fill="#0f172a">Ethernet switch</text>
   <text x="600" y="92" text-anchor="middle" font-weight="bold" fill="#0f172a">Plant LAN 129.1.1.0/24</text>
   <line x1="440" y1="155" x2="600" y2="155" stroke="#0f172a" stroke-width="3"/>
-  <text x="520" y="148" text-anchor="middle" fill="#0f172a">129.1.1.5</text>
+  <text x="520" y="148" text-anchor="middle" fill="#0f172a">DHCP</text>
 
   <!-- PLC -->
   <line x1="600" y1="135" x2="680" y2="135" stroke="#0f172a" stroke-width="3"/>
@@ -61,12 +61,12 @@
   <!-- OPC UA path -->
   <path d="M440,355 L588,355" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#arr)"/>
   <text x="515" y="348" text-anchor="middle" fill="#14532d" font-size="12">OPC UA client</text>
-  <text x="515" y="372" text-anchor="middle" fill="#14532d" font-size="11">(AR NIC: to confirm)</text>
+  <text x="515" y="372" text-anchor="middle" fill="#14532d" font-size="11">(AR port 129.1.1.5)</text>
 
   <!-- notes -->
   <text x="30" y="492" font-weight="bold" fill="#1f2933">Notes</text>
-  <text x="30" y="514" fill="#334155">1. The browser on Linux (129.1.1.5) fetches the HMI from the Automation Runtime (192.168.138.2).</text>
-  <text x="30" y="534" fill="#334155">2. The WebViewer widget loads the camera page in the same browser, so Linux must reach 129.1.1.45.</text>
+  <text x="30" y="514" fill="#334155">1. The browser on Linux (DHCP) fetches the HMI from the Automation Runtime (192.168.138.2).</text>
+  <text x="30" y="534" fill="#334155">2. The WebViewer widget loads the camera page in the same browser, so Linux needs a DHCP lease in 129.1.1.0/24 to reach 129.1.1.45.</text>
   <text x="30" y="554" fill="#334155">3. 192.168.138.0/24 is internal to the hypervisor; keep it off the plant LAN (avoid putting the E20C on it).</text>
   <text x="30" y="574" fill="#334155">4. The AR reads MLC75 tags as an OPC UA client over the switch; mapp View binds to those AR variables.</text>
   <text x="30" y="594" fill="#334155">5. Dashed items are assumed or proposed, not confirmed.</text>
