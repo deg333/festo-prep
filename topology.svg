@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 640" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#d9822b"/>
+    </marker>
+  </defs>
+  <rect width="900" height="640" fill="#ffffff"/>
+  <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1f2933">Machine network topology</text>
+
+  <!-- PC2200 -->
+  <rect x="30" y="60" width="430" height="400" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="45" y="82" font-weight="bold" fill="#1f2933">B&amp;R Hygienic PC (PC2200)</text>
+
+  <rect x="50" y="100" width="390" height="110" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="245" y="128" text-anchor="middle" font-weight="bold" fill="#1e3a8a">Linux 12 (GPOS)</text>
+  <text x="245" y="148" text-anchor="middle" fill="#1e3a8a">Ext. NIC: 129.1.1.5</text>
+  <text x="245" y="166" text-anchor="middle" fill="#1e3a8a">Virtual NIC: 192.168.138.x (assumed .1)</text>
+  <text x="245" y="186" text-anchor="middle" fill="#1e3a8a">Browser (kiosk) shows the HMI</text>
+
+  <rect x="50" y="300" width="390" height="110" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="245" y="328" text-anchor="middle" font-weight="bold" fill="#14532d">Hypervisor / Automation Runtime</text>
+  <text x="245" y="348" text-anchor="middle" fill="#14532d">192.168.138.2 (to verify)</text>
+  <text x="245" y="366" text-anchor="middle" fill="#14532d">Runs PLC code + mapp View web server</text>
+  <text x="245" y="386" text-anchor="middle" fill="#14532d">HMI served from here (HTTP :81 / HTTPS :443)</text>
+
+  <!-- virtual link -->
+  <line x1="245" y1="210" x2="245" y2="300" stroke="#475569" stroke-width="3" stroke-dasharray="6 4"/>
+  <text x="258" y="250" fill="#475569">Hypervisor virtual link</text>
+  <text x="258" y="268" fill="#475569">192.168.138.0/24 (internal)</text>
+
+  <!-- LAN bus -->
+  <line x1="600" y1="100" x2="600" y2="420" stroke="#0f172a" stroke-width="5"/>
+  <text x="600" y="92" text-anchor="middle" font-weight="bold" fill="#0f172a">Plant LAN 129.1.1.0/24</text>
+  <line x1="440" y1="155" x2="600" y2="155" stroke="#0f172a" stroke-width="3"/>
+  <text x="520" y="148" text-anchor="middle" fill="#0f172a">129.1.1.5</text>
+
+  <!-- PLC -->
+  <line x1="600" y1="135" x2="680" y2="135" stroke="#0f172a" stroke-width="3"/>
+  <rect x="680" y="100" width="190" height="70" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="775" y="128" text-anchor="middle" font-weight="bold" fill="#78350f">MLC75 PLC</text>
+  <text x="775" y="148" text-anchor="middle" fill="#78350f">129.1.1.4</text>
+
+  <!-- Keyence -->
+  <line x1="600" y1="245" x2="680" y2="245" stroke="#0f172a" stroke-width="3"/>
+  <rect x="680" y="200" width="190" height="80" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="775" y="228" text-anchor="middle" font-weight="bold" fill="#7f1d1d">Keyence camera</text>
+  <text x="775" y="248" text-anchor="middle" fill="#7f1d1d">129.1.1.45</text>
+  <text x="775" y="266" text-anchor="middle" fill="#7f1d1d">web page / stream</text>
+
+  <!-- E20C proposed -->
+  <line x1="600" y1="340" x2="680" y2="340" stroke="#0f172a" stroke-width="3" stroke-dasharray="6 4"/>
+  <rect x="680" y="305" width="190" height="70" rx="8" fill="#f3e8ff" stroke="#9333ea" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="775" y="333" text-anchor="middle" font-weight="bold" fill="#581c87">Radxa E20C (optional)</text>
+  <text x="775" y="353" text-anchor="middle" fill="#581c87">OpenWrt, e.g. 129.1.1.33</text>
+
+  <!-- iframe request path -->
+  <path d="M440,192 L640,192 L640,222 L680,222" fill="none" stroke="#d9822b" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#arr)"/>
+  <text x="520" y="186" text-anchor="middle" fill="#b45309" font-size="12">iframe</text>
+
+  <!-- notes -->
+  <text x="30" y="492" font-weight="bold" fill="#1f2933">Notes</text>
+  <text x="30" y="514" fill="#334155">1. The browser on Linux (129.1.1.5) fetches the HMI from the Automation Runtime (192.168.138.2).</text>
+  <text x="30" y="534" fill="#334155">2. The WebViewer widget loads the camera page in the same browser, so Linux must reach 129.1.1.45.</text>
+  <text x="30" y="554" fill="#334155">3. 192.168.138.0/24 is internal to the hypervisor; keep it off the plant LAN (avoid putting the E20C on it).</text>
+  <text x="30" y="574" fill="#334155">4. How the PLC connects to the AR (Ethernet, POWERLINK, X2X) is not shown: please confirm.</text>
+  <text x="30" y="594" fill="#334155">5. Dashed items are assumed or proposed, not confirmed.</text>
+</svg>
